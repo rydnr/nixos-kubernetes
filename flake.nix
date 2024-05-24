@@ -29,3 +29,7 @@
     flake-utils.lib.eachDefaultSystem
     (system: { nixosModules = { kubeApiserver = ./kube-apiserver.nix; }; });
 }
+
+#    outputs = { self, nixos, flake-utils }: {
+#    nixosModules = { kubeApiserver = ./kube-apiserver.nix; };
+#};
