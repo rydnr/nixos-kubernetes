@@ -1,9 +1,16 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 with lib;
 
-let cfg = config.services.customService;
-in {
+let
+  cfg = config.services.customService;
+in
+{
   options.services.customService = {
     enable = mkOption {
       type = types.bool;
@@ -26,8 +33,9 @@ in {
       serviceConfig = {
         ExecStart = "${pkgs.coreutils}/bin/echo ${cfg.exampleOption}";
       };
-
-      install = { wantedBy = [ "multi-user.target" ]; };
+      install = {
+        wantedBy = [ "multi-user.target" ];
+      };
     };
   };
 }
