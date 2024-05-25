@@ -17,6 +17,8 @@ in
       default = false;
       description = "Enable custom service.";
     };
+
+    # Generic flags
     advertiseAddress = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -235,7 +237,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "List of directives for HSTS, comma separated. If this list is empty, then HSTS directives will not be added. Example: ['max-age=31536000' 'includeSubDomains' 'preload']";
     };
 
-    # etcd flags
+    # Etcd flags
     deleteCollectionWorkers = mkOption {
       type = types.nullOr types.int;
       default = null;
@@ -1153,7 +1155,66 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       serviceConfig = {
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-apiserver \
-            ${optionalString (cfg.advertiseAddress != null) "--advertise-address ${cfg.advertiseAddress}"}
+            ${optionalString (cfg.advertiseAddress != null) "--advertise-address ${cfg.advertiseAddress}"} \
+            ${
+              optionalString (
+                cfg.cloudProviderGceL7lbSrcCidrs != null
+              ) "--cloud-provider-gce-l7lb-src-cidrs ${cfg.cloudProviderGceL7lbSrcCidrs}"
+            } \
+            ${
+              optionalString (cfg.corsAllowedOrigins != null) "--cors-allowed-origins ${cfg.corsAllowedOrigins}"
+            } \
+            ${
+              optionalString (
+                cfg.defaultNotReadyTolerationSeconds != null
+              ) "--default-not-ready-toleration-seconds ${cfg.defaultNotReadyTolerationSeconds}"
+            } \
+            ${
+              optionalString (
+                cfg.defaultUnreachableTolerationSeconds != null
+              ) "--default-unreachable-toleration-seconds ${cfg.defaultUnreachableTolerationSeconds}"
+            } \
+            ${optionalString (cfg.externalHostname != null) "--external-hostname ${cfg.externalHostname}"} \
+            ${optionalString (cfg.featureGates != null) "--feature-gates ${cfg.featureGates}"} \
+            ${optionalString (cfg.goawayChance != null) "--goaway-chance ${cfg.goawayChance}"} \
+            ${optionalString (cfg.livezGracePeriod != null) "--livez-grace-period ${cfg.livezGracePeriod}"} \
+            ${
+              optionalString (
+                cfg.maxMutatingRequestsInflight != null
+              ) "--max-mutating-requests-inflight ${cfg.maxMutatingRequestsInflight}"
+            } \
+            ${
+              optionalString (
+                cfg.maxRequestsInflight != null
+              ) "--max-requests-inflight ${cfg.maxRequestsInflight}"
+            } \
+            ${
+              optionalString (cfg.minRequestTimeout != null) "--min-request-timeout ${cfg.minRequestTimeout}"
+            } \
+            ${optionalString (cfg.requestTimeout != null) "--request-timeout ${cfg.requestTimeout}"} \
+            ${
+              optionalString (
+                cfg.shutdownDelayDuration != null
+              ) "--shutdown-delay-duration ${cfg.shutdownDelayDuration}"
+            } \
+            ${optionalString (cfg.shutdownSendRetryAfter != null) "--shutdown-send-retry-after"} \
+            ${
+              optionalString (
+                cfg.shutdownWatchTerminationGracePeriod != null
+              ) "--shutdown-watch-termination-grace-period ${cfg.shutdownWatchTerminationGracePeriod}"
+            } \
+            ${
+              optionalString (
+                cfg.strictTransportSecurityDirectives != null
+              ) "--strict-transport-security-directives ${cfg.strictTransportSecurityDirectives}"
+            } \
+            ${
+              optionalString (
+                cfg.deleteCollectionWorkers != null
+              ) "--delete-collection-workers ${cfg.deleteCollectionWorkers}"
+            }
+            ${optionalString (cfg.enableGarbageCollector != null) "--enable-garbage-collector"} \
+
         '';
       };
     };
