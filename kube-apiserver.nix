@@ -52,7 +52,9 @@ in
               ) "--cloud-provider-gce-l7lb-src-cidrs ${cfg.cloudProviderGceL7lbSrcCidrs}"
             } \
             ${
-              concatStringsSep " " (map (item: "--cors-allowed-origins ${item}") (cfg.corsAllowedOrigins or [ ]))
+              optionalString (
+                cfg.corsAllowedOrigins != null
+              ) "--cors-allowed-origins \"${concatStringsSep "," cfg.corsAllowedOrigins}\""
             }
 
         '';
