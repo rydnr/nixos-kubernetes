@@ -29,6 +29,11 @@ in
       default = "130.211.0.0/22,35.191.0.0/16";
       description = "CIDRs opened in GCE firewall for L7 LB traffic proxy & health checks (default 130.211.0.0/22,35.191.0.0/16)";
     };
+    corsAllowedOrigins = mkOption {
+      type = types.nullOr types.listOf;
+      default = null;
+      description = "List of allowed origins for CORS, comma separated. An allowed origin can be a regular expression to support subdomain matching. If this list is empty CORS will not be enabled. Please ensure each expression matches the entire hostname by anchoring to the start with '^' or including the '//' prefix, and by anchoring to the end with '$' or including the ':' port separator suffix. Examples of valid expressions are '//example\.com(:|$)' and '^https://example\.com(:|$)'";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -45,6 +50,9 @@ in
               optionalString (
                 cfg.cloudProviderGceL7lbSrcCidrs != null
               ) "--cloud-provider-gce-l7lb-src-cidrs ${cfg.cloudProviderGceL7lbSrcCidrs}"
+            } \
+            ${
+              optionalString (cfg.corsAllowedOrigins != null) "--cors-allowed-origins ${cfg.corsAllowedOrigins}"
             }
 
         '';
