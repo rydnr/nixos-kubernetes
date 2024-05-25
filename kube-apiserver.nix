@@ -30,7 +30,7 @@ in
       description = "CIDRs opened in GCE firewall for L7 LB traffic proxy & health checks (default 130.211.0.0/22,35.191.0.0/16)";
     };
     corsAllowedOrigins = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of allowed origins for CORS, comma separated. An allowed origin can be a regular expression to support subdomain matching. If this list is empty CORS will not be enabled. Please ensure each expression matches the entire hostname by anchoring to the start with '^' or including the '//' prefix, and by anchoring to the end with '$' or including the ':' port separator suffix. Examples of valid expressions are '//example\.com(:|$)' and '^https://example\.com(:|$)'";
     };
@@ -232,7 +232,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "This option, if set, represents the maximum amount of grace period the apiserver will wait for active watch request(s) to drain during the graceful server shutdown window.";
     };
     strictTransportSecurityDirectives = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of directives for HSTS, comma separated. If this list is empty, then HSTS directives will not be added. Example: ['max-age=31536000' 'includeSubDomains' 'preload']";
     };
@@ -304,12 +304,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "The timeout to use when checking etcd readiness (default 2s)";
     };
     etcdServers = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of etcd servers to connect with (scheme://ip:port), comma separated.";
     };
     etcdServersOverrides = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "Per-resource etcd servers overrides, comma separated. The individual override format: group/resource#servers, where servers are URLs, semicolon separated. Note that this applies only to resources compiled into this server binary. ";
     };
@@ -338,7 +338,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "Enable watch caching in the apiserver (default true)";
     };
     watchCacheSizes = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "Watch cache size settings for some resources (pods, nodes, etc.), comma separated. The individual setting format: resource[.group]#size, where resource is lowercase plural (no version), group is omitted for resources of apiVersion v1 (the legacy core API) and included for others, and size is a number. This option is only meaningful for resources built into the apiserver, not ones defined by CRDs or aggregated from external servers, and is only consulted if the watch-cache is enabled. The only meaningful size setting to supply here is zero, which means to disable watch caching for the associated resource; all non-zero values are equivalent and mean to not disable watch caching for that resource";
     };
@@ -379,7 +379,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "File containing the default x509 Certificate for HTTPS. (CA cert, if any, concatenated after server cert). If HTTPS serving is enabled, and --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory specified by --cert-dir.";
     };
     tlsCipherSuites = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "" "
 Comma-separated list of cipher suites for the server. If omitted, the default Go cipher suites will be used. Preferred values:
@@ -588,7 +588,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "Enables anonymous requests to the secure port of the API server. Requests that are not rejected by another authentication method are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated. (default true)";
     };
     apiAudiences = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "Identifiers of the API. The service account token authenticator will validate that tokens used against the API are bound to at least one of these audiences. If the --service-account-issuer flag is configured and this flag is not, this field defaults to a single element list containing the issuer URL.";
     };
@@ -668,7 +668,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "If provided, all usernames will be prefixed with this value. If not provided, username claims other than 'email' are prefixed by the issuer URL to avoid clashes. To skip any prefixing, provide the value '-'.";
     };
     requestheaderAllowedNames = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of client certificate common names to allow to provide usernames in headers specified by --requestheader-username-headers. If empty, any client certificate validated by the authorities in --requestheader-client-ca-file is allowed.";
     };
@@ -678,17 +678,17 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "Root certificate bundle to use to verify client certificates on incoming requests before trusting usernames in headers specified by --requestheader-username-headers. WARNING: generally do not depend on authorization being already done for incoming requests.";
     };
     requestheaderExtraHeadersPrefix = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of request header prefixes to inspect. X-Remote-Extra- is suggested.";
     };
     requestheaderGroupHeaders = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of request headers to inspect for groups. X-Remote-Group is suggested.";
     };
     requestheaderUsernameHeaders = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "List of request headers to inspect for usernames. X-Remote-User is common.";
     };
@@ -774,7 +774,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 
     # API enablement flags:
     runtimeConfig = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "" "
 A set of key=value pairs that enable or disable built-in APIs. Supported options are:
@@ -961,7 +961,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
     # Metrics flags
     allowMetricLabels = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "The map from metric-label to value allow-list of this label. The key's format is <MetricName>,<LabelName>. The value's format is <allowed_value>,<allowed_value>...e.g. metric1,label1='v1,v2,v3', metric1,label2='v1,v2,v3' metric2,label1='v1,v2,v3'. (default [])";
     };
@@ -971,7 +971,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "The path to the manifest file that contains the allow-list mapping. The format of the file is the same as the flag --allow-metric-labels. Note that the flag --allow-metric-labels will override the manifest file.";
     };
     disabledMetrics = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "This flag provides an escape hatch for misbehaving metrics. You must provide the fully qualified metric name in order to disable it. Disclaimer: disabling metrics is higher in precedence than showing hidden metrics.";
     };
@@ -1021,7 +1021,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "number for the log level verbosity";
     };
     vmodule = mkOption {
-      type = types.nullOr types.list;
+      type = types.nullOr types.listOf;
       default = null;
       description = "comma-separated list of pattern=N settings for file-filtered logging (only works for text log format)";
     };
