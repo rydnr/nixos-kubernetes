@@ -25,8 +25,8 @@ in
       description = "The IP address on which to advertise the apiserver to members of the cluster. This address must be reachable by the rest of the cluster. If blank, the --bind-address will be used. If --bind-address is unspecified, the host's default interface will be used.";
     };
     cloudProviderGceL7lbSrcCidrs = mkOption {
-      type = types.nullOr types.str;
-      default = "130.211.0.0/22,35.191.0.0/16";
+      type = types.nullOr (types.listOf types.str);
+      default = null;
       description = "CIDRs opened in GCE firewall for L7 LB traffic proxy & health checks (default 130.211.0.0/22,35.191.0.0/16)";
     };
     corsAllowedOrigins = mkOption {
@@ -49,7 +49,7 @@ in
             ${
               optionalString (
                 cfg.cloudProviderGceL7lbSrcCidrs != null
-              ) "--cloud-provider-gce-l7lb-src-cidrs ${cfg.cloudProviderGceL7lbSrcCidrs}"
+              ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringsSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
             } \
             ${
               optionalString (
