@@ -33,9 +33,6 @@ in
       serviceConfig = {
         ExecStart = "${pkgs.coreutils}/bin/echo ${cfg.exampleOption}";
       };
-      install = {
-        wantedBy = [ "multi-user.target" ];
-      };
     };
   };
 }
