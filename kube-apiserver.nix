@@ -30,7 +30,7 @@ in
       description = "CIDRs opened in GCE firewall for L7 LB traffic proxy & health checks (default 130.211.0.0/22,35.191.0.0/16)";
     };
     corsAllowedOrigins = mkOption {
-      type = types.nullOr types.listOf;
+      type = types.nullOr types.listOf types.str;
       default = null;
       description = "List of allowed origins for CORS, comma separated. An allowed origin can be a regular expression to support subdomain matching. If this list is empty CORS will not be enabled. Please ensure each expression matches the entire hostname by anchoring to the start with '^' or including the '//' prefix, and by anchoring to the end with '$' or including the ':' port separator suffix. Examples of valid expressions are '//example\.com(:|$)' and '^https://example\.com(:|$)'";
     };
