@@ -642,7 +642,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       default = null;
       description = "If provided, the name of a custom OpenID Connect claim for specifying user groups. The claim value is expected to be a string or array of strings. This flag is experimental, please see the authentication documentation for further details.";
     };
-    oidcGroupPrefix = mkOption {
+    oidcGroupsPrefix = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "If provided, all groups will be prefixed with this value to prevent conflicts with other authentication strategies.";
