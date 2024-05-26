@@ -652,6 +652,11 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       default = null;
       description = "The URL of the OpenID issuer, only HTTPS scheme will be accepted. If set, it will be used to verify the OIDC JSON Web Token (JWT).";
     };
+    oidcRequiredClaim = mkOption {
+      type = types.nullOr (types.listoOf types.str);
+      default = null;
+      description = "A key=value pair that describes a required claim in the ID Token. If set, the claim is verified to be present in the ID Token with a matching value. Repeat this flag to specify multiple claims.";
+    };
     oidcSigningAlgs = mkOption {
       type = types.nullOr (types.enum [
         "RS256"
@@ -1284,7 +1289,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.oidcGroupsClaim != null) "--oidc-groups-claim ${cfg.oidcGroupsClaim}"} \
             ${optionalString (cfg.oidcGroupsPrefix != null) "--oidc-groups-prefix ${cfg.oidcGroupsPrefix}"} \
             ${optionalString (cfg.oidcIssuerUrl != null) "--oidc-issuer-url ${cfg.oidcIssuerUrl}"} \
-            ${optionalString (cfg.oidcRequiredClaim != null) "--oidc-required-claim ${cfg.oidcRequiredClaim}"} \
+            ${optionalString (cfg.oidcRequiredClaim != null) (concatStringsSep " --oidc-required-claim \"${cfg.oidcRequiredClaim}\"")} \
             ${optionalString (cfg.oidcSigningAlgs != null) "--oidc-signing-algs ${cfg.oidcSigningAlgs}"} \
             ${optionalString (cfg.oidcUsernameClaim != null) "--oidc-username-claim ${cfg.oidcUsernameClaim}"} \
             ${optionalString (cfg.oidcUsernamePrefix != null) "--oidc-username-prefix ${cfg.oidcUsernamePrefix}"} \
