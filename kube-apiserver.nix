@@ -1193,7 +1193,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.cloudProviderGceL7lbSrcCidrs != null
-              ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
+              ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringsSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
             } \
             ${
               optionalString (
@@ -1214,7 +1214,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.featureGates != null
-              ) "--feature-gates \"${concatStringSep "," cfg.featureGates}\""
+              ) "--feature-gates \"${concatStringsSep "," cfg.featureGates}\""
             } \
             ${optionalString (cfg.goawayChance != null) "--goaway-chance ${cfg.goawayChance}"} \
             ${optionalString (cfg.livezGracePeriod != null) "--livez-grace-period ${cfg.livezGracePeriod}"} \
@@ -1245,7 +1245,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             } \
             ${
               optionalString (cfg.strictTransportSecurityDirectives != null)
-                "--strict-transport-security-directives \"${concatStringSep "," cfg.strictTransportSecurityDirectives}\""
+                "--strict-transport-security-directives \"${concatStringsSep "," cfg.strictTransportSecurityDirectives}\""
             } \
             ${
               optionalString (
@@ -1303,12 +1303,14 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
               ) "--etcd-readycheck-timeout ${cfg.etcdReadycheckTimeout}"
             } \
             ${
-              optionalString (cfg.etcdServers != null) "--etcd-servers \"${concatStringSep "," cfg.etcdServers}\""
+              optionalString (
+                cfg.etcdServers != null
+              ) "--etcd-servers \"${concatStringsSep "," cfg.etcdServers}\""
             } \
             ${
               optionalString (
                 cfg.etcdServersOverrides != null
-              ) "--etcd-servers-overrides \"${concatStringSep "," cfg.etcdServersOverrides}\""
+              ) "--etcd-servers-overrides \"${concatStringsSep "," cfg.etcdServersOverrides}\""
             } \
             ${
               optionalString (
@@ -1321,7 +1323,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.watchCacheSizes != null
-              ) "--watch-cache-sizes \"${concatStringSep "," cfg.watchCacheSizes}\""
+              ) "--watch-cache-sizes \"${concatStringsSep "," cfg.watchCacheSizes}\""
             } \
             ${optionalString (cfg.bindAddress != null) "--bind-address ${cfg.bindAddress}"} \
             ${optionalString (cfg.certDir != null) "--cert-dir ${cfg.certDir}"} \
@@ -1343,7 +1345,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.tlsCipherSuites != null
-              ) "--tls-cipher-suites \"${concatStringSep "," cfg.tlsCipherSuites}\""
+              ) "--tls-cipher-suites \"${concatStringsSep "," cfg.tlsCipherSuites}\""
             } \
             ${optionalString (cfg.tlsMinVersion != null) "--tls-min-version ${cfg.tlsMinVersion}"} \
             ${
@@ -1389,11 +1391,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.auditLogMaxsize != null) "--audit-log-maxsize ${cfg.auditLogMaxsize}"} \
             ${optionalString (cfg.auditLogMode != null) "--audit-log-mode ${cfg.auditLogMode}"} \
             ${optionalString (cfg.auditLogPath != null) "--audit-log-path ${cfg.auditLogPath}"} \
-            ${
-              optionalString (
-                cfg.auditLogTruncateEnabled != null
-              ) "--audit-log-truncate-enabled ${cfg.auditLogTruncateEnabled}"
-            } \
+            ${optionalString (cfg.auditLogTruncateEnabled != null) "--audit-log-truncate-enabled"} \
             ${
               optionalString (
                 cfg.auditLogTruncateMaxBatchSize != null
@@ -1481,7 +1479,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.apiAudiences != null
-              ) "--api-audiences \"${concatStringSep "," cfg.apiAudiences}\""
+              ) "--api-audiences \"${concatStringsSep "," cfg.apiAudiences}\""
             } \
             ${
               optionalString (
@@ -1527,7 +1525,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.requestheaderAllowedNames != null
-              ) "--requestheader-allowed-names \"${concatStringSep "," cfg.requestheaderAllowedNames}\""
+              ) "--requestheader-allowed-names \"${concatStringsSep "," cfg.requestheaderAllowedNames}\""
             } \
             ${
               optionalString (
@@ -1536,17 +1534,17 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             } \
             ${
               optionalString (cfg.requestheaderExtraHeadersPrefix != null)
-                "--requestheader-extra-headers-prefix \"${concatStringSep "," cfg.requestheaderExtraHeadersPrefix}\""
+                "--requestheader-extra-headers-prefix \"${concatStringsSep "," cfg.requestheaderExtraHeadersPrefix}\""
             } \
             ${
               optionalString (
                 cfg.requestheaderGroupHeaders != null
-              ) "--requestheader-group-headers \"${concatStringSep "," cfg.requestheaderGroupHeaders}\""
+              ) "--requestheader-group-headers \"${concatStringsSep "," cfg.requestheaderGroupHeaders}\""
             } \
             ${
               optionalString (
                 cfg.requestheaderUsernameHeaders != null
-              ) "--requestheader-username-headers \"${concatStringSep "," cfg.requestheaderUsernameHeaders}\""
+              ) "--requestheader-username-headers \"${concatStringsSep "," cfg.requestheaderUsernameHeaders}\""
             } \
             ${
               optionalString (
@@ -1585,7 +1583,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.authorizationMode != null
-              ) "--authorization-mode \"${concatStringSep "," cfg.authorizationMode}\""
+              ) "--authorization-mode \"${concatStringsSep "," cfg.authorizationMode}\""
             } \
             ${
               optionalString (
@@ -1615,7 +1613,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.runtimeConfig != null
-              ) "--runtime-config \"${concatStringSep "," cfg.runtimeConfig}\""
+              ) "--runtime-config \"${concatStringsSep "," cfg.runtimeConfig}\""
             } \
             ${
               optionalString (
@@ -1625,7 +1623,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.admissionControl != null
-              ) "--admission-control \"${concatStringSep "," cfg.admissionControl}\""
+              ) "--admission-control \"${concatStringsSep "," cfg.admissionControl}\""
             } \
             ${
               optionalString (
@@ -1635,17 +1633,17 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.disableAdmissionPlugins != null
-              ) "--disable-admission-plugins \"${concatStringSep "," cfg.disableAdmissionPlugins}\""
+              ) "--disable-admission-plugins \"${concatStringsSep "," cfg.disableAdmissionPlugins}\""
             } \
             ${
               optionalString (
                 cfg.enableAdmissionPlugins != null
-              ) "--enable-admission-plugins \"${concatStringSep "," cfg.enableAdmissionPlugins}\""
+              ) "--enable-admission-plugins \"${concatStringsSep "," cfg.enableAdmissionPlugins}\""
             } \
             ${
               optionalString (
                 cfg.allowMetricLabels != null
-              ) "--allow-metric-labels \"${concatStringSep "," cfg.allowMetricLabels}\""
+              ) "--allow-metric-labels \"${concatStringsSep "," cfg.allowMetricLabels}\""
             } \
             ${
               optionalString (
@@ -1655,7 +1653,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.disabledMetrics != null
-              ) "--disabled-metrics \"${concatStringSep "," cfg.disabledMetrics}\""
+              ) "--disabled-metrics \"${concatStringsSep "," cfg.disabledMetrics}\""
             } \
             ${
               optionalString (
@@ -1683,7 +1681,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             } \
             ${optionalString (cfg.loggingFormat != null) "--logging-format ${cfg.loggingFormat}"} \
             ${optionalString (cfg.v != null) "--v ${cfg.v}"} \
-            ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringSep "," cfg.vmodule}\""} \
+            ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
             ${
               optionalString (cfg.tracingConfigFile != null) "--tracing-config-file ${cfg.tracingConfigFile}"
             } \
@@ -1759,6 +1757,10 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.serviceNodePortRange != null
               ) "--service-node-port-range ${cfg.serviceNodePortRange}"
             }
+
+
+
+
         '';
       };
     };
