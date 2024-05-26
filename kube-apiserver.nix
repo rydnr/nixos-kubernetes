@@ -1188,7 +1188,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.cloudProviderGceL7lbSrcCidrs != null
-              ) "--cloud-provider-gce-l7lb-src-cidrs ${cfg.cloudProviderGceL7lbSrcCidrs}"
+              ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringsSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
             } \
             ${
               optionalString (
