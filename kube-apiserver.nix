@@ -1303,7 +1303,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.etcdServersOverrides != null
-              ) "--etcd-servers-overrides \"${concatStringSep cfg.etcdServersOverrides}\""
+              ) "--etcd-servers-overrides \"${concatStringSep "," cfg.etcdServersOverrides}\""
             } \
             ${
               optionalString (
