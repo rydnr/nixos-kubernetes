@@ -653,7 +653,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "The URL of the OpenID issuer, only HTTPS scheme will be accepted. If set, it will be used to verify the OIDC JSON Web Token (JWT).";
     };
     oidcRequiredClaim = mkOption {
-      type = types.nullOr (types.listoOf types.str);
+      type = types.nullOr (types.listOf types.str);
       default = null;
       description = "A key=value pair that describes a required claim in the ID Token. If set, the claim is verified to be present in the ID Token with a matching value. Repeat this flag to specify multiple claims.";
     };
