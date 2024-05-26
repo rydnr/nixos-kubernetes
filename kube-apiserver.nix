@@ -324,13 +324,11 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "The storage backend for persistence. Options: 'etcd3' (default).";
     };
     storageMediaType = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "application/json"
-          "application/yaml"
-          "application/vnd.kubernetes.protobuf"
-        ]
-      );
+      type = types.nullOr (types.enum [
+        "application/json"
+        "application/yaml"
+        "application/vnd.kubernetes.protobuf"
+      ]);
       default = null;
       description = "The media type to use to store objects in storage. Some resources or storage backends may only support a specific media type and will ignore this setting. Supported media types: [application/json, application/yaml, application/vnd.kubernetes.protobuf] (default 'application/vnd.kubernetes.protobuf ')";
     };
@@ -390,14 +388,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 " "";
     };
     tlsMinVersion = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "VersionTLS10"
-          "VersionTLS11"
-          "VersionTLS12"
-          "VERSIONTLS13"
-        ]
-      );
+      type = types.nullOr (types.enum [ "VersionTLS10" "VersionTLS11" "VersionTLS12" "VERSIONTLS13" ]);
       default = null;
       description = "Minimum TLS version supported. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13";
     };
@@ -449,12 +440,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "set, the rotated log files will be compressed using gzip.";
     };
     auditLogFormat = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "legacy"
-          "json"
-        ]
-      );
+      type = types.nullOr (types.enum [ "legacy" "json" ]);
       default = null;
       description = "Format of saved audits. 'legacy' indicates 1-line text format for each event. 'json' indicates structured json format. Known formats are legacy,json. (default 'json')";
     };
@@ -474,13 +460,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "The maximum size in megabytes of the audit log file before it gets rotated.";
     };
     auditLogMode = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "batch"
-          "blocking"
-          "blocking-strict"
-        ]
-      );
+      type = types.nullOr (types.enum [ "batch" "blocking" "blocking-strict" ]);
       default = null;
       description = "Strategy for sending audit events. Blocking indicates sending events should block server responses. Batch causes the backend to buffer and write events asynchronously. Known modes are batch,blocking,blocking-strict. (default 'blocking')";
     };
@@ -555,13 +535,11 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "The amount of time to wait before retrying the first failed request. (default 10s)";
     };
     auditWebhookMode = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "batch"
-          "blocking"
-          "blocking-strict"
-        ]
-      );
+      type = types.nullOr (types.enum [
+        "batch"
+        "blocking"
+        "blocking-strict"
+      ]);
       default = null;
       description = "Strategy for sending audit events. Blocking indicates sending events should block server responses. Batch causes the backend to buffer and write events asynchronously. Known modes are batch,blocking,blocking-strict. (default 'batch')";
     };
@@ -664,25 +642,28 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       default = null;
       description = "If provided, the name of a custom OpenID Connect claim for specifying user groups. The claim value is expected to be a string or array of strings. This flag is experimental, please see the authentication documentation for further details.";
     };
+    oidcGroupPrefix = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "If provided, all groups will be prefixed with this value to prevent conflicts with other authentication strategies.";
+    };
     oidcIssuerUrl = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The URL of the OpenID issuer, only HTTPS scheme will be accepted. If set, it will be used to verify the OIDC JSON Web Token (JWT).";
     };
     oidcSigningAlgs = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "RS256"
-          "RS384"
-          "RS512"
-          "ES256"
-          "ES384"
-          "ES512"
-          "PS256"
-          "PS384"
-          "PS512"
-        ]
-      );
+      type = types.nullOr (types.enum [
+        "RS256"
+        "RS384"
+        "RS512"
+        "ES256"
+        "ES384"
+        "ES512"
+        "PS256"
+        "PS384"
+        "PS512"
+      ]);
       default = null;
       description = "Comma-separated list of allowed JOSE asymmetric signing algorithms. JWTs with a supported 'alg' header values are: RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512. Values are defined by RFC 7518 https://tools.ietf.org/html/rfc7518#section-3.1. (default [RS256])";
     };
@@ -764,18 +745,14 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "File with Authorization Configuration to configure the authorizer chain.Note: This feature is in Alpha since v1.29.--feature-gate=StructuredAuthorizationConfiguration=true feature flag needs to be set to true for enabling the functionality.This feature is mutually exclusive with the other --authorization-mode and --authorization-webhook-* flags.";
     };
     authorizationMode = mkOption {
-      type = types.nullOr (
-        types.listOf (
-          types.enum [
-            "AlwaysAllow"
-            "AlwaysDeny"
-            "ABAC"
-            "Webhook"
-            "RBAC"
-            "Node"
-          ]
-        )
-      );
+      type = types.nullOr (types.listOf (types.enum [
+        "AlwaysAllow"
+        "AlwaysDeny"
+        "ABAC"
+        "Webhook"
+        "RBAC"
+        "Node"
+      ]));
       default = null;
       description = "Ordered list of plug-ins to do authorization on secure port. Defaults to AlwaysAllow if --authorization-config is not used. Comma-delimited list of: AlwaysAllow,AlwaysDeny,ABAC,Webhook,RBAC,Node.";
     };
@@ -826,47 +803,43 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "File with apiserver egress selector configuration.";
     };
     admissionControl = mkOption {
-      type = types.nullOr (
-        types.listOf (
-          types.enum [
-            "AlwaysAdmit"
-            "AlwaysDeny"
-            "AlwaysPullImages"
-            "CertificateApproval"
-            "CertificateSigning"
-            "CertificateSubjectRestriction"
-            "ClusterTrustBundleAttest"
-            "DefaultIngressClass"
-            "DefaultStorageClass"
-            "DefaultTolerationSeconds"
-            "DenyServiceExternalIPs"
-            "EventRateLimit"
-            "ExtendedResourceToleration"
-            "ImagePolicyWebhook"
-            "LimitPodHardAntiAffinityTopology"
-            "LimitRanger"
-            "MutatingAdmissionWebhook"
-            "NamespaceAutoProvision"
-            "NamespaceExists"
-            "NamespaceLifecycle"
-            "NodeRestriction"
-            "OwnerReferencesPermissionEnforcement"
-            "PersistentVolumeClaimResize"
-            "PersistentVolumeLabel"
-            "PodNodeSelector"
-            "PodSecurity"
-            "PodTolerationRestriction"
-            "Priority"
-            "ResourceQuota"
-            "RuntimeClass"
-            "ServiceAccount"
-            "StorageObjectInUseProtection"
-            "TaintNodesByCondition"
-            "ValidatingAdmissionPolicy"
-            "ValidatingAdmissionWebhook"
-          ]
-        )
-      );
+      type = types.nullOr (types.listOf (types.enum [
+        "AlwaysAdmit"
+        "AlwaysDeny"
+        "AlwaysPullImages"
+        "CertificateApproval"
+        "CertificateSigning"
+        "CertificateSubjectRestriction"
+        "ClusterTrustBundleAttest"
+        "DefaultIngressClass"
+        "DefaultStorageClass"
+        "DefaultTolerationSeconds"
+        "DenyServiceExternalIPs"
+        "EventRateLimit"
+        "ExtendedResourceToleration"
+        "ImagePolicyWebhook"
+        "LimitPodHardAntiAffinityTopology"
+        "LimitRanger"
+        "MutatingAdmissionWebhook"
+        "NamespaceAutoProvision"
+        "NamespaceExists"
+        "NamespaceLifecycle"
+        "NodeRestriction"
+        "OwnerReferencesPermissionEnforcement"
+        "PersistentVolumeClaimResize"
+        "PersistentVolumeLabel"
+        "PodNodeSelector"
+        "PodSecurity"
+        "PodTolerationRestriction"
+        "Priority"
+        "ResourceQuota"
+        "RuntimeClass"
+        "ServiceAccount"
+        "StorageObjectInUseProtection"
+        "TaintNodesByCondition"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+      ]));
       default = null;
       description = "Admission is divided into two phases. In the first phase, only mutating admission plugins run. In the second phase, only validating admission plugins run. The names in the below list may represent a validating plugin, a mutating plugin, or both. The order of plugins in which they are passed to this flag does not matter. Comma-delimited list of: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. (DEPRECATED: Use --enable-admission-plugins or --disable-admission-plugins instead. Will be removed in a future version.)";
     };
@@ -876,111 +849,103 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "File with admission control configuration.";
     };
     disableAdmissionPlugins = mkOption {
-      type = types.nullOr (
-        types.listOf (
-          types.enum [
-            "NamespaceLifecycle"
-            "LimitRanger"
-            "ServiceAccount"
-            "TaintNodesByCondition"
-            "PodSecurity"
-            "Priority"
-            "DefaultTolerationSeconds"
-            "DefaultStorageClass"
-            "StorageObjectInUseProtection"
-            "PersistentVolumeClaimResize"
-            "RuntimeClass"
-            "CertificateApproval"
-            "CertificateSigning"
-            "ClusterTrustBundleAttest"
-            "CertificateSubjectRestriction"
-            "DefaultIngressClass"
-            "MutatingAdmissionWebhook"
-            "ValidatingAdmissionPolicy"
-            "ValidatingAdmissionWebhook"
-            "ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit"
-            "AlwaysDeny"
-            "AlwaysPullImages"
-            "CertificateApproval"
-            "CertificateSigning"
-            "CertificateSubjectRestriction"
-            "ClusterTrustBundleAttest"
-            "DefaultIngressClass"
-            "DefaultStorageClass"
-            "DefaultTolerationSeconds"
-            "DenyServiceExternalIPs"
-            "EventRateLimit"
-            "ExtendedResourceToleration"
-            "ImagePolicyWebhook"
-            "LimitPodHardAntiAffinityTopology"
-            "LimitRanger"
-            "MutatingAdmissionWebhook"
-            "NamespaceAutoProvision"
-            "NamespaceExists"
-            "NamespaceLifecycle"
-            "NodeRestriction"
-            "OwnerReferencesPermissionEnforcement"
-            "PersistentVolumeClaimResize"
-            "PersistentVolumeLabel"
-            "PodNodeSelector"
-            "PodSecurity"
-            "PodTolerationRestriction"
-            "Priority"
-            "ResourceQuota"
-            "RuntimeClass"
-            "ServiceAccount"
-            "StorageObjectInUseProtection"
-            "TaintNodesByCondition"
-            "ValidatingAdmissionPolicy"
-            "ValidatingAdmissionWebhook"
-          ]
-        )
-      );
+      type = types.nullOr (types.listOf (types.enum [
+        "NamespaceLifecycle"
+        "LimitRanger"
+        "ServiceAccount"
+        "TaintNodesByCondition"
+        "PodSecurity"
+        "Priority"
+        "DefaultTolerationSeconds"
+        "DefaultStorageClass"
+        "StorageObjectInUseProtection"
+        "PersistentVolumeClaimResize"
+        "RuntimeClass"
+        "CertificateApproval"
+        "CertificateSigning"
+        "ClusterTrustBundleAttest"
+        "CertificateSubjectRestriction"
+        "DefaultIngressClass"
+        "MutatingAdmissionWebhook"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+        "ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit"
+        "AlwaysDeny"
+        "AlwaysPullImages"
+        "CertificateApproval"
+        "CertificateSigning"
+        "CertificateSubjectRestriction"
+        "ClusterTrustBundleAttest"
+        "DefaultIngressClass"
+        "DefaultStorageClass"
+        "DefaultTolerationSeconds"
+        "DenyServiceExternalIPs"
+        "EventRateLimit"
+        "ExtendedResourceToleration"
+        "ImagePolicyWebhook"
+        "LimitPodHardAntiAffinityTopology"
+        "LimitRanger"
+        "MutatingAdmissionWebhook"
+        "NamespaceAutoProvision"
+        "NamespaceExists"
+        "NamespaceLifecycle"
+        "NodeRestriction"
+        "OwnerReferencesPermissionEnforcement"
+        "PersistentVolumeClaimResize"
+        "PersistentVolumeLabel"
+        "PodNodeSelector"
+        "PodSecurity"
+        "PodTolerationRestriction"
+        "Priority"
+        "ResourceQuota"
+        "RuntimeClass"
+        "ServiceAccount"
+        "StorageObjectInUseProtection"
+        "TaintNodesByCondition"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+      ]));
       default = null;
       description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.";
     };
     enableAdmissionPlugins = mkOption {
-      type = types.nullOr (
-        types.listOf (
-          types.enum [
-            "AlwaysAdmit"
-            "AlwaysDeny"
-            "AlwaysPullImages"
-            "CertificateApproval"
-            "CertificateSigning"
-            "CertificateSubjectRestriction"
-            "ClusterTrustBundleAttest"
-            "DefaultIngressClass"
-            "DefaultStorageClass"
-            "DefaultTolerationSeconds"
-            "DenyServiceExternalIPs"
-            "EventRateLimit"
-            "ExtendedResourceToleration"
-            "ImagePolicyWebhook"
-            "LimitPodHardAntiAffinityTopology"
-            "LimitRanger"
-            "MutatingAdmissionWebhook"
-            "NamespaceAutoProvision"
-            "NamespaceExists"
-            "NamespaceLifecycle"
-            "NodeRestriction"
-            "OwnerReferencesPermissionEnforcement"
-            "PersistentVolumeClaimResize"
-            "PersistentVolumeLabel"
-            "PodNodeSelector"
-            "PodSecurity"
-            "PodTolerationRestriction"
-            "Priority"
-            "ResourceQuota"
-            "RuntimeClass"
-            "ServiceAccount"
-            "StorageObjectInUseProtection"
-            "TaintNodesByCondition"
-            "ValidatingAdmissionPolicy"
-            "ValidatingAdmissionWebhook"
-          ]
-        )
-      );
+      type = types.nullOr (types.listOf (types.enum [
+        "AlwaysAdmit"
+        "AlwaysDeny"
+        "AlwaysPullImages"
+        "CertificateApproval"
+        "CertificateSigning"
+        "CertificateSubjectRestriction"
+        "ClusterTrustBundleAttest"
+        "DefaultIngressClass"
+        "DefaultStorageClass"
+        "DefaultTolerationSeconds"
+        "DenyServiceExternalIPs"
+        "EventRateLimit"
+        "ExtendedResourceToleration"
+        "ImagePolicyWebhook"
+        "LimitPodHardAntiAffinityTopology"
+        "LimitRanger"
+        "MutatingAdmissionWebhook"
+        "NamespaceAutoProvision"
+        "NamespaceExists"
+        "NamespaceLifecycle"
+        "NodeRestriction"
+        "OwnerReferencesPermissionEnforcement"
+        "PersistentVolumeClaimResize"
+        "PersistentVolumeLabel"
+        "PodNodeSelector"
+        "PodSecurity"
+        "PodTolerationRestriction"
+        "Priority"
+        "ResourceQuota"
+        "RuntimeClass"
+        "ServiceAccount"
+        "StorageObjectInUseProtection"
+        "TaintNodesByCondition"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+      ]));
       default = null;
       description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.";
     };
@@ -1034,12 +999,10 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "[Alpha] In text format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
     loggingFormat = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "json"
-          "text"
-        ]
-      );
+      type = types.nullOr (types.enum [
+        "json"
+        "text"
+      ]);
       default = null;
       description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text'. (default 'text'";
     };
@@ -1078,13 +1041,11 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "Turns on aggregator routing requests to endpoints IP rather than cluster IP.";
     };
     endpointReconcilerType = mkOption {
-      type = types.nullOr (
-        types.enum [
-          "master-count"
-          "lease"
-          "none"
-        ]
-      );
+      type = types.nullOr (types.enum [
+        "master-count"
+        "lease"
+        "none"
+      ]);
       default = null;
       description = "Use an endpoint reconciler (master-count, lease, none) master-count is deprecated, and will be removed in a future version. (default 'lease')";
     };
@@ -1109,17 +1070,13 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "Path to a client key file for TLS.";
     };
     kubeletPreferredAddressTypes = mkOption {
-      type = types.nullOr (
-        types.listOf (
-          types.enum [
-            "Hostname"
-            "InternalDNS"
-            "InternalIP"
-            "ExternalDNS"
-            "ExternalIP"
-          ]
-        )
-      );
+      type = types.nullOr (types.listOf (types.enum [
+        "Hostname"
+        "InternalDNS"
+        "InternalIP"
+        "ExternalDNS"
+        "ExternalIP"
+      ]));
       default = null;
       description = "List of the preferred NodeAddressTypes to use for kubelet connections. (default [Hostname,InternalDNS,InternalIP,ExternalDNS,ExternalIP])";
     };
@@ -1196,9 +1153,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
               ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringsSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
             } \
             ${
-              optionalString (
-                cfg.corsAllowedOrigins != null
-              ) "--cors-allowed-origins \"${concatStringsSep "," cfg.corsAllowedOrigins}\""
+              optionalString (cfg.corsAllowedOrigins != null) "--cors-allowed-origins \"${concatStringsSep "," cfg.corsAllowedOrigins}\""
             } \
             ${
               optionalString (
@@ -1211,11 +1166,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
               ) "--default-unreachable-toleration-seconds ${cfg.defaultUnreachableTolerationSeconds}"
             } \
             ${optionalString (cfg.externalHostname != null) "--external-hostname ${cfg.externalHostname}"} \
-            ${
-              optionalString (
-                cfg.featureGates != null
-              ) "--feature-gates \"${concatStringsSep "," cfg.featureGates}\""
-            } \
+            ${optionalString (cfg.featureGates != null) "--feature-gates \"${concatStringsSep "," cfg.featureGates}\""} \
             ${optionalString (cfg.goawayChance != null) "--goaway-chance ${cfg.goawayChance}"} \
             ${optionalString (cfg.livezGracePeriod != null) "--livez-grace-period ${cfg.livezGracePeriod}"} \
             ${
@@ -1244,8 +1195,9 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
               ) "--shutdown-watch-termination-grace-period ${cfg.shutdownWatchTerminationGracePeriod}"
             } \
             ${
-              optionalString (cfg.strictTransportSecurityDirectives != null)
-                "--strict-transport-security-directives \"${concatStringsSep "," cfg.strictTransportSecurityDirectives}\""
+              optionalString (
+                cfg.strictTransportSecurityDirectives != null
+              ) "--strict-transport-security-directives \"${concatStringsSep "," cfg.strictTransportSecurityDirectives}\""
             } \
             ${
               optionalString (
@@ -1253,516 +1205,153 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
               ) "--delete-collection-workers ${cfg.deleteCollectionWorkers}"
             } \
             ${optionalString (cfg.enableGarbageCollector != null) "--enable-garbage-collector"} \
-            ${
-              optionalString (
-                cfg.deleteCollectionWorkers != null
-              ) "--delete-collection-workers ${cfg.deleteCollectionWorkers}"
-            } \
-            ${
-              optionalString (
-                cfg.enableGarbageCollector != null
-              ) "--enable-garbage-collector ${cfg.enableGarbageCollector}"
-            } \
-            ${
-              optionalString (
-                cfg.encryptionProviderConfig != null
-              ) "--encryption-provider-config ${cfg.encryptionProviderConfig}"
-            } \
-            ${
-              optionalString (
-                cfg.encryptionProviderConfigAutomaticReload != null
-              ) "--encryption-provider-config-automatic-reload   ${cfg.encryptionProviderConfigAutomaticReload}"
-            } \
+            ${optionalString (cfg.deleteCollectionWorkers != null) "--delete-collection-workers ${cfg.deleteCollectionWorkers}"} \
+            ${optionalString (cfg.enableGarbageCollector != null) "--enable-garbage-collector ${cfg.enableGarbageCollector}"} \
+            ${optionalString (cfg.encryptionProviderConfig != null) "--encryption-provider-config ${cfg.encryptionProviderConfig}"} \
+            ${optionalString (cfg.encryptionProviderConfigAutomaticReload   != null) "--encryption-provider-config-automatic-reload   ${cfg.encryptionProviderConfigAutomaticReload  }"} \
             ${optionalString (cfg.etcdCafile != null) "--etcd-cafile ${cfg.etcdCafile}"} \
             ${optionalString (cfg.etcdCertfile != null) "--etcd-certfile ${cfg.etcdCertfile}"} \
-            ${
-              optionalString (
-                cfg.etcdCompactionInterval != null
-              ) "--etcd-compaction-interval ${cfg.etcdCompactionInterval}"
-            } \
-            ${
-              optionalString (
-                cfg.etcdCountMetricPollPeriod != null
-              ) "--etcd-count-metric-poll-period ${cfg.etcdCountMetricPollPeriod}"
-            } \
-            ${
-              optionalString (
-                cfg.etcdDbMetricPollInterval != null
-              ) "--etcd-db-metric-poll-interval ${cfg.etcdDbMetricPollInterval}"
-            } \
-            ${
-              optionalString (
-                cfg.etcdHealthcheckTimeout != null
-              ) "--etcd-healthcheck-timeout ${cfg.etcdHealthcheckTimeout}"
-            } \
+            ${optionalString (cfg.etcdCompactionInterval != null) "--etcd-compaction-interval ${cfg.etcdCompactionInterval}"} \
+            ${optionalString (cfg.etcdCountMetricPollPeriod != null) "--etcd-count-metric-poll-period ${cfg.etcdCountMetricPollPeriod}"} \
+            ${optionalString (cfg.etcdDbMetricPollInterval != null) "--etcd-db-metric-poll-interval ${cfg.etcdDbMetricPollInterval}"} \
+            ${optionalString (cfg.etcdHealthcheckTimeout != null) "--etcd-healthcheck-timeout ${cfg.etcdHealthcheckTimeout}"} \
             ${optionalString (cfg.etcdKeyfile != null) "--etcd-keyfile ${cfg.etcdKeyfile}"} \
             ${optionalString (cfg.etcdPrefix != null) "--etcd-prefix ${cfg.etcdPrefix}"} \
-            ${
-              optionalString (
-                cfg.etcdReadycheckTimeout != null
-              ) "--etcd-readycheck-timeout ${cfg.etcdReadycheckTimeout}"
-            } \
-            ${
-              optionalString (
-                cfg.etcdServers != null
-              ) "--etcd-servers \"${concatStringsSep "," cfg.etcdServers}\""
-            } \
-            ${
-              optionalString (
-                cfg.etcdServersOverrides != null
-              ) "--etcd-servers-overrides \"${concatStringsSep "," cfg.etcdServersOverrides}\""
-            } \
-            ${
-              optionalString (
-                cfg.leaseReuseDurationSeconds != null
-              ) "--lease-reuse-duration-seconds ${cfg.leaseReuseDurationSeconds}"
-            } \
+            ${optionalString (cfg.etcdReadycheckTimeout != null) "--etcd-readycheck-timeout ${cfg.etcdReadycheckTimeout}"} \
+            ${optionalString (cfg.etcdServers != null) "--etcd-servers \"${concatStringsSep "," cfg.etcdServers}\""} \
+            ${optionalString (cfg.etcdServersOverrides != null) "--etcd-servers-overrides \"${concatStringsSep "," cfg.etcdServersOverrides}\""} \
+            ${optionalString (cfg.leaseReuseDurationSeconds != null) "--lease-reuse-duration-seconds ${cfg.leaseReuseDurationSeconds}"} \
             ${optionalString (cfg.storageBackend != null) "--storage-backend ${cfg.storageBackend}"} \
             ${optionalString (cfg.storageMediaType != null) "--storage-media-type ${cfg.storageMediaType}"} \
             ${optionalString (cfg.watchCache != null) "--watch-cache ${cfg.watchCache}"} \
-            ${
-              optionalString (
-                cfg.watchCacheSizes != null
-              ) "--watch-cache-sizes \"${concatStringsSep "," cfg.watchCacheSizes}\""
-            } \
+            ${optionalString (cfg.watchCacheSizes != null) "--watch-cache-sizes \"${concatStringsSep "," cfg.watchCacheSizes}\""} \
             ${optionalString (cfg.bindAddress != null) "--bind-address ${cfg.bindAddress}"} \
             ${optionalString (cfg.certDir != null) "--cert-dir ${cfg.certDir}"} \
-            ${
-              optionalString (
-                cfg.http2MaxStreamsPerConnection != null
-              ) "--http2-max-streams-per-connection ${cfg.http2MaxStreamsPerConnection}"
-            } \
-            ${
-              optionalString (
-                cfg.permitAddressSharing != null
-              ) "--permit-address-sharing ${cfg.permitAddressSharing}"
-            } \
-            ${
-              optionalString (cfg.permitPortSharing != null) "--permit-port-sharing ${cfg.permitPortSharing}"
-            } \
+            ${optionalString (cfg.http2MaxStreamsPerConnection != null) "--http2-max-streams-per-connection ${cfg.http2MaxStreamsPerConnection}"} \
+            ${optionalString (cfg.permitAddressSharing != null) "--permit-address-sharing ${cfg.permitAddressSharing}"} \
+            ${optionalString (cfg.permitPortSharing != null) "--permit-port-sharing ${cfg.permitPortSharing}"} \
             ${optionalString (cfg.securePort != null) "--secure-port ${cfg.securePort}"} \
             ${optionalString (cfg.tlsCertFile != null) "--tls-cert-file ${cfg.tlsCertFile}"} \
-            ${
-              optionalString (
-                cfg.tlsCipherSuites != null
-              ) "--tls-cipher-suites \"${concatStringsSep "," cfg.tlsCipherSuites}\""
-            } \
+            ${optionalString (cfg.tlsCipherSuites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tlsCipherSuites}\""} \
             ${optionalString (cfg.tlsMinVersion != null) "--tls-min-version ${cfg.tlsMinVersion}"} \
-            ${
-              optionalString (cfg.tlsPrivateKeyFile != null) "--tls-private-key-file ${cfg.tlsPrivateKeyFile}"
-            } \
+            ${optionalString (cfg.tlsPrivateKeyFile != null) "--tls-private-key-file ${cfg.tlsPrivateKeyFile}"} \
             ${optionalString (cfg.tlsSniCertKey != null) "--tls-sni-cert-key ${cfg.tlsSniCertKey}"} \
-            ${
-              optionalString (
-                cfg.auditLogBatchBufferSize != null
-              ) "--audit-log-batch-buffer-size ${cfg.auditLogBatchBufferSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditLogBatchMaxSize != null
-              ) "--audit-log-batch-max-size ${cfg.auditLogBatchMaxSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditLogBatchMaxWait != null
-              ) "--audit-log-batch-max-wait ${cfg.auditLogBatchMaxWait}"
-            } \
-            ${
-              optionalString (
-                cfg.auditLogBatchThrottleBurst != null
-              ) "--audit-log-batch-throttle-burst ${cfg.auditLogBatchThrottleBurst}"
-            } \
-            ${
-              optionalString (
-                cfg.auditLogBatchThrottleEnable != null
-              ) "--audit-log-batch-throttle-enable ${cfg.auditLogBatchThrottleEnable}"
-            } \
-            ${
-              optionalString (
-                cfg.auditLogBatchThrottleQps != null
-              ) "--audit-log-batch-throttle-qps ${cfg.auditLogBatchThrottleQps}"
-            } \
+            ${optionalString (cfg.auditLogBatchBufferSize != null) "--audit-log-batch-buffer-size ${cfg.auditLogBatchBufferSize}"} \
+            ${optionalString (cfg.auditLogBatchMaxSize != null) "--audit-log-batch-max-size ${cfg.auditLogBatchMaxSize}"} \
+            ${optionalString (cfg.auditLogBatchMaxWait != null) "--audit-log-batch-max-wait ${cfg.auditLogBatchMaxWait}"} \
+            ${optionalString (cfg.auditLogBatchThrottleBurst != null) "--audit-log-batch-throttle-burst ${cfg.auditLogBatchThrottleBurst}"} \
+            ${optionalString (cfg.auditLogBatchThrottleEnable != null) "--audit-log-batch-throttle-enable ${cfg.auditLogBatchThrottleEnable}"} \
+            ${optionalString (cfg.auditLogBatchThrottleQps != null) "--audit-log-batch-throttle-qps ${cfg.auditLogBatchThrottleQps}"} \
             ${optionalString (cfg.auditLogCompress != null) "--audit-log-compress ${cfg.auditLogCompress}"} \
             ${optionalString (cfg.auditLogFormat != null) "--audit-log-format ${cfg.auditLogFormat}"} \
             ${optionalString (cfg.auditLogMaxage != null) "--audit-log-maxage ${cfg.auditLogMaxage}"} \
-            ${
-              optionalString (cfg.auditLogMaxbackup != null) "--audit-log-maxbackup ${cfg.auditLogMaxbackup}"
-            } \
+            ${optionalString (cfg.auditLogMaxbackup != null) "--audit-log-maxbackup ${cfg.auditLogMaxbackup}"} \
             ${optionalString (cfg.auditLogMaxsize != null) "--audit-log-maxsize ${cfg.auditLogMaxsize}"} \
             ${optionalString (cfg.auditLogMode != null) "--audit-log-mode ${cfg.auditLogMode}"} \
             ${optionalString (cfg.auditLogPath != null) "--audit-log-path ${cfg.auditLogPath}"} \
             ${optionalString (cfg.auditLogTruncateEnabled != null) "--audit-log-truncate-enabled"} \
-            ${
-              optionalString (
-                cfg.auditLogTruncateMaxBatchSize != null
-              ) "--audit-log-truncate-max-batch-size ${cfg.auditLogTruncateMaxBatchSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditLogTruncateMaxEventSize != null
-              ) "--audit-log-truncate-max-event-size ${cfg.auditLogTruncateMaxEventSize}"
-            } \
+            ${optionalString (cfg.auditLogTruncateMaxBatchSize != null) "--audit-log-truncate-max-batch-size ${cfg.auditLogTruncateMaxBatchSize}"} \
+            ${optionalString (cfg.auditLogTruncateMaxEventSize != null) "--audit-log-truncate-max-event-size ${cfg.auditLogTruncateMaxEventSize}"} \
             ${optionalString (cfg.auditLogVersion != null) "--audit-log-version ${cfg.auditLogVersion}"} \
             ${optionalString (cfg.auditPolicyFile != null) "--audit-policy-file ${cfg.auditPolicyFile}"} \
-            ${
-              optionalString (
-                cfg.auditWebhookBatchBufferSize != null
-              ) "--audit-webhook-batch-buffer-size ${cfg.auditWebhookBatchBufferSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookBatchMaxSize != null
-              ) "--audit-webhook-batch-max-size ${cfg.auditWebhookBatchMaxSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookBatchMaxWait != null
-              ) "--audit-webhook-batch-max-wait ${cfg.auditWebhookBatchMaxWait}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookBatchThrottleBurst != null
-              ) "--audit-webhook-batch-throttle-burst ${cfg.auditWebhookBatchThrottleBurst}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookBatchThrottleEnable != null
-              ) "--audit-webhook-batch-throttle-enable         ${cfg.auditWebhookBatchThrottleEnable}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookBatchThrottleQps != null
-              ) "--audit-webhook-batch-throttle-qps ${cfg.auditWebhookBatchThrottleQps}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookConfigFile != null
-              ) "--audit-webhook-config-file ${cfg.auditWebhookConfigFile}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookInitialBackoff != null
-              ) "--audit-webhook-initial-backoff ${cfg.auditWebhookInitialBackoff}"
-            } \
+            ${optionalString (cfg.auditWebhookBatchBufferSize != null) "--audit-webhook-batch-buffer-size ${cfg.auditWebhookBatchBufferSize}"} \
+            ${optionalString (cfg.auditWebhookBatchMaxSize != null) "--audit-webhook-batch-max-size ${cfg.auditWebhookBatchMaxSize}"} \
+            ${optionalString (cfg.auditWebhookBatchMaxWait != null) "--audit-webhook-batch-max-wait ${cfg.auditWebhookBatchMaxWait}"} \
+            ${optionalString (cfg.auditWebhookBatchThrottleBurst != null) "--audit-webhook-batch-throttle-burst ${cfg.auditWebhookBatchThrottleBurst}"} \
+            ${optionalString (cfg.auditWebhookBatchThrottleEnable != null) "--audit-webhook-batch-throttle-enable         ${cfg.auditWebhookBatchThrottleEnable}"} \
+            ${optionalString (cfg.auditWebhookBatchThrottleQps != null) "--audit-webhook-batch-throttle-qps ${cfg.auditWebhookBatchThrottleQps}"} \
+            ${optionalString (cfg.auditWebhookConfigFile != null) "--audit-webhook-config-file ${cfg.auditWebhookConfigFile}"} \
+            ${optionalString (cfg.auditWebhookInitialBackoff != null) "--audit-webhook-initial-backoff ${cfg.auditWebhookInitialBackoff}"} \
             ${optionalString (cfg.auditWebhookMode != null) "--audit-webhook-mode ${cfg.auditWebhookMode}"} \
-            ${
-              optionalString (
-                cfg.auditWebhookTruncateEnabled != null
-              ) "--audit-webhook-truncate-enabled ${cfg.auditWebhookTruncateEnabled}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookTruncateMaxBatchSize != null
-              ) "--audit-webhook-truncate-max-batch-size ${cfg.auditWebhookTruncateMaxBatchSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookTruncateMaxEventSize != null
-              ) "--audit-webhook-truncate-max-event-size ${cfg.auditWebhookTruncateMaxEventSize}"
-            } \
-            ${
-              optionalString (
-                cfg.auditWebhookVersion != null
-              ) "--audit-webhook-version ${cfg.auditWebhookVersion}"
-            } \
-            ${
-              optionalString (cfg.contentionProfiling != null) "--contention-profiling ${cfg.contentionProfiling}"
-            } \
+            ${optionalString (cfg.auditWebhookTruncateEnabled != null) "--audit-webhook-truncate-enabled ${cfg.auditWebhookTruncateEnabled}"} \
+            ${optionalString (cfg.auditWebhookTruncateMaxBatchSize != null) "--audit-webhook-truncate-max-batch-size ${cfg.auditWebhookTruncateMaxBatchSize}"} \
+            ${optionalString (cfg.auditWebhookTruncateMaxEventSize != null) "--audit-webhook-truncate-max-event-size ${cfg.auditWebhookTruncateMaxEventSize}"} \
+            ${optionalString (cfg.auditWebhookVersion != null) "--audit-webhook-version ${cfg.auditWebhookVersion}"} \
+            ${optionalString (cfg.contentionProfiling != null) "--contention-profiling ${cfg.contentionProfiling}"} \
             ${optionalString (cfg.debugSocketPath != null) "--debug-socket-path ${cfg.debugSocketPath}"} \
-            ${
-              optionalString (
-                cfg.enablePriorityAndFairness != null
-              ) "--enable-priority-and-fairness ${cfg.enablePriorityAndFairness}"
-            } \
+            ${optionalString (cfg.enablePriorityAndFairness != null) "--enable-priority-and-fairness ${cfg.enablePriorityAndFairness}"} \
             ${optionalString (cfg.profiling != null) "--profiling ${cfg.profiling}"} \
             ${optionalString (cfg.anonymousAuth != null) "--anonymous-auth ${cfg.anonymousAuth}"} \
-            ${
-              optionalString (
-                cfg.apiAudiences != null
-              ) "--api-audiences \"${concatStringsSep "," cfg.apiAudiences}\""
-            } \
-            ${
-              optionalString (
-                cfg.authenticationConfig != null
-              ) "--authentication-config ${cfg.authenticationConfig}"
-            } \
-            ${
-              optionalString (
-                cfg.authenticationTokenWebhookCacheTtl != null
-              ) "--authentication-token-webhook-cache-ttl ${cfg.authenticationTokenWebhookCacheTtl}"
-            } \
-            ${
-              optionalString (
-                cfg.authenticationTokenWebhookConfigFile != null
-              ) "--authentication-token-webhook-config-file ${cfg.authenticationTokenWebhookConfigFile}"
-            } \
-            ${
-              optionalString (
-                cfg.authenticationTokenWebhookVersion != null
-              ) "--authentication-token-webhook-version ${cfg.authenticationTokenWebhookVersion}"
-            } \
+            ${optionalString (cfg.apiAudiences != null) "--api-audiences \"${concatStringsSep "," cfg.apiAudiences}\""} \
+            ${optionalString (cfg.authenticationConfig != null) "--authentication-config ${cfg.authenticationConfig}"} \
+            ${optionalString (cfg.authenticationTokenWebhookCacheTtl != null) "--authentication-token-webhook-cache-ttl ${cfg.authenticationTokenWebhookCacheTtl}"} \
+            ${optionalString (cfg.authenticationTokenWebhookConfigFile != null) "--authentication-token-webhook-config-file ${cfg.authenticationTokenWebhookConfigFile}"} \
+            ${optionalString (cfg.authenticationTokenWebhookVersion != null) "--authentication-token-webhook-version ${cfg.authenticationTokenWebhookVersion}"} \
             ${optionalString (cfg.clientCaFile != null) "--client-ca-file ${cfg.clientCaFile}"} \
-            ${
-              optionalString (
-                cfg.enableBootstrapTokenAuth != null
-              ) "--enable-bootstrap-token-auth ${cfg.enableBootstrapTokenAuth}"
-            } \
+            ${optionalString (cfg.enableBootstrapTokenAuth != null) "--enable-bootstrap-token-auth ${cfg.enableBootstrapTokenAuth}"} \
             ${optionalString (cfg.oidcCaFile != null) "--oidc-ca-file ${cfg.oidcCaFile}"} \
             ${optionalString (cfg.oidcClientId != null) "--oidc-client-id ${cfg.oidcClientId}"} \
             ${optionalString (cfg.oidcGroupsClaim != null) "--oidc-groups-claim ${cfg.oidcGroupsClaim}"} \
             ${optionalString (cfg.oidcGroupsPrefix != null) "--oidc-groups-prefix ${cfg.oidcGroupsPrefix}"} \
             ${optionalString (cfg.oidcIssuerUrl != null) "--oidc-issuer-url ${cfg.oidcIssuerUrl}"} \
-            ${
-              optionalString (cfg.oidcRequiredClaim != null) "--oidc-required-claim ${cfg.oidcRequiredClaim}"
-            } \
+            ${optionalString (cfg.oidcRequiredClaim != null) "--oidc-required-claim ${cfg.oidcRequiredClaim}"} \
             ${optionalString (cfg.oidcSigningAlgs != null) "--oidc-signing-algs ${cfg.oidcSigningAlgs}"} \
-            ${
-              optionalString (cfg.oidcUsernameClaim != null) "--oidc-username-claim ${cfg.oidcUsernameClaim}"
-            } \
-            ${
-              optionalString (cfg.oidcUsernamePrefix != null) "--oidc-username-prefix ${cfg.oidcUsernamePrefix}"
-            } \
-            ${
-              optionalString (
-                cfg.requestheaderAllowedNames != null
-              ) "--requestheader-allowed-names \"${concatStringsSep "," cfg.requestheaderAllowedNames}\""
-            } \
-            ${
-              optionalString (
-                cfg.requestheaderClientCaFile != null
-              ) "--requestheader-client-ca-file ${cfg.requestheaderClientCaFile}"
-            } \
-            ${
-              optionalString (cfg.requestheaderExtraHeadersPrefix != null)
-                "--requestheader-extra-headers-prefix \"${concatStringsSep "," cfg.requestheaderExtraHeadersPrefix}\""
-            } \
-            ${
-              optionalString (
-                cfg.requestheaderGroupHeaders != null
-              ) "--requestheader-group-headers \"${concatStringsSep "," cfg.requestheaderGroupHeaders}\""
-            } \
-            ${
-              optionalString (
-                cfg.requestheaderUsernameHeaders != null
-              ) "--requestheader-username-headers \"${concatStringsSep "," cfg.requestheaderUsernameHeaders}\""
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountExtendTokenExpiration != null
-              ) "--service-account-extend-token-expiration ${cfg.serviceAccountExtendTokenExpiration}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountIssuer != null
-              ) "--service-account-issuer ${cfg.serviceAccountIssuer}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountJwksUri != null
-              ) "--service-account-jwks-uri ${cfg.serviceAccountJwksUri}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountKeyFile != null
-              ) "--service-account-key-file ${cfg.serviceAccountKeyFile}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountLookup != null
-              ) "--service-account-lookup ${cfg.serviceAccountLookup}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountMaxTokenExpiration != null
-              ) "--service-account-max-token-expiration ${cfg.serviceAccountMaxTokenExpiration}"
-            } \
+            ${optionalString (cfg.oidcUsernameClaim != null) "--oidc-username-claim ${cfg.oidcUsernameClaim}"} \
+            ${optionalString (cfg.oidcUsernamePrefix != null) "--oidc-username-prefix ${cfg.oidcUsernamePrefix}"} \
+            ${optionalString (cfg.requestheaderAllowedNames != null) "--requestheader-allowed-names \"${concatStringsSep "," cfg.requestheaderAllowedNames}\""} \
+            ${optionalString (cfg.requestheaderClientCaFile != null) "--requestheader-client-ca-file ${cfg.requestheaderClientCaFile}"} \
+            ${optionalString (cfg.requestheaderExtraHeadersPrefix != null) "--requestheader-extra-headers-prefix \"${concatStringsSep "," cfg.requestheaderExtraHeadersPrefix}\""} \
+            ${optionalString (cfg.requestheaderGroupHeaders != null) "--requestheader-group-headers \"${concatStringsSep "," cfg.requestheaderGroupHeaders}\""} \
+            ${optionalString (cfg.requestheaderUsernameHeaders != null) "--requestheader-username-headers \"${concatStringsSep "," cfg.requestheaderUsernameHeaders}\""} \
+            ${optionalString (cfg.serviceAccountExtendTokenExpiration != null) "--service-account-extend-token-expiration ${cfg.serviceAccountExtendTokenExpiration}"} \
+            ${optionalString (cfg.serviceAccountIssuer != null) "--service-account-issuer ${cfg.serviceAccountIssuer}"} \
+            ${optionalString (cfg.serviceAccountJwksUri != null) "--service-account-jwks-uri ${cfg.serviceAccountJwksUri}"} \
+            ${optionalString (cfg.serviceAccountKeyFile != null) "--service-account-key-file ${cfg.serviceAccountKeyFile}"} \
+            ${optionalString (cfg.serviceAccountLookup != null) "--service-account-lookup ${cfg.serviceAccountLookup}"} \
+            ${optionalString (cfg.serviceAccountMaxTokenExpiration != null) "--service-account-max-token-expiration ${cfg.serviceAccountMaxTokenExpiration}"} \
             ${optionalString (cfg.tokenAuthFile != null) "--token-auth-file ${cfg.tokenAuthFile}"} \
-            ${
-              optionalString (cfg.authorizationConfig != null) "--authorization-config ${cfg.authorizationConfig}"
-            } \
-            ${
-              optionalString (
-                cfg.authorizationMode != null
-              ) "--authorization-mode \"${concatStringsSep "," cfg.authorizationMode}\""
-            } \
-            ${
-              optionalString (
-                cfg.authorizationPolicyFile != null
-              ) "--authorization-policy-file ${cfg.authorizationPolicyFile}"
-            } \
-            ${
-              optionalString (
-                cfg.authorizationWebhookCacheAuthorizedTtl != null
-              ) "--authorization-webhook-cache-authorized-ttl ${cfg.authorizationWebhookCacheAuthorizedTtl}"
-            } \
-            ${
-              optionalString (
-                cfg.authorizationWebhookCacheUnauthorizedTtl != null
-              ) "--authorization-webhook-cache-unauthorized-ttl ${cfg.authorizationWebhookCacheUnauthorizedTtl}"
-            } \
-            ${
-              optionalString (
-                cfg.authorizationWebhookConfigFile != null
-              ) "--authorization-webhook-config-file ${cfg.authorizationWebhookConfigFile}"
-            } \
-            ${
-              optionalString (
-                cfg.authorizationWebhookVersion != null
-              ) "--authorization-webhook-version ${cfg.authorizationWebhookVersion}"
-            } \
-            ${
-              optionalString (
-                cfg.runtimeConfig != null
-              ) "--runtime-config \"${concatStringsSep "," cfg.runtimeConfig}\""
-            } \
-            ${
-              optionalString (
-                cfg.egressSelectorConfigFile != null
-              ) "--egress-selector-config-file ${cfg.egressSelectorConfigFile}"
-            } \
-            ${
-              optionalString (
-                cfg.admissionControl != null
-              ) "--admission-control \"${concatStringsSep "," cfg.admissionControl}\""
-            } \
-            ${
-              optionalString (
-                cfg.admissionControlConfigFile != null
-              ) "--admission-control-config-file ${cfg.admissionControlConfigFile}"
-            } \
-            ${
-              optionalString (
-                cfg.disableAdmissionPlugins != null
-              ) "--disable-admission-plugins \"${concatStringsSep "," cfg.disableAdmissionPlugins}\""
-            } \
-            ${
-              optionalString (
-                cfg.enableAdmissionPlugins != null
-              ) "--enable-admission-plugins \"${concatStringsSep "," cfg.enableAdmissionPlugins}\""
-            } \
-            ${
-              optionalString (
-                cfg.allowMetricLabels != null
-              ) "--allow-metric-labels \"${concatStringsSep "," cfg.allowMetricLabels}\""
-            } \
-            ${
-              optionalString (
-                cfg.allowMetricLabelsManifest != null
-              ) "--allow-metric-labels-manifest ${cfg.allowMetricLabelsManifest}"
-            } \
-            ${
-              optionalString (
-                cfg.disabledMetrics != null
-              ) "--disabled-metrics \"${concatStringsSep "," cfg.disabledMetrics}\""
-            } \
-            ${
-              optionalString (
-                cfg.showHiddenMetricsForVersion != null
-              ) "--show-hidden-metrics-for-version ${cfg.showHiddenMetricsForVersion}"
-            } \
-            ${
-              optionalString (cfg.logFlushFrequency != null) "--log-flush-frequency ${cfg.logFlushFrequency}"
-            } \
-            ${
-              optionalString (
-                cfg.logJsonInfoBufferSize != null
-              ) "--log-json-info-buffer-size ${cfg.logJsonInfoBufferSize}"
-            } \
-            ${
-              optionalString (cfg.logJsonSplitStream != null) "--log-json-split-stream ${cfg.logJsonSplitStream}"
-            } \
-            ${
-              optionalString (
-                cfg.logTextInfoBufferSize != null
-              ) "--log-text-info-buffer-size ${cfg.logTextInfoBufferSize}"
-            } \
-            ${
-              optionalString (cfg.logTextSplitStream != null) "--log-text-split-stream ${cfg.logTextSplitStream}"
-            } \
+            ${optionalString (cfg.authorizationConfig != null) "--authorization-config ${cfg.authorizationConfig}"} \
+            ${optionalString (cfg.authorizationMode != null) "--authorization-mode \"${concatStringsSep "," cfg.authorizationMode}\""} \
+            ${optionalString (cfg.authorizationPolicyFile != null) "--authorization-policy-file ${cfg.authorizationPolicyFile}"} \
+            ${optionalString (cfg.authorizationWebhookCacheAuthorizedTtl != null) "--authorization-webhook-cache-authorized-ttl ${cfg.authorizationWebhookCacheAuthorizedTtl}"} \
+            ${optionalString (cfg.authorizationWebhookCacheUnauthorizedTtl != null) "--authorization-webhook-cache-unauthorized-ttl ${cfg.authorizationWebhookCacheUnauthorizedTtl}"} \
+            ${optionalString (cfg.authorizationWebhookConfigFile != null) "--authorization-webhook-config-file ${cfg.authorizationWebhookConfigFile}"} \
+            ${optionalString (cfg.authorizationWebhookVersion != null) "--authorization-webhook-version ${cfg.authorizationWebhookVersion}"} \
+            ${optionalString (cfg.runtimeConfig != null) "--runtime-config \"${concatStringsSep "," cfg.runtimeConfig}\""} \
+            ${optionalString (cfg.egressSelectorConfigFile != null) "--egress-selector-config-file ${cfg.egressSelectorConfigFile}"} \
+            ${optionalString (cfg.admissionControl != null) "--admission-control \"${concatStringsSep "," cfg.admissionControl}\""} \
+            ${optionalString (cfg.admissionControlConfigFile != null) "--admission-control-config-file ${cfg.admissionControlConfigFile}"} \
+            ${optionalString (cfg.disableAdmissionPlugins != null) "--disable-admission-plugins \"${concatStringsSep "," cfg.disableAdmissionPlugins}\""} \
+            ${optionalString (cfg.enableAdmissionPlugins != null) "--enable-admission-plugins \"${concatStringsSep "," cfg.enableAdmissionPlugins}\""} \
+            ${optionalString (cfg.allowMetricLabels != null) "--allow-metric-labels \"${concatStringsSep "," cfg.allowMetricLabels}\""} \
+            ${optionalString (cfg.allowMetricLabelsManifest != null) "--allow-metric-labels-manifest ${cfg.allowMetricLabelsManifest}"} \
+            ${optionalString (cfg.disabledMetrics != null) "--disabled-metrics \"${concatStringsSep "," cfg.disabledMetrics}\""} \
+            ${optionalString (cfg.showHiddenMetricsForVersion != null) "--show-hidden-metrics-for-version ${cfg.showHiddenMetricsForVersion}"} \
+            ${optionalString (cfg.logFlushFrequency != null) "--log-flush-frequency ${cfg.logFlushFrequency}"} \
+            ${optionalString (cfg.logJsonInfoBufferSize != null) "--log-json-info-buffer-size ${cfg.logJsonInfoBufferSize}"} \
+            ${optionalString (cfg.logJsonSplitStream != null) "--log-json-split-stream ${cfg.logJsonSplitStream}"} \
+            ${optionalString (cfg.logTextInfoBufferSize != null) "--log-text-info-buffer-size ${cfg.logTextInfoBufferSize}"} \
+            ${optionalString (cfg.logTextSplitStream != null) "--log-text-split-stream ${cfg.logTextSplitStream}"} \
             ${optionalString (cfg.loggingFormat != null) "--logging-format ${cfg.loggingFormat}"} \
             ${optionalString (cfg.v != null) "--v ${cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
-            ${
-              optionalString (cfg.tracingConfigFile != null) "--tracing-config-file ${cfg.tracingConfigFile}"
-            } \
-            ${
-              optionalString (
-                cfg.aggregatorRejectForwardingRedirect != null
-              ) "--aggregator-reject-forwarding-redirect ${cfg.aggregatorRejectForwardingRedirect}"
-            } \
+            ${optionalString (cfg.tracingConfigFile != null) "--tracing-config-file ${cfg.tracingConfigFile}"} \
+            ${optionalString (cfg.aggregatorRejectForwardingRedirect != null) "--aggregator-reject-forwarding-redirect ${cfg.aggregatorRejectForwardingRedirect}"} \
             ${optionalString (cfg.allowPrivileged != null) "--allow-privileged ${cfg.allowPrivileged}"} \
-            ${
-              optionalString (
-                cfg.enableAggregatorRouting != null
-              ) "--enable-aggregator-routing                 ${cfg.enableAggregatorRouting}"
-            } \
-            ${
-              optionalString (
-                cfg.endpointReconcilerType != null
-              ) "--endpoint-reconciler-type ${cfg.endpointReconcilerType}"
-            } \
+            ${optionalString (cfg.enableAggregatorRouting != null) "--enable-aggregator-routing                 ${cfg.enableAggregatorRouting}"} \
+            ${optionalString (cfg.endpointReconcilerType != null) "--endpoint-reconciler-type ${cfg.endpointReconcilerType}"} \
             ${optionalString (cfg.eventTtl != null) "--event-ttl ${cfg.eventTtl}"} \
-            ${
-              optionalString (
-                cfg.kubeletCertificateAuthority != null
-              ) "--kubelet-certificate-authority ${cfg.kubeletCertificateAuthority}"
-            } \
-            ${
-              optionalString (
-                cfg.kubeletClientCertificate != null
-              ) "--kubelet-client-certificate ${cfg.kubeletClientCertificate}"
-            } \
+            ${optionalString (cfg.kubeletCertificateAuthority != null) "--kubelet-certificate-authority ${cfg.kubeletCertificateAuthority}"} \
+            ${optionalString (cfg.kubeletClientCertificate != null) "--kubelet-client-certificate ${cfg.kubeletClientCertificate}"} \
             ${optionalString (cfg.kubeletClientKey != null) "--kubelet-client-key ${cfg.kubeletClientKey}"} \
-            ${
-              optionalString (
-                cfg.kubeletPreferredAddressTypes != null
-              ) "--kubelet-preferred-address-types \"${concatStringDep "," cfg.kubeletPreferredAddressTypes}\""
-            } \
+            ${optionalString (cfg.kubeletPreferredAddressTypes != null) "--kubelet-preferred-address-types \"${concatStringDep "," cfg.kubeletPreferredAddressTypes}\""} \
             ${optionalString (cfg.kubeletTimeout != null) "--kubelet-timeout ${cfg.kubeletTimeout}"} \
-            ${
-              optionalString (
-                cfg.kubernetesServiceNodePort != null
-              ) "--kubernetes-service-node-port ${cfg.kubernetesServiceNodePort}"
-            } \
-            ${
-              optionalString (
-                cfg.maxConnectionBytesPerSec != null
-              ) "--max-connection-bytes-per-sec ${cfg.maxConnectionBytesPerSec}"
-            } \
+            ${optionalString (cfg.kubernetesServiceNodePort != null) "--kubernetes-service-node-port ${cfg.kubernetesServiceNodePort}"} \
+            ${optionalString (cfg.maxConnectionBytesPerSec != null) "--max-connection-bytes-per-sec ${cfg.maxConnectionBytesPerSec}"} \
             ${optionalString (cfg.peerAdvertiseIp != null) "--peer-advertise-ip ${cfg.peerAdvertiseIp}"} \
-            ${
-              optionalString (cfg.peerAdvertisePort != null) "--peer-advertise-port ${cfg.peerAdvertisePort}"
-            } \
+            ${optionalString (cfg.peerAdvertisePort != null) "--peer-advertise-port ${cfg.peerAdvertisePort}"} \
             ${optionalString (cfg.peerCaFile != null) "--peer-ca-file ${cfg.peerCaFile}"} \
-            ${
-              optionalString (
-                cfg.proxyClientCertFile != null
-              ) "--proxy-client-cert-file ${cfg.proxyClientCertFile}"
-            } \
-            ${
-              optionalString (cfg.proxyClientKeyFile != null) "--proxy-client-key-file ${cfg.proxyClientKeyFile}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceAccountSigningKeyFile != null
-              ) "--service-account-signing-key-file ${cfg.serviceAccountSigningKeyFile}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceClusterIpRange != null
-              ) "--service-cluster-ip-range ${cfg.serviceClusterIpRange}"
-            } \
-            ${
-              optionalString (
-                cfg.serviceNodePortRange != null
-              ) "--service-node-port-range ${cfg.serviceNodePortRange}"
-            }
+            ${optionalString (cfg.proxyClientCertFile != null) "--proxy-client-cert-file ${cfg.proxyClientCertFile}"} \
+            ${optionalString (cfg.proxyClientKeyFile != null) "--proxy-client-key-file ${cfg.proxyClientKeyFile}"} \
+            ${optionalString (cfg.serviceAccountSigningKeyFile != null) "--service-account-signing-key-file ${cfg.serviceAccountSigningKeyFile}"} \
+            ${optionalString (cfg.serviceClusterIpRange != null) "--service-cluster-ip-range ${cfg.serviceClusterIpRange}"} \
+            ${optionalString (cfg.serviceNodePortRange != null) "--service-node-port-range ${cfg.serviceNodePortRange}"}
 
 
 
 
-        '';
-      };
+            '';
+        };
     };
   };
 }
