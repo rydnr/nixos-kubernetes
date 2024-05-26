@@ -565,6 +565,11 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       default = null;
       description = "Strategy for sending audit events. Blocking indicates sending events should block server responses. Batch causes the backend to buffer and write events asynchronously. Known modes are batch,blocking,blocking-strict. (default 'batch')";
     };
+    auditWebhookTruncateEnabled = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Whether event and batch truncating is enabled.";
+    };
     auditWebhookTruncateMaxBatchSize = mkOption {
       type = types.nullOr types.int;
       default = null;
@@ -1188,7 +1193,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.cloudProviderGceL7lbSrcCidrs != null
-              ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringsSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
+              ) "--cloud-provider-gce-l7lb-src-cidrs \"${concatStringSep "," cfg.cloudProviderGceL7lbSrcCidrs}\""
             } \
             ${
               optionalString (
