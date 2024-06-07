@@ -27,7 +27,7 @@
   outputs = inputs:
     with inputs;
     flake-utils.lib.eachDefaultSystem
-    (system: { nixosModules = { kubeApiserver = ./kube-apiserver.nix; }; });
+    (system: { nixosModules = { kube-apiserver = ./kube-apiserver.nix; kube-scheduler = ./kube-scheduler.nix; }; });
 }
 
 #    outputs = { self, nixos, flake-utils }: {
