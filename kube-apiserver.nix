@@ -1151,7 +1151,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       serviceConfig = {
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-apiserver \
-                ${optionalString (cfg.advertise-address != null) "--advertise-address ${cfg.advertise-address}"} \
+            ${optionalString (cfg.advertise-address != null) "--advertise-address ${cfg.advertise-address}"} \
             ${
               optionalString (
                 cfg.cloud-provider-gce-l7lb-src-cidrs != null
