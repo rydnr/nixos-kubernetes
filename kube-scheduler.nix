@@ -1,5 +1,5 @@
 {
-  upstreamConfig,
+  config,
   pkgs,
   lib,
   ...
@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = upstreamConfig.services.kube-scheduler;
+  cfg = config.services.kube-scheduler;
 in
 {
   options.services.kube-scheduler = {
@@ -19,7 +19,7 @@ in
     };
 
     # Misc flags
-    config = mkOption {
+    configFile = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The path to the configuration file.";
