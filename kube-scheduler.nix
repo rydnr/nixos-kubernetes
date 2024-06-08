@@ -259,7 +259,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
         "leases"
         "endpointsleases"
         "configmapsleases"
-      ])
+      ]);
       default = null;
       description = "The type of resource object that is used for locking during leader election. Supported options are 'leases', 'endpointsleases' and 'configmapsleases'. (default 'leases')";
     };
