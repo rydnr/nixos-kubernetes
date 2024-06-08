@@ -1437,7 +1437,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
 #+begin_src nix :tangle kube-scheduler.nix
 {
-  config,
+  upstreamConfig,
   pkgs,
   lib,
   ...
@@ -1446,7 +1446,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 with lib;
 
 let
-  cfg = config.services.kube-scheduler;
+  cfg = upstreamConfig.services.kube-scheduler;
 in
 {
   options.services.kube-scheduler = {

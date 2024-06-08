@@ -1,5 +1,5 @@
 {
-  config,
+  upstreamConfig,
   pkgs,
   lib,
   ...
@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.kube-scheduler;
+  cfg = upstreamConfig.services.kube-scheduler;
 in
 {
   options.services.kube-scheduler = {
