@@ -475,7 +475,6 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       serviceConfig = {
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-scheduler \
-            '';
             ${optionalString (cfg.config != null) "--config ${cfg.config}"} \
             ${optionalString (cfg.master != null) "--master ${cfg.master}"} \
             ${optionalString (cfg.write-config-to != null) "--write-config-to ${cfg.write-config-to}"} \
@@ -528,6 +527,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.logging-format != null) "--logging-format ${cfg.logging-format}"} \
             ${optionalString (cfg.v != null) "--v ${cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""}
+            '';
       };
     };
   };
