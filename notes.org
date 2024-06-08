@@ -652,11 +652,6 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       default = null;
       description = "Use an unprotected (no authn/authz) unix-domain socket for profiling with the given path";
     };
-    enable-priority-and-fairness = mkOption {
-      type = types.nullOr types.bool;
-      default = null;
-      description = "If true, replace the max-in-flight handler with an enhanced one that queues and dispatches with priority and fairness (default true)";
-    };
     profiling = mkOption {
       type = types.nullOr types.bool;
       default = null;
@@ -1353,7 +1348,6 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.audit-webhook-version != null) "--audit-webhook-version ${cfg.audit-webhook-version}"} \
             ${optionalString (cfg.contention-profiling != null) "--contention-profiling ${cfg.contention-profiling}"} \
             ${optionalString (cfg.debug-socket-path != null) "--debug-socket-path ${cfg.debug-socket-path}"} \
-            ${optionalString (cfg.enable-priority-and-fairness != null) "--enable-priority-and-fairness ${cfg.enable-priority-and-fairness}"} \
             ${optionalString (cfg.profiling != null) "--profiling ${cfg.profiling}"} \
             ${optionalString (cfg.anonymous-auth != null) "--anonymous-auth ${cfg.anonymous-auth}"} \
             ${optionalString (cfg.api-audiences != null) "--api-audiences \"${concatStringsSep "," cfg.api-audiences}\""} \
