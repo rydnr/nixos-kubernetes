@@ -504,7 +504,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     audit-log-batch-throttle-enable = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "batching throttling is enabled. Only used in batch mode.";
+      description = "Whether batching throttling is enabled. Only used in batch mode.";
     };
     audit-log-batch-throttle-qps = mkOption {
       type = types.nullOr types.float;
@@ -514,7 +514,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     audit-log-compress = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "set, the rotated log files will be compressed using gzip.";
+      description = "If set, the rotated log files will be compressed using gzip.";
     };
     audit-log-format = mkOption {
       type = types.nullOr (types.enum [ "legacy" "json" ]);
@@ -1235,42 +1235,42 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.default-not-ready-toleration-seconds != null
-              ) "--default-not-ready-toleration-seconds ${cfg.default-not-ready-toleration-seconds}"
+              ) "--default-not-ready-toleration-seconds ${toString cfg.default-not-ready-toleration-seconds}"
             } \
             ${
               optionalString (
                 cfg.default-unreachable-toleration-seconds != null
-              ) "--default-unreachable-toleration-seconds ${cfg.default-unreachable-toleration-seconds}"
+              ) "--default-unreachable-toleration-seconds ${toString cfg.default-unreachable-toleration-seconds}"
             } \
             ${optionalString (cfg.enable-priority-and-fairness != null) "--enable-priority-and-fairness ${cfg.enable-priority-and-fairness}"} \
             ${optionalString (cfg.external-hostname != null) "--external-hostname ${cfg.external-hostname}"} \
             ${optionalString (cfg.feature-gates != null) "--feature-gates \"${concatStringsSep "," cfg.feature-gates}\""} \
             ${optionalString (cfg.goaway-chance != null) "--goaway-chance ${cfg.goaway-chance}"} \
-            ${optionalString (cfg.livez-grace-period != null) "--livez-grace-period ${cfg.livez-grace-period}"} \
+            ${optionalString (cfg.livez-grace-period != null) "--livez-grace-period ${toString cfg.livez-grace-period}"} \
             ${
               optionalString (
                 cfg.max-mutating-requests-inflight != null
-              ) "--max-mutating-requests-inflight ${cfg.max-mutating-requests-inflight}"
+              ) "--max-mutating-requests-inflight ${toString cfg.max-mutating-requests-inflight}"
             } \
             ${
               optionalString (
                 cfg.max-requests-inflight != null
-              ) "--max-requests-inflight ${cfg.max-requests-inflight}"
+              ) "--max-requests-inflight ${toString cfg.max-requests-inflight}"
             } \
             ${
-              optionalString (cfg.min-request-timeout != null) "--min-request-timeout ${cfg.min-request-timeout}"
+              optionalString (cfg.min-request-timeout != null) "--min-request-timeout ${toString cfg.min-request-timeout}"
             } \
-            ${optionalString (cfg.request-timeout != null) "--request-timeout ${cfg.request-timeout}"} \
+            ${optionalString (cfg.request-timeout != null) "--request-timeout ${toString cfg.request-timeout}"} \
             ${
               optionalString (
                 cfg.shutdown-delay-duration != null
-              ) "--shutdown-delay-duration ${cfg.shutdown-delay-duration}"
+              ) "--shutdown-delay-duration ${toString cfg.shutdown-delay-duration}"
             } \
             ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after"} \
             ${
               optionalString (
                 cfg.shutdown-watch-termination-grace-period != null
-              ) "--shutdown-watch-termination-grace-period ${cfg.shutdown-watch-termination-grace-period}"
+              ) "--shutdown-watch-termination-grace-period ${toString cfg.shutdown-watch-termination-grace-period}"
             } \
             ${
               optionalString (
@@ -1280,14 +1280,12 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.delete-collection-workers != null
-              ) "--delete-collection-workers ${cfg.delete-collection-workers}"
+              ) "--delete-collection-workers ${cfg.toString delete-collection-workers}"
             } \
             ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector"} \
-            ${optionalString (cfg.delete-collection-workers != null) "--delete-collection-workers ${cfg.delete-collection-workers}"} \
-            ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector ${cfg.enable-garbage-collector}"} \
             ${optionalString (cfg.encryption-provider-config != null) "--encryption-provider-config ${cfg.encryption-provider-config}"} \
 
-            ${optionalString (cfg.encryption-provider-config-automatic-reload   != null) "--encryption-provider-config-automatic-reload   ${cfg.encryption-provider-config-automatic-reload  }"} \
+            ${optionalString (cfg.encryption-provider-config-automatic-reload != null) "--encryption-provider-config-automatic-reload"} \
             ${optionalString (cfg.etcd-cafile != null) "--etcd-cafile ${cfg.etcd-cafile}"} \
             ${optionalString (cfg.etcd-certfile != null) "--etcd-certfile ${cfg.etcd-certfile}"} \
             ${optionalString (cfg.etcd-compaction-interval != null) "--etcd-compaction-interval ${cfg.etcd-compaction-interval}"} \
@@ -1299,64 +1297,64 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.etcd-readycheck-timeout != null) "--etcd-readycheck-timeout ${cfg.etcd-readycheck-timeout}"} \
             ${optionalString (cfg.etcd-servers != null) "--etcd-servers \"${concatStringsSep "," cfg.etcd-servers}\""} \
             ${optionalString (cfg.etcd-servers-overrides != null) "--etcd-servers-overrides \"${concatStringsSep "," cfg.etcd-servers-overrides}\""} \
-            ${optionalString (cfg.lease-reuse-duration-seconds != null) "--lease-reuse-duration-seconds ${cfg.lease-reuse-duration-seconds}"} \
+            ${optionalString (cfg.lease-reuse-duration-seconds != null) "--lease-reuse-duration-seconds ${toString cfg.lease-reuse-duration-seconds}"} \
             ${optionalString (cfg.storage-backend != null) "--storage-backend ${cfg.storage-backend}"} \
             ${optionalString (cfg.storage-media-type != null) "--storage-media-type ${cfg.storage-media-type}"} \
-            ${optionalString (cfg.watch-cache != null) "--watch-cache ${cfg.watch-cache}"} \
+            ${optionalString (cfg.watch-cache != null) "--watch-cache ${toString cfg.watch-cache}"} \
             ${optionalString (cfg.watch-cache-sizes != null) "--watch-cache-sizes \"${concatStringsSep "," cfg.watch-cache-sizes}\""} \
             ${optionalString (cfg.bind-address != null) "--bind-address ${cfg.bind-address}"} \
             ${optionalString (cfg.cert-dir != null) "--cert-dir ${cfg.cert-dir}"} \
-            ${optionalString (cfg.http2-max-streams-per-connection != null) "--http2-max-streams-per-connection ${cfg.http2-max-streams-per-connection}"} \
-            ${optionalString (cfg.permit-address-sharing != null) "--permit-address-sharing ${cfg.permit-address-sharing}"} \
-            ${optionalString (cfg.permit-port-sharing != null) "--permit-port-sharing ${cfg.permit-port-sharing}"} \
-            ${optionalString (cfg.secure-port != null) "--secure-port ${cfg.secure-port}"} \
+            ${optionalString (cfg.http2-max-streams-per-connection != null) "--http2-max-streams-per-connection ${toString cfg.http2-max-streams-per-connection}"} \
+            ${optionalString (cfg.permit-address-sharing != null) "--permit-address-sharing ${toString cfg.permit-address-sharing}"} \
+            ${optionalString (cfg.permit-port-sharing != null) "--permit-port-sharing ${toString cfg.permit-port-sharing}"} \
+            ${optionalString (cfg.secure-port != null) "--secure-port ${toString cfg.secure-port}"} \
             ${optionalString (cfg.tls-cert-file != null) "--tls-cert-file ${cfg.tls-cert-file}"} \
             ${optionalString (cfg.tls-cipher-suites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
             ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${cfg.tls-min-version}"} \
             ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${cfg.tls-private-key-file}"} \
             ${optionalString (cfg.tls-sni-cert-key != null) "--tls-sni-cert-key \"${concatStringsSep "," cfg.tls-sni-cert-key}\""} \
-            ${optionalString (cfg.audit-log-batch-buffer-size != null) "--audit-log-batch-buffer-size ${cfg.audit-log-batch-buffer-size}"} \
-            ${optionalString (cfg.audit-log-batch-max-size != null) "--audit-log-batch-max-size ${cfg.audit-log-batch-max-size}"} \
-            ${optionalString (cfg.audit-log-batch-max-wait != null) "--audit-log-batch-max-wait ${cfg.audit-log-batch-max-wait}"} \
-            ${optionalString (cfg.audit-log-batch-throttle-burst != null) "--audit-log-batch-throttle-burst ${cfg.audit-log-batch-throttle-burst}"} \
-            ${optionalString (cfg.audit-log-batch-throttle-enable != null) "--audit-log-batch-throttle-enable ${cfg.audit-log-batch-throttle-enable}"} \
-            ${optionalString (cfg.audit-log-batch-throttle-qps != null) "--audit-log-batch-throttle-qps ${cfg.audit-log-batch-throttle-qps}"} \
-            ${optionalString (cfg.audit-log-compress != null) "--audit-log-compress ${cfg.audit-log-compress}"} \
+            ${optionalString (cfg.audit-log-batch-buffer-size != null) "--audit-log-batch-buffer-size ${toString cfg.audit-log-batch-buffer-size}"} \
+            ${optionalString (cfg.audit-log-batch-max-size != null) "--audit-log-batch-max-size ${toString cfg.audit-log-batch-max-size}"} \
+            ${optionalString (cfg.audit-log-batch-max-wait != null) "--audit-log-batch-max-wait ${toString cfg.audit-log-batch-max-wait}"} \
+            ${optionalString (cfg.audit-log-batch-throttle-burst != null) "--audit-log-batch-throttle-burst ${toString cfg.audit-log-batch-throttle-burst}"} \
+            ${optionalString (cfg.audit-log-batch-throttle-enable != null) "--audit-log-batch-throttle-enable ${toString cfg.audit-log-batch-throttle-enable}"} \
+            ${optionalString (cfg.audit-log-batch-throttle-qps != null) "--audit-log-batch-throttle-qps ${toString cfg.audit-log-batch-throttle-qps}"} \
+            ${optionalString (cfg.audit-log-compress != null) "--audit-log-compress"} \
             ${optionalString (cfg.audit-log-format != null) "--audit-log-format ${cfg.audit-log-format}"} \
-            ${optionalString (cfg.audit-log-maxage != null) "--audit-log-maxage ${cfg.audit-log-maxage}"} \
-            ${optionalString (cfg.audit-log-maxbackup != null) "--audit-log-maxbackup ${cfg.audit-log-maxbackup}"} \
-            ${optionalString (cfg.audit-log-maxsize != null) "--audit-log-maxsize ${cfg.audit-log-maxsize}"} \
+            ${optionalString (cfg.audit-log-maxage != null) "--audit-log-maxage ${toString cfg.audit-log-maxage}"} \
+            ${optionalString (cfg.audit-log-maxbackup != null) "--audit-log-maxbackup ${toString cfg.audit-log-maxbackup}"} \
+            ${optionalString (cfg.audit-log-maxsize != null) "--audit-log-maxsize ${toString cfg.audit-log-maxsize}"} \
             ${optionalString (cfg.audit-log-mode != null) "--audit-log-mode ${cfg.audit-log-mode}"} \
             ${optionalString (cfg.audit-log-path != null) "--audit-log-path ${cfg.audit-log-path}"} \
             ${optionalString (cfg.audit-log-truncate-enabled != null) "--audit-log-truncate-enabled"} \
-            ${optionalString (cfg.audit-log-truncate-max-batch-size != null) "--audit-log-truncate-max-batch-size ${cfg.audit-log-truncate-max-batch-size}"} \
-            ${optionalString (cfg.audit-log-truncate-max-event-size != null) "--audit-log-truncate-max-event-size ${cfg.audit-log-truncate-max-event-size}"} \
+            ${optionalString (cfg.audit-log-truncate-max-batch-size != null) "--audit-log-truncate-max-batch-size ${toString cfg.audit-log-truncate-max-batch-size}"} \
+            ${optionalString (cfg.audit-log-truncate-max-event-size != null) "--audit-log-truncate-max-event-size ${toString cfg.audit-log-truncate-max-event-size}"} \
             ${optionalString (cfg.audit-log-version != null) "--audit-log-version ${cfg.audit-log-version}"} \
             ${optionalString (cfg.audit-policy-file != null) "--audit-policy-file ${cfg.audit-policy-file}"} \
-            ${optionalString (cfg.audit-webhook-batch-buffer-size != null) "--audit-webhook-batch-buffer-size ${cfg.audit-webhook-batch-buffer-size}"} \
-            ${optionalString (cfg.audit-webhook-batch-max-size != null) "--audit-webhook-batch-max-size ${cfg.audit-webhook-batch-max-size}"} \
-            ${optionalString (cfg.audit-webhook-batch-max-wait != null) "--audit-webhook-batch-max-wait ${cfg.audit-webhook-batch-max-wait}"} \
-            ${optionalString (cfg.audit-webhook-batch-throttle-burst != null) "--audit-webhook-batch-throttle-burst ${cfg.audit-webhook-batch-throttle-burst}"} \
-            ${optionalString (cfg.audit-webhook-batch-throttle-enable != null) "--audit-webhook-batch-throttle-enable         ${cfg.audit-webhook-batch-throttle-enable}"} \
-            ${optionalString (cfg.audit-webhook-batch-throttle-qps != null) "--audit-webhook-batch-throttle-qps ${cfg.audit-webhook-batch-throttle-qps}"} \
+            ${optionalString (cfg.audit-webhook-batch-buffer-size != null) "--audit-webhook-batch-buffer-size ${toString cfg.audit-webhook-batch-buffer-size}"} \
+            ${optionalString (cfg.audit-webhook-batch-max-size != null) "--audit-webhook-batch-max-size ${toString cfg.audit-webhook-batch-max-size}"} \
+            ${optionalString (cfg.audit-webhook-batch-max-wait != null) "--audit-webhook-batch-max-wait ${toString cfg.audit-webhook-batch-max-wait}"} \
+            ${optionalString (cfg.audit-webhook-batch-throttle-burst != null) "--audit-webhook-batch-throttle-burst ${toString cfg.audit-webhook-batch-throttle-burst}"} \
+            ${optionalString (cfg.audit-webhook-batch-throttle-enable != null) "--audit-webhook-batch-throttle-enable         ${toString cfg.audit-webhook-batch-throttle-enable}"} \
+            ${optionalString (cfg.audit-webhook-batch-throttle-qps != null) "--audit-webhook-batch-throttle-qps ${toString cfg.audit-webhook-batch-throttle-qps}"} \
             ${optionalString (cfg.audit-webhook-config-file != null) "--audit-webhook-config-file ${cfg.audit-webhook-config-file}"} \
             ${optionalString (cfg.audit-webhook-initial-backoff != null) "--audit-webhook-initial-backoff ${cfg.audit-webhook-initial-backoff}"} \
             ${optionalString (cfg.audit-webhook-mode != null) "--audit-webhook-mode ${cfg.audit-webhook-mode}"} \
-            ${optionalString (cfg.audit-webhook-truncate-enabled != null) "--audit-webhook-truncate-enabled ${cfg.audit-webhook-truncate-enabled}"} \
-            ${optionalString (cfg.audit-webhook-truncate-max-batch-size != null) "--audit-webhook-truncate-max-batch-size ${cfg.audit-webhook-truncate-max-batch-size}"} \
-            ${optionalString (cfg.audit-webhook-truncate-max-event-size != null) "--audit-webhook-truncate-max-event-size ${cfg.audit-webhook-truncate-max-event-size}"} \
+            ${optionalString (cfg.audit-webhook-truncate-enabled != null) "--audit-webhook-truncate-enabled"} \
+            ${optionalString (cfg.audit-webhook-truncate-max-batch-size != null) "--audit-webhook-truncate-max-batch-size ${toString cfg.audit-webhook-truncate-max-batch-size}"} \
+            ${optionalString (cfg.audit-webhook-truncate-max-event-size != null) "--audit-webhook-truncate-max-event-size ${toString cfg.audit-webhook-truncate-max-event-size}"} \
             ${optionalString (cfg.audit-webhook-version != null) "--audit-webhook-version ${cfg.audit-webhook-version}"} \
-            ${optionalString (cfg.contention-profiling != null) "--contention-profiling ${cfg.contention-profiling}"} \
+            ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
             ${optionalString (cfg.debug-socket-path != null) "--debug-socket-path ${cfg.debug-socket-path}"} \
-            ${optionalString (cfg.profiling != null) "--profiling ${cfg.profiling}"} \
-            ${optionalString (cfg.anonymous-auth != null) "--anonymous-auth ${cfg.anonymous-auth}"} \
+            ${optionalString (cfg.profiling != null) "--profiling ${toString cfg.profiling}"} \
+            ${optionalString (cfg.anonymous-auth != null) "--anonymous-auth ${toString cfg.anonymous-auth}"} \
             ${optionalString (cfg.api-audiences != null) "--api-audiences \"${concatStringsSep "," cfg.api-audiences}\""} \
             ${optionalString (cfg.authentication-config != null) "--authentication-config ${cfg.authentication-config}"} \
             ${optionalString (cfg.authentication-token-webhook-cache-ttl != null) "--authentication-token-webhook-cache-ttl ${cfg.authentication-token-webhook-cache-ttl}"} \
             ${optionalString (cfg.authentication-token-webhook-config-file != null) "--authentication-token-webhook-config-file ${cfg.authentication-token-webhook-config-file}"} \
             ${optionalString (cfg.authentication-token-webhook-version != null) "--authentication-token-webhook-version ${cfg.authentication-token-webhook-version}"} \
             ${optionalString (cfg.client-ca-file != null) "--client-ca-file ${cfg.client-ca-file}"} \
-            ${optionalString (cfg.enable-bootstrap-token-auth != null) "--enable-bootstrap-token-auth ${cfg.enable-bootstrap-token-auth}"} \
+            ${optionalString (cfg.enable-bootstrap-token-auth != null) "--enable-bootstrap-token-auth ${toString cfg.enable-bootstrap-token-auth}"} \
             ${optionalString (cfg.oidc-ca-file != null) "--oidc-ca-file ${cfg.oidc-ca-file}"} \
             ${optionalString (cfg.oidc-client-id != null) "--oidc-client-id ${cfg.oidc-client-id}"} \
             ${optionalString (cfg.oidc-groups-claim != null) "--oidc-groups-claim ${cfg.oidc-groups-claim}"} \
@@ -1371,11 +1369,11 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.requestheader-extra-headers-prefix != null) "--requestheader-extra-headers-prefix \"${concatStringsSep "," cfg.requestheader-extra-headers-prefix}\""} \
             ${optionalString (cfg.requestheader-group-headers != null) "--requestheader-group-headers \"${concatStringsSep "," cfg.requestheader-group-headers}\""} \
             ${optionalString (cfg.requestheader-username-headers != null) "--requestheader-username-headers \"${concatStringsSep "," cfg.requestheader-username-headers}\""} \
-            ${optionalString (cfg.service-account-extend-token-expiration != null) "--service-account-extend-token-expiration ${cfg.service-account-extend-token-expiration}"} \
+            ${optionalString (cfg.service-account-extend-token-expiration != null) "--service-account-extend-token-expiration ${toString cfg.service-account-extend-token-expiration}"} \
             ${optionalString (cfg.service-account-issuer != null) "--service-account-issuer ${cfg.service-account-issuer}"} \
             ${optionalString (cfg.service-account-jwks-uri != null) "--service-account-jwks-uri ${cfg.service-account-jwks-uri}"} \
             ${optionalString (cfg.service-account-key-file != null) "--service-account-key-file ${cfg.service-account-key-file}"} \
-            ${optionalString (cfg.service-account-lookup != null) "--service-account-lookup ${cfg.service-account-lookup}"} \
+            ${optionalString (cfg.service-account-lookup != null) "--service-account-lookup ${toString cfg.service-account-lookup}"} \
             ${optionalString (cfg.service-account-max-token-expiration != null) "--service-account-max-token-expiration ${cfg.service-account-max-token-expiration}"} \
             ${optionalString (cfg.token-auth-file != null) "--token-auth-file ${cfg.token-auth-file}"} \
             ${optionalString (cfg.authorization-config != null) "--authorization-config ${cfg.authorization-config}"} \
@@ -1397,16 +1395,16 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.show-hidden-metrics-for-version != null) "--show-hidden-metrics-for-version ${cfg.show-hidden-metrics-for-version}"} \
             ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${cfg.log-json-info-buffer-size}"} \
-            ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream ${cfg.log-json-split-stream}"} \
+            ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
             ${optionalString (cfg.log-text-info-buffer-size != null) "--log-text-info-buffer-size ${cfg.log-text-info-buffer-size}"} \
-            ${optionalString (cfg.log-text-split-stream != null) "--log-text-split-stream ${cfg.log-text-split-stream}"} \
+            ${optionalString (cfg.log-text-split-stream != null) "--log-text-split-stream"} \
             ${optionalString (cfg.logging-format != null) "--logging-format ${cfg.logging-format}"} \
-            ${optionalString (cfg.v != null) "--v ${cfg.v}"} \
+            ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
             ${optionalString (cfg.tracing-config-file != null) "--tracing-config-file ${cfg.tracing-config-file}"} \
             ${optionalString (cfg.aggregator-reject-forwarding-redirect != null) "--aggregator-reject-forwarding-redirect ${cfg.aggregator-reject-forwarding-redirect}"} \
             ${optionalString (cfg.allow-privileged != null) "--allow-privileged ${cfg.allow-privileged}"} \
-            ${optionalString (cfg.enable-aggregator-routing != null) "--enable-aggregator-routing                 ${cfg.enable-aggregator-routing}"} \
+            ${optionalString (cfg.enable-aggregator-routing != null) "--enable-aggregator-routing"} \
             ${optionalString (cfg.endpoint-reconciler-type != null) "--endpoint-reconciler-type ${cfg.endpoint-reconciler-type}"} \
             ${optionalString (cfg.event-ttl != null) "--event-ttl ${cfg.event-ttl}"} \
             ${optionalString (cfg.kubelet-certificate-authority != null) "--kubelet-certificate-authority ${cfg.kubelet-certificate-authority}"} \
@@ -1414,10 +1412,10 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.kubelet-client-key != null) "--kubelet-client-key ${cfg.kubelet-client-key}"} \
             ${optionalString (cfg.kubelet-preferred-address-types != null) "--kubelet-preferred-address-types \"${concatStringDep "," cfg.kubelet-preferred-address-types}\""} \
             ${optionalString (cfg.kubelet-timeout != null) "--kubelet-timeout ${cfg.kubelet-timeout}"} \
-            ${optionalString (cfg.kubernetes-service-node-port != null) "--kubernetes-service-node-port ${cfg.kubernetes-service-node-port}"} \
-            ${optionalString (cfg.max-connection-bytes-per-sec != null) "--max-connection-bytes-per-sec ${cfg.max-connection-bytes-per-sec}"} \
+            ${optionalString (cfg.kubernetes-service-node-port != null) "--kubernetes-service-node-port ${toString cfg.kubernetes-service-node-port}"} \
+            ${optionalString (cfg.max-connection-bytes-per-sec != null) "--max-connection-bytes-per-sec ${toString cfg.max-connection-bytes-per-sec}"} \
             ${optionalString (cfg.peer-advertise-ip != null) "--peer-advertise-ip ${cfg.peer-advertise-ip}"} \
-            ${optionalString (cfg.peer-advertise-port != null) "--peer-advertise-port ${cfg.peer-advertise-port}"} \
+            ${optionalString (cfg.peer-advertise-port != null) "--peer-advertise-port ${toString cfg.peer-advertise-port}"} \
             ${optionalString (cfg.peer-ca-file != null) "--peer-ca-file ${cfg.peer-ca-file}"} \
             ${optionalString (cfg.proxy-client-cert-file != null) "--proxy-client-cert-file ${cfg.proxy-client-cert-file}"} \
             ${optionalString (cfg.proxy-client-key-file != null) "--proxy-client-key-file ${cfg.proxy-client-key-file}"} \
@@ -1912,24 +1910,24 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       serviceConfig = {
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-scheduler \
-            ${optionalString (cfg.config != null) "--config ${cfg.config}"} \
+            ${optionalString (cfg.configFile != null) "--config ${cfg.configFile}"} \
             ${optionalString (cfg.master != null) "--master ${cfg.master}"} \
             ${optionalString (cfg.write-config-to != null) "--write-config-to ${cfg.write-config-to}"} \
             ${optionalString (cfg.bind-address != null) "--bind-address ${cfg.bind-address}"} \
             ${optionalString (cfg.cert-dir != null) "--cert-dir ${cfg.cert-dir}"} \
-            ${optionalString (cfg.http2-max-streams-per-connection != null) "--http2-max-streams-per-connection ${cfg.http2-max-streams-per-connection}"} \
-            ${optionalString (cfg.permit-address-sharing != null) "--permit-address-sharing ${cfg.permit-address-sharing                }"} \
-            ${optionalString (cfg.permit-port-sharing != null) "--permit-port-sharing ${cfg.permit-port-sharing}"} \
-            ${optionalString (cfg.secure-port != null) "--secure-port ${cfg.secure-port}"} \
+            ${optionalString (cfg.http2-max-streams-per-connection != null) "--http2-max-streams-per-connection ${toString cfg.http2-max-streams-per-connection}"} \
+            ${optionalString (cfg.permit-address-sharing != null) "--permit-address-sharing ${toString cfg.permit-address-sharing}"} \
+            ${optionalString (cfg.permit-port-sharing != null) "--permit-port-sharing ${toString cfg.permit-port-sharing}"} \
+            ${optionalString (cfg.secure-port != null) "--secure-port ${toString cfg.secure-port}"} \
             ${optionalString (cfg.tls-cert-file != null) "--tls-cert-file ${cfg.tls-cert-file}"} \
             ${optionalString (cfg.tls-cipher-suites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
             ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${cfg.tls-min-version}"} \
             ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${cfg.tls-private-key-file}"} \
             ${optionalString (cfg.tls-sni-cert-key != null) "--tls-sni-cert-key \"${concatStringsSep "," cfg.tls-sni-cert-key}\""} \
             ${optionalString (cfg.authentication-kubeconfig != null) "--authentication-kubeconfig ${cfg.authentication-kubeconfig}"} \
-            ${optionalString (cfg.authentication-skip-lookup != null) "--authentication-skip-lookup {cfg.authentication-skip-lookup}"} \
+            ${optionalString (cfg.authentication-skip-lookup != null) "--authentication-skip-lookup ${toString cfg.authentication-skip-lookup}"} \
             ${optionalString (cfg.authentication-token-webhook-cache-ttl != null) "--authentication-token-webhook-cache-ttl ${cfg.authentication-token-webhook-cache-ttl}"} \
-            ${optionalString (cfg.authentication-tolerate-lookup-failure != null) "--authentication-tolerate-lookup-failure ${cfg.authentication-tolerate-lookup-failure}"} \
+            ${optionalString (cfg.authentication-tolerate-lookup-failure != null) "--authentication-tolerate-lookup-failure ${toString cfg.authentication-tolerate-lookup-failure}"} \
             ${optionalString (cfg.client-ca-file != null) "--client-ca-file ${cfg.client-ca-file}"} \
             ${optionalString (cfg.requestheader-allowed-names != null) "--requestheader-allowed-names \"${concatStringsSep "," cfg.requestheader-allowed-names}\""} \
             ${optionalString (cfg.requestheader-client-ca-file != null) "--requestheader-client-ca-file ${cfg.requestheader-client-ca-file}"} \
@@ -1940,13 +1938,13 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.authorization-kubeconfig != null) "--authorization-kubeconfig ${cfg.authorization-kubeconfig}"} \
             ${optionalString (cfg.authorization-webhook-cache-authorized-ttl != null) "--authorization-webhook-cache-authorized-ttl ${cfg.authorization-webhook-cache-authorized-ttl}"} \
             ${optionalString (cfg.authorization-webhook-cache-unauthorized-ttl != null) "--authorization-webhook-cache-unauthorized-ttl ${cfg.authorization-webhook-cache-unauthorized-ttl}"} \
-            ${optionalString (cfg.contention-profiling != null) "--contention-profiling ${cfg.contention-profiling}"} \
-            ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${cfg.kube-api-burst}"} \
+            ${optionalString (cfg.contention-profiling != null) "--contention-profiling ${toString cfg.contention-profiling}"} \
+            ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
             ${optionalString (cfg.kube-api-content-type != null) "--kube-api-content-type ${cfg.kube-api-content-type}"} \
-            ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${cfg.kube-api-qps}"} \
+            ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${cfg.kubeconfig}"} \
             ${optionalString (cfg.pod-max-in-unschedulable-pods-duration != null) "--pod-max-in-unschedulable-pods-duration ${cfg.pod-max-in-unschedulable-pods-duration}"} \
-            ${optionalString (cfg.profiling != null) "--profiling ${cfg.profiling}"} \
+            ${optionalString (cfg.profiling != null) "--profiling ${toString cfg.profiling}"} \
             ${optionalString (cfg.leader-elect != null) "--leader-elect ${cfg.leader-elect}"} \
             ${optionalString (cfg.leader-elect-lease-duration != null) "--leader-elect-lease-duration ${cfg.leader-elect-lease-duration}"} \
             ${optionalString (cfg.leader-elect-renew-deadline != null) "--leader-elect-renew-deadline ${cfg.leader-elect-renew-deadline}"} \
@@ -1960,9 +1958,9 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.show-hidden-metrics-for-version != null) "--show-hidden-metrics-for-version ${cfg.show-hidden-metrics-for-version}"} \
             ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${cfg.log-json-info-buffer-size}"} \
-            ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream ${cfg.log-json-split-stream}"} \
+            ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
             ${optionalString (cfg.logging-format != null) "--logging-format ${cfg.logging-format}"} \
-            ${optionalString (cfg.v != null) "--v ${cfg.v}"} \
+            ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""}
             '';
       };
