@@ -1886,7 +1886,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
 
   logging-format = mkOption {
-      type = types.nullOr (types.enum [ "json" "text" ];
+      type = types.nullOr (types.enum [ "json" "text" ]);
       default = null;
       description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text'. (default 'text')";
     };
