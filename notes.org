@@ -1487,31 +1487,31 @@ in
       description = "The directory where the TLS certs are located. If --tls-cert-file and --tls-private-key-file are provided, this flag will be ignored.";
     };
 
-  http2-max-streams-per-connection = mkOption {
+    http2-max-streams-per-connection = mkOption {
       type = types.nullOr types.int;
       default = null;
       description = "The limit that the server gives to clients for the maximum number of streams in an HTTP/2 connection. Zero means to use golang's default.";
     };
 
-  permit-address-sharing = mkOption {
+    permit-address-sharing = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "true, SO_REUSEADDR will be used when binding the port. This allows binding to wildcard IPs like 0.0.0.0 and specific IPs in parallel, and it avoids waiting for the kernel to release sockets in TIME_WAIT state. [default=false]";
     };
 
-  permit-port-sharing = mkOption {
+    permit-port-sharing = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "true, SO_REUSEPORT will be used when binding the port, which allows more than one instance to bind on the same address and port. [default=false]";
     };
 
-  secure-port = mkOption {
+    secure-port = mkOption {
       type = types.nullOr types.int;
       default = null;
       description = "The port on which to serve HTTPS with authentication and authorization. If 0, don't serve HTTPS at all. (default 10259)";
     };
 
-  tls-cert-file = mkOption {
+    tls-cert-file = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "File containing the default x509 Certificate for HTTPS. (CA cert, if any, concatenated after server cert). If HTTPS serving is enabled, and --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory specified by --cert-dir.";
@@ -1524,175 +1524,175 @@ in
 Comma-separated list of cipher suites for the server. If omitted, the default Go cipher suites will be used. Preferred values:
 Preferred values: TLS_AES_128_GCM_SHA256, TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305, TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305, TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256.
 Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_RC4_128_SHA, TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_RC4_128_SHA, TLS_RSA_WITH_3DES_EDE_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA256, TLS_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_256_GCM_SHA384, TLS_RSA_WITH_RC4_128_SHA.
-" "";
+"" ";
 
-  tls-min-version = mkOption {
-      type = types.nullOr types.str;
+    tls-min-version = mkOption {
+      type = types.nullOr (types.enum [ "VersionTLS10" "VersionTLS11" "VersionTLS12" "VersionTLS13" ]);
       default = null;
       description = "Minimum TLS version supported. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13";
     };
 
-  tls-private-key-file = mkOption {
+    tls-private-key-file = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "File containing the default x509 private key matching --tls-cert-file.";
     };
 
-  tls-sni-cert-key = mkOption {
+    tls-sni-cert-key = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "A pair of x509 certificate and private key file paths, optionally suffixed with a list of domain patterns which are fully qualified domain names, possibly with prefixed wildcard segments. The domain patterns also allow IP addresses, but IPs should only be used if the apiserver has visibility to the IP address requested by a client. If no domain patterns are provided, the names of the certificate are extracted. Non-wildcard matches trump over wildcard matches, explicit domain patterns trump over extracted names. For multiple key/certificate pairs, use the --tls-sni-cert-key multiple times. Examples: 'example.crt,example.key' or 'foo.crt,foo.key:*.foo.com,foo.com'. (default [])";
     };
 
-  # Authentication flags
-  authentication-kubeconfig = mkOption {
+    # Authentication flags
+    authentication-kubeconfig = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "kubeconfig file pointing at the 'core' kubernetes server with enough rights to create tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.";
     };
 
-  authentication-skip-lookup = mkOption {
+    authentication-skip-lookup = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "If false, the authentication-kubeconfig will be used to lookup missing authentication configuration from the cluster.";
     };
 
-  authentication-token-webhook-cache-ttl = mkOption {
+    authentication-token-webhook-cache-ttl = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The duration to cache responses from the webhook token authenticator. (default 10s)";
     };
 
-  authentication-tolerate-lookup-failure = mkOption {
+    authentication-tolerate-lookup-failure = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "If true, failures to look up missing authentication configuration from the cluster are not considered fatal. Note that this can result in authentication that treats all requests as anonymous. (default true)";
     };
 
-  client-ca-file = mkOption {
+    client-ca-file = mkOption {
       type = types.nullOr types.path;
       default = null;
       description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.";
     };
 
-  requestheader-allowed-names = mkOption {
+    requestheader-allowed-names = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "List of client certificate common names to allow to provide usernames in headers specified by --requestheader-username-headers. If empty, any client certificate validated by the authorities in --requestheader-client-ca-file is allowed.";
     };
 
-  requestheader-client-ca-file = mkOption {
+    requestheader-client-ca-file = mkOption {
       type = types.nullOr types.path;
       default = null;
       description = "Root certificate bundle to use to verify client certificates on incoming requests before trusting usernames in headers specified by --requestheader-username-headers. WARNING: generally do not depend on authorization being already done for incoming requests.";
     };
 
-  requestheader-extra-headers-prefix = mkOption {
+    requestheader-extra-headers-prefix = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "List of request header prefixes to inspect. X-Remote-Extra- is suggested. (default [x-remote-extra-])";
     };
 
-  requestheader-group-headers = mkOption {
+    requestheader-group-headers = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "List of request headers to inspect for groups. X-Remote-Group is suggested. (default [x-remote-group])";
     };
 
-  requestheader-username-headers = mkOption {
+    requestheader-username-headers = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "List of request headers to inspect for usernames. X-Remote-User is common. (default [x-remote-user])";
     };
 
-  # Authorization flags
-  authorization-always-allow-paths = mkOption {
+    # Authorization flags
+    authorization-always-allow-paths = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "A list of HTTP paths to skip during authorization, i.e. these are authorized without contacting the 'core' kubernetes server. (default [/healthz,/readyz,/livez])";
     };
 
-  authorization-kubeconfig = mkOption {
+    authorization-kubeconfig = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "kubeconfig file pointing at the 'core' kubernetes server with enough rights to create subjectaccessreviews.authorization.k8s.io. This is optional. If empty, all requests not skipped by authorization are forbidden.";
     };
 
-  authorization-webhook-cache-authorized-ttl = mkOption {
+    authorization-webhook-cache-authorized-ttl = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The duration to cache 'authorized' responses from the webhook authorizer. (default 10s)";
     };
 
-  authorization-webhook-cache-unauthorized-ttl = mkOption {
+    authorization-webhook-cache-unauthorized-ttl = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The duration to cache 'unauthorized' responses from the webhook authorizer. (default 10s)";
     };
 
-   # Deprecated flags
-  contention-profiling = mkOption {
+    # Deprecated flags
+    contention-profiling = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "DEPRECATED: enable block profiling, if profiling is enabled. This parameter is ignored if a config file is specified in --config. (default true)";
     };
 
-  kube-api-burst = mkOption {
+    kube-api-burst = mkOption {
       type = types.nullOr types.int;
       default = null;
       description = "DEPRECATED: burst to use while talking with kubernetes apiserver. This parameter is ignored if a config file is specified in --config. (default 100)";
     };
 
-  kube-api-content-type = mkOption {
+    kube-api-content-type = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "DEPRECATED: content type of requests sent to apiserver. This parameter is ignored if a config file is specified in --config. (default 'application/vnd.kubernetes.protobuf')";
     };
 
-  kube-api-qps = mkOption {
+    kube-api-qps = mkOption {
       type = types.nullOr types.float;
       default = null;
       description = "DEPRECATED: QPS to use while talking with kubernetes apiserver. This parameter is ignored if a config file is specified in --config. (default 50)";
     };
 
-  kubeconfig = mkOption {
+    kubeconfig = mkOption {
       type = types.nullOr types.path;
       default = null;
       description = "DEPRECATED: path to kubeconfig file with authorization and master location information. This parameter is ignored if a config file is specified in --config.";
     };
 
-  pod-max-in-unschedulable-pods-duration = mkOption {
+    pod-max-in-unschedulable-pods-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "DEPRECATED: the maximum time a pod can stay in unschedulablePods. If a pod stays in unschedulablePods for longer than this value, the pod will be moved from unschedulablePods to backoffQ or activeQ. This flag is deprecated and will be removed in 1.26 (default 5m0s)";
     };
 
-  profiling = mkOption {
+    profiling = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "DEPRECATED: enable profiling via web interface host:port/debug/pprof/. This parameter is ignored if a config file is specified in --config. (default true)";
     };
 
-  # Leader election flags
-  leader-elect = mkOption {
+    # Leader election flags
+    leader-elect = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "a leader election client and gain leadership before executing the main loop. Enable this when running replicated components for high availability. (default true)";
     };
 
-  leader-elect-lease-duration = mkOption {
+    leader-elect-lease-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate. This is only applicable if leader election is enabled. (default 15s)";
     };
 
-  leader-elect-renew-deadline = mkOption {
+    leader-elect-renew-deadline = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than the lease duration. This is only applicable if leader election is enabled. (default 10s)";
     };
 
-  leader-elect-resource-lock = mkOption {
+    leader-elect-resource-lock = mkOption {
       type = types.nullOr (types.enum [
         "leases"
         "endpointsleases"
@@ -1702,28 +1702,28 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       description = "The type of resource object that is used for locking during leader election. Supported options are 'leases', 'endpointsleases' and 'configmapsleases'. (default 'leases')";
     };
 
-  leader-elect-resource-name = mkOption {
+    leader-elect-resource-name = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The name of resource object that is used for locking during leader election. (default 'kube-scheduler')";
     };
 
-  leader-elect-resource-namespace = mkOption {
+    leader-elect-resource-namespace = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The namespace of resource object that is used for locking during leader election. (default 'kube-system')";
     };
 
-  leader-elect-retry-period = mkOption {
+    leader-elect-retry-period = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if leader election is enabled. (default 2s)";
     };
 
-  feature-gates = mkOption {
+    feature-gates = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = """
+      description = "" "
 A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
                                       APIListChunking=true|false (BETA - default=true)
                                       APIPriorityAndFairness=true|false (BETA - default=true)
@@ -1844,60 +1844,60 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
                                       WinDSR=true|false (ALPHA - default=false)
                                       WinOverlay=true|false (BETA - default=true)
                                       WindowsHostNetwork=true|false (ALPHA - default=true)
-""";
+"" ";
     };
 
-  # Metrics flags
-  allow-metric-labels = mkOption {
+    # Metrics flags
+    allow-metric-labels = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "The map from metric-label to value allow-list of this label. The key's format is <MetricName>,<LabelName>. The value's format is <allowed_value>,<allowed_value>...e.g. metric1,label1='v1,v2,v3', metric1,label2='v1,v2,v3' metric2,label1='v1,v2,v3'. (default [])";
     };
 
-  disabled-metrics = mkOption {
+    disabled-metrics = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "This flag provides an escape hatch for misbehaving metrics. You must provide the fully qualified metric name in order to disable it. Disclaimer: disabling metrics is higher in precedence than showing hidden metrics.";
     };
 
-  show-hidden-metrics-for-version = mkOption {
+    show-hidden-metrics-for-version = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The previous version for which you want to show hidden metrics. Only the previous minor version is meaningful, other values will not be allowed. The format is <major>.<minor>, e.g.: '1.16'. The purpose of this format is make sure you have the opportunity to notice if the next release hides additional metrics, rather than being surprised when they are permanently removed in the release after that.";
     };
 
-   # Logs flags
-  log-flush-frequency = mkOption {
+    # Logs flags
+    log-flush-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "Maximum number of seconds between log flushes (default 5s)";
     };
 
-  log-json-info-buffer-size = mkOption {
+    log-json-info-buffer-size = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "[Alpha] In JSON format with split output streams, the info messages can be buffered for a while to increase performance. The default value of zero bytes disables buffering. The size can be specified as number of bytes (512), multiples of 1000 (1K), multiples of 1024 (2Ki), or powers of those (3M, 4G, 5Mi, 6Gi). Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
-  log-json-split-stream = mkOption {
+    log-json-split-stream = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
-  logging-format = mkOption {
+    logging-format = mkOption {
       type = types.nullOr (types.enum [ "json" "text" ]);
       default = null;
       description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text'. (default 'text')";
     };
 
-  v = mkOption {
+    v = mkOption {
       type = types.nullOr types.int;
       default = null;
       description = "number for the log level verbosity";
     };
 
-  vmodule = mkOption {
+    vmodule = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
       description = "comma-separated list of pattern=N settings for file-filtered logging (only works for text log format)";
