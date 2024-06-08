@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.kube-apiserver2;
+  cfg = config.services.kube-apiserver;
 in
 {
   options.services.kube-apiserver = {
@@ -43,6 +43,11 @@ in
       type = types.nullOr types.int;
       default = null;
       description = "Indicates the tolerationSeconds of the toleration for unreachable:NoExecute that is added by default to every pod that does not already have such a toleration. (default 300)";
+    };
+    enable-priority-and-fairness = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "If true and the APIPriorityAndFairness feature gate is enabled, replace the max-in-flight handler with an enhanced one that queues and dispatches with priority and fairness (default true)";
     };
     external-hostname = mkOption {
       type = types.nullOr types.str;
@@ -1170,6 +1175,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.default-unreachable-toleration-seconds != null
               ) "--default-unreachable-toleration-seconds ${cfg.default-unreachable-toleration-seconds}"
             } \
+            ${optionalString (cfg.enable-priority-and-fairness != null) "--enable-priority-and-fairness ${cfg.enable-priority-and-fairness}"} \
             ${optionalString (cfg.external-hostname != null) "--external-hostname ${cfg.external-hostname}"} \
             ${optionalString (cfg.feature-gates != null) "--feature-gates \"${concatStringsSep "," cfg.feature-gates}\""} \
             ${optionalString (cfg.goaway-chance != null) "--goaway-chance ${cfg.goaway-chance}"} \
@@ -1242,8 +1248,6 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${cfg.tls-min-version}"} \
             ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${cfg.tls-private-key-file}"} \
             ${optionalString (cfg.tls-sni-cert-key != null) "--tls-sni-cert-key \"${concatStringsSep "," cfg.tls-sni-cert-key}\""} \
-            ${optionalString (cfg.authentication-kubeconfig != null) "--authentication-kubeconfig ${cfg.authentication-kubeconfig}"} \
-            ${optionalString (cfg.authentication-skip-lookup != null) "--authentication-skip-lookup {cfg.authentication-skip-lookup}"} \
             ${optionalString (cfg.audit-log-batch-buffer-size != null) "--audit-log-batch-buffer-size ${cfg.audit-log-batch-buffer-size}"} \
             ${optionalString (cfg.audit-log-batch-max-size != null) "--audit-log-batch-max-size ${cfg.audit-log-batch-max-size}"} \
             ${optionalString (cfg.audit-log-batch-max-wait != null) "--audit-log-batch-max-wait ${cfg.audit-log-batch-max-wait}"} \
