@@ -1208,7 +1208,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${
               optionalString (
                 cfg.delete-collection-workers != null
-              ) "--delete-collection-workers ${cfg.toString delete-collection-workers}"
+              ) "--delete-collection-workers ${toString cfg.delete-collection-workers}"
             } \
             ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector"} \
             ${optionalString (cfg.encryption-provider-config != null) "--encryption-provider-config ${cfg.encryption-provider-config}"} \
