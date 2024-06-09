@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.services.kube-scheduler;
+  tls-sni-cert-key-items = if cfg.tls-sni-cert-key-items != null then map (item: "--tls-sni-cert-key ${item}") cfg.tls-sni-cert-key else [];
 in
 {
   options.services.kube-scheduler = {
@@ -96,7 +97,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     };
 
     tls-private-key-file = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr types.path;
       default = null;
       description = "File containing the default x509 private key matching --tls-cert-file.";
     };
@@ -489,7 +490,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.tls-cipher-suites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
             ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${cfg.tls-min-version}"} \
             ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${cfg.tls-private-key-file}"} \
-            ${optionalString (cfg.tls-sni-cert-key != null) "--tls-sni-cert-key \"${concatStringsSep "," cfg.tls-sni-cert-key}\""} \
+            ${concatStringsSep " " tls-sni-cert-key-items} \
             ${optionalString (cfg.authentication-kubeconfig != null) "--authentication-kubeconfig ${cfg.authentication-kubeconfig}"} \
             ${optionalString (cfg.authentication-skip-lookup != null) "--authentication-skip-lookup ${toString cfg.authentication-skip-lookup}"} \
             ${optionalString (cfg.authentication-token-webhook-cache-ttl != null) "--authentication-token-webhook-cache-ttl ${cfg.authentication-token-webhook-cache-ttl}"} \
