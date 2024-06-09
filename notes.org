@@ -1642,7 +1642,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     leader-elect = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "a leader election client and gain leadership before executing the main loop. Enable this when running replicated components for high availability. (default true)";
+      description = "Whether a leader election client and gain leadership before executing the main loop. Enable this when running replicated components for high availability. (default true)";
     };
 
     leader-elect-lease-duration = mkOption {
@@ -1913,7 +1913,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${cfg.kubeconfig}"} \
             ${optionalString (cfg.pod-max-in-unschedulable-pods-duration != null) "--pod-max-in-unschedulable-pods-duration ${cfg.pod-max-in-unschedulable-pods-duration}"} \
             ${optionalString (cfg.profiling != null) "--profiling ${toString cfg.profiling}"} \
-            ${optionalString (cfg.leader-elect != null) "--leader-elect ${cfg.leader-elect}"} \
+            ${optionalString (cfg.leader-elect != null) "--leader-elect ${toString cfg.leader-elect}"} \
             ${optionalString (cfg.leader-elect-lease-duration != null) "--leader-elect-lease-duration ${cfg.leader-elect-lease-duration}"} \
             ${optionalString (cfg.leader-elect-renew-deadline != null) "--leader-elect-renew-deadline ${cfg.leader-elect-renew-deadline}"} \
             ${optionalString (cfg.leader-elect-resource-lock != null) "--leader-elect-resource-lock ${cfg.leader-elect-resource-lock}"} \
