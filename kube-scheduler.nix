@@ -171,7 +171,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 
     # Authorization flags
     authorization-always-allow-paths = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr (types.listOf types.str);
       default = null;
       description = "A list of HTTP paths to skip during authorization, i.e. these are authorized without contacting the 'core' kubernetes server. (default [/healthz,/readyz,/livez])";
     };
