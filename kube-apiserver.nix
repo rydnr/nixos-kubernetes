@@ -1179,7 +1179,6 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             } \
             ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector"} \
             ${optionalString (cfg.encryption-provider-config != null) "--encryption-provider-config ${cfg.encryption-provider-config}"} \
-
             ${optionalString (cfg.encryption-provider-config-automatic-reload != null) "--encryption-provider-config-automatic-reload"} \
             ${optionalString (cfg.etcd-cafile != null) "--etcd-cafile ${cfg.etcd-cafile}"} \
             ${optionalString (cfg.etcd-certfile != null) "--etcd-certfile ${cfg.etcd-certfile}"} \
