@@ -875,41 +875,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
         "MutatingAdmissionWebhook"
         "ValidatingAdmissionPolicy"
         "ValidatingAdmissionWebhook"
-        "ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit"
-        "AlwaysDeny"
-        "AlwaysPullImages"
-        "CertificateApproval"
-        "CertificateSigning"
-        "CertificateSubjectRestriction"
-        "ClusterTrustBundleAttest"
-        "DefaultIngressClass"
-        "DefaultStorageClass"
-        "DefaultTolerationSeconds"
-        "DenyServiceExternalIPs"
-        "EventRateLimit"
-        "ExtendedResourceToleration"
-        "ImagePolicyWebhook"
-        "LimitPodHardAntiAffinityTopology"
-        "LimitRanger"
-        "MutatingAdmissionWebhook"
-        "NamespaceAutoProvision"
-        "NamespaceExists"
-        "NamespaceLifecycle"
-        "NodeRestriction"
-        "OwnerReferencesPermissionEnforcement"
-        "PersistentVolumeClaimResize"
-        "PersistentVolumeLabel"
-        "PodNodeSelector"
-        "PodSecurity"
-        "PodTolerationRestriction"
-        "Priority"
         "ResourceQuota"
-        "RuntimeClass"
-        "ServiceAccount"
-        "StorageObjectInUseProtection"
-        "TaintNodesByCondition"
-        "ValidatingAdmissionPolicy"
-        "ValidatingAdmissionWebhook"
       ]));
       default = null;
       description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.";
@@ -1331,7 +1297,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
             ${optionalString (cfg.tracing-config-file != null) "--tracing-config-file ${cfg.tracing-config-file}"} \
-            ${optionalString (cfg.aggregator-reject-forwarding-redirect != null) "--aggregator-reject-forwarding-redirect ${cfg.aggregator-reject-forwarding-redirect}"} \
+            ${optionalString (cfg.aggregator-reject-forwarding-redirect != null) "--aggregator-reject-forwarding-redirect ${toString cfg.aggregator-reject-forwarding-redirect}"} \
             ${optionalString (cfg.allow-privileged != null) "--allow-privileged ${cfg.allow-privileged}"} \
             ${optionalString (cfg.enable-aggregator-routing != null) "--enable-aggregator-routing"} \
             ${optionalString (cfg.endpoint-reconciler-type != null) "--endpoint-reconciler-type ${cfg.endpoint-reconciler-type}"} \
