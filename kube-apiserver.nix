@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.services.kube-apiserver;
+  oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
 in
 {
   options.services.kube-apiserver = {
@@ -1288,7 +1289,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.oidc-groups-claim != null) "--oidc-groups-claim ${cfg.oidc-groups-claim}"} \
             ${optionalString (cfg.oidc-groups-prefix != null) "--oidc-groups-prefix ${cfg.oidc-groups-prefix}"} \
             ${optionalString (cfg.oidc-issuer-url != null) "--oidc-issuer-url ${cfg.oidc-issuer-url}"} \
-            ${optionalString (cfg.oidc-required-claim != null) (concatStringsSep " --oidc-required-claim \"${cfg.oidc-required-claim}\"")} \
+            ${concatStringsSep " " oidc-required-claim-items} \
             ${optionalString (cfg.oidc-signing-algs != null) "--oidc-signing-algs ${cfg.oidc-signing-algs}"} \
             ${optionalString (cfg.oidc-username-claim != null) "--oidc-username-claim ${cfg.oidc-username-claim}"} \
             ${optionalString (cfg.oidc-username-prefix != null) "--oidc-username-prefix ${cfg.oidc-username-prefix}"} \
