@@ -9,7 +9,7 @@ with lib;
 
 let
   cfg = config.services.kube-scheduler;
-  tls-sni-cert-key-items = if cfg.tls-sni-cert-key-items != null then map (item: "--tls-sni-cert-key ${item}") cfg.tls-sni-cert-key else [];
+  tls-sni-cert-key-items = if cfg.tls-sni-cert-key != null then map (item: "--tls-sni-cert-key ${item}") cfg.tls-sni-cert-key else [];
 in
 {
   options.services.kube-scheduler = {
