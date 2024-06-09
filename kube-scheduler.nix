@@ -110,7 +110,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 
     # Authentication flags
     authentication-kubeconfig = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr types.path;
       default = null;
       description = "kubeconfig file pointing at the 'core' kubernetes server with enough rights to create tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.";
     };
