@@ -2210,7 +2210,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
 
     leader-elect-resource-lock = mkOption {
-      type = types.nullOr types.enum [ "leases" "endpointsleases" "configmapsleases" ];
+      type = types.nullOr (types.enum [ "leases" "endpointsleases" "configmapsleases" ]);
       default = null;
       description = "The type of resource object that is used for locking during leader election. Supported options are 'leases', 'endpointsleases' and 'configmapsleases'. (default 'leases')";
     };
@@ -2312,7 +2312,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
 
     tls-min-version = mkOption {
-      type = types.nullOr types.enum [ "VersionTLS10" "VersionTLS11" "VersionTLS12" "VersionTLS13" ];
+      type = types.nullOr (types.enum [ "VersionTLS10" "VersionTLS11" "VersionTLS12" "VersionTLS13" ]);
       default = null;
       description = "Minimum TLS version supported. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13";
     };
@@ -2852,7 +2852,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
 
     logging-format = mkOption {
-      type = types.nullOr types.enum [ "json" "text" ];
+      type = types.nullOr (types.enum [ "json" "text" ]);
       default = null;
       description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text'. (default 'text')";
     };
