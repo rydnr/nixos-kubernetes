@@ -218,7 +218,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 """;
     };
 
-    config.healthz-bind-address = mkOption {
+    healthz-bind-address = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The IP address with port for the health check server to serve on (set to '0.0.0.0:10256' for all IPv4 interfaces and '[::]:10256' for all IPv6 interfaces). Set empty to disable. This parameter is ignored if a config file is specified by --config. (default 0.0.0.0:10256)";
