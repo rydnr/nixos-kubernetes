@@ -1162,7 +1162,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.shutdown-delay-duration != null
               ) "--shutdown-delay-duration ${toString cfg.shutdown-delay-duration}"
             } \
-            ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after"} \
+            ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after ${bootSoString cfg.shutdown-send-retry-after}"} \
             ${
               optionalString (
                 cfg.shutdown-watch-termination-grace-period != null
@@ -1178,9 +1178,9 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.delete-collection-workers != null
               ) "--delete-collection-workers ${toString cfg.delete-collection-workers}"
             } \
-            ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector"} \
+            ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector ${boolToString cfg.enable-garbage-collector}"} \
             ${optionalString (cfg.encryption-provider-config != null) "--encryption-provider-config ${cfg.encryption-provider-config}"} \
-            ${optionalString (cfg.encryption-provider-config-automatic-reload != null) "--encryption-provider-config-automatic-reload"} \
+            ${optionalString (cfg.encryption-provider-config-automatic-reload != null) "--encryption-provider-config-automatic-reload ${boolToString cfg.encryption-provider-config-automatic-reload}"} \
             ${optionalString (cfg.etcd-cafile != null) "--etcd-cafile ${cfg.etcd-cafile}"} \
             ${optionalString (cfg.etcd-certfile != null) "--etcd-certfile ${cfg.etcd-certfile}"} \
             ${optionalString (cfg.etcd-compaction-interval != null) "--etcd-compaction-interval ${cfg.etcd-compaction-interval}"} \
@@ -1249,7 +1249,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.authentication-token-webhook-config-file != null) "--authentication-token-webhook-config-file ${cfg.authentication-token-webhook-config-file}"} \
             ${optionalString (cfg.authentication-token-webhook-version != null) "--authentication-token-webhook-version ${cfg.authentication-token-webhook-version}"} \
             ${optionalString (cfg.client-ca-file != null) "--client-ca-file ${cfg.client-ca-file}"} \
-            ${optionalString (cfg.enable-bootstrap-token-auth != null) "--enable-bootstrap-token-auth ${boolToString cfg.enable-bootstrap-token-auth}"} \
+            ${optionalString (cfg.enable-bootstrap-token-auth != null) "--enable-bootstrap-token-auth"} \
             ${optionalString (cfg.oidc-ca-file != null) "--oidc-ca-file ${cfg.oidc-ca-file}"} \
             ${optionalString (cfg.oidc-client-id != null) "--oidc-client-id ${cfg.oidc-client-id}"} \
             ${optionalString (cfg.oidc-groups-claim != null) "--oidc-groups-claim ${cfg.oidc-groups-claim}"} \

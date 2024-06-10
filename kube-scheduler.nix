@@ -60,13 +60,13 @@ in
     permit-address-sharing = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "true, SO_REUSEADDR will be used when binding the port. This allows binding to wildcard IPs like 0.0.0.0 and specific IPs in parallel, and it avoids waiting for the kernel to release sockets in TIME_WAIT state. [default=false]";
+      description = "If true, SO_REUSEADDR will be used when binding the port. This allows binding to wildcard IPs like 0.0.0.0 and specific IPs in parallel, and it avoids waiting for the kernel to release sockets in TIME_WAIT state. [default=false]";
     };
 
     permit-port-sharing = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "true, SO_REUSEPORT will be used when binding the port, which allows more than one instance to bind on the same address and port. [default=false]";
+      description = "If true, SO_REUSEPORT will be used when binding the port, which allows more than one instance to bind on the same address and port. [default=false]";
     };
 
     secure-port = mkOption {
@@ -113,7 +113,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     authentication-kubeconfig = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "kubeconfig file pointing at the 'core' kubernetes server with enough rights to create tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.";
+      description = "The kubeconfig file pointing at the 'core' kubernetes server with enough rights to create tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.";
     };
 
     authentication-skip-lookup = mkOption {

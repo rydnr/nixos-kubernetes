@@ -1234,7 +1234,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.shutdown-delay-duration != null
               ) "--shutdown-delay-duration ${toString cfg.shutdown-delay-duration}"
             } \
-            ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after"} \
+            ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after ${bootSoString cfg.shutdown-send-retry-after}"} \
             ${
               optionalString (
                 cfg.shutdown-watch-termination-grace-period != null
@@ -1250,9 +1250,9 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.delete-collection-workers != null
               ) "--delete-collection-workers ${toString cfg.delete-collection-workers}"
             } \
-            ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector"} \
+            ${optionalString (cfg.enable-garbage-collector != null) "--enable-garbage-collector ${boolToString cfg.enable-garbage-collector}"} \
             ${optionalString (cfg.encryption-provider-config != null) "--encryption-provider-config ${cfg.encryption-provider-config}"} \
-            ${optionalString (cfg.encryption-provider-config-automatic-reload != null) "--encryption-provider-config-automatic-reload"} \
+            ${optionalString (cfg.encryption-provider-config-automatic-reload != null) "--encryption-provider-config-automatic-reload ${boolToString cfg.encryption-provider-config-automatic-reload}"} \
             ${optionalString (cfg.etcd-cafile != null) "--etcd-cafile ${cfg.etcd-cafile}"} \
             ${optionalString (cfg.etcd-certfile != null) "--etcd-certfile ${cfg.etcd-certfile}"} \
             ${optionalString (cfg.etcd-compaction-interval != null) "--etcd-compaction-interval ${cfg.etcd-compaction-interval}"} \
@@ -1321,7 +1321,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
             ${optionalString (cfg.authentication-token-webhook-config-file != null) "--authentication-token-webhook-config-file ${cfg.authentication-token-webhook-config-file}"} \
             ${optionalString (cfg.authentication-token-webhook-version != null) "--authentication-token-webhook-version ${cfg.authentication-token-webhook-version}"} \
             ${optionalString (cfg.client-ca-file != null) "--client-ca-file ${cfg.client-ca-file}"} \
-            ${optionalString (cfg.enable-bootstrap-token-auth != null) "--enable-bootstrap-token-auth ${boolToString cfg.enable-bootstrap-token-auth}"} \
+            ${optionalString (cfg.enable-bootstrap-token-auth != null) "--enable-bootstrap-token-auth"} \
             ${optionalString (cfg.oidc-ca-file != null) "--oidc-ca-file ${cfg.oidc-ca-file}"} \
             ${optionalString (cfg.oidc-client-id != null) "--oidc-client-id ${cfg.oidc-client-id}"} \
             ${optionalString (cfg.oidc-groups-claim != null) "--oidc-groups-claim ${cfg.oidc-groups-claim}"} \
@@ -1461,13 +1461,13 @@ in
     permit-address-sharing = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "true, SO_REUSEADDR will be used when binding the port. This allows binding to wildcard IPs like 0.0.0.0 and specific IPs in parallel, and it avoids waiting for the kernel to release sockets in TIME_WAIT state. [default=false]";
+      description = "If true, SO_REUSEADDR will be used when binding the port. This allows binding to wildcard IPs like 0.0.0.0 and specific IPs in parallel, and it avoids waiting for the kernel to release sockets in TIME_WAIT state. [default=false]";
     };
 
     permit-port-sharing = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "true, SO_REUSEPORT will be used when binding the port, which allows more than one instance to bind on the same address and port. [default=false]";
+      description = "If true, SO_REUSEPORT will be used when binding the port, which allows more than one instance to bind on the same address and port. [default=false]";
     };
 
     secure-port = mkOption {
@@ -1514,7 +1514,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     authentication-kubeconfig = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "kubeconfig file pointing at the 'core' kubernetes server with enough rights to create tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.";
+      description = "The kubeconfig file pointing at the 'core' kubernetes server with enough rights to create tokenreviews.authentication.k8s.io. This is optional. If empty, all token requests are considered to be anonymous and no client CA is looked up in the cluster.";
     };
 
     authentication-skip-lookup = mkOption {
