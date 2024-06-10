@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.services.kube-scheduler;
+  boolToString = b: if b then "true" else "false";
   tls-sni-cert-key-items = if cfg.tls-sni-cert-key != null then map (item: "--tls-sni-cert-key ${item}") cfg.tls-sni-cert-key else [];
 in
 {
@@ -21,7 +22,7 @@ in
 
     # Misc flags
     configFile = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr types.path;
       default = null;
       description = "The path to the configuration file.";
     };
@@ -483,8 +484,8 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.bind-address != null) "--bind-address ${cfg.bind-address}"} \
             ${optionalString (cfg.cert-dir != null) "--cert-dir ${cfg.cert-dir}"} \
             ${optionalString (cfg.http2-max-streams-per-connection != null) "--http2-max-streams-per-connection ${toString cfg.http2-max-streams-per-connection}"} \
-            ${optionalString (cfg.permit-address-sharing != null) "--permit-address-sharing ${toString cfg.permit-address-sharing}"} \
-            ${optionalString (cfg.permit-port-sharing != null) "--permit-port-sharing ${toString cfg.permit-port-sharing}"} \
+            ${optionalString (cfg.permit-address-sharing != null) "--permit-address-sharing ${boolToString cfg.permit-address-sharing}"} \
+            ${optionalString (cfg.permit-port-sharing != null) "--permit-port-sharing ${boolToString cfg.permit-port-sharing}"} \
             ${optionalString (cfg.secure-port != null) "--secure-port ${toString cfg.secure-port}"} \
             ${optionalString (cfg.tls-cert-file != null) "--tls-cert-file ${cfg.tls-cert-file}"} \
             ${optionalString (cfg.tls-cipher-suites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
@@ -492,9 +493,9 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${cfg.tls-private-key-file}"} \
             ${concatStringsSep " " tls-sni-cert-key-items} \
             ${optionalString (cfg.authentication-kubeconfig != null) "--authentication-kubeconfig ${cfg.authentication-kubeconfig}"} \
-            ${optionalString (cfg.authentication-skip-lookup != null) "--authentication-skip-lookup ${toString cfg.authentication-skip-lookup}"} \
+            ${optionalString (cfg.authentication-skip-lookup != null) "--authentication-skip-lookup ${boolToString cfg.authentication-skip-lookup}"} \
             ${optionalString (cfg.authentication-token-webhook-cache-ttl != null) "--authentication-token-webhook-cache-ttl ${cfg.authentication-token-webhook-cache-ttl}"} \
-            ${optionalString (cfg.authentication-tolerate-lookup-failure != null) "--authentication-tolerate-lookup-failure ${toString cfg.authentication-tolerate-lookup-failure}"} \
+            ${optionalString (cfg.authentication-tolerate-lookup-failure != null) "--authentication-tolerate-lookup-failure ${boolToString cfg.authentication-tolerate-lookup-failure}"} \
             ${optionalString (cfg.client-ca-file != null) "--client-ca-file ${cfg.client-ca-file}"} \
             ${optionalString (cfg.requestheader-allowed-names != null) "--requestheader-allowed-names \"${concatStringsSep "," cfg.requestheader-allowed-names}\""} \
             ${optionalString (cfg.requestheader-client-ca-file != null) "--requestheader-client-ca-file ${cfg.requestheader-client-ca-file}"} \
@@ -505,14 +506,14 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.authorization-kubeconfig != null) "--authorization-kubeconfig ${cfg.authorization-kubeconfig}"} \
             ${optionalString (cfg.authorization-webhook-cache-authorized-ttl != null) "--authorization-webhook-cache-authorized-ttl ${cfg.authorization-webhook-cache-authorized-ttl}"} \
             ${optionalString (cfg.authorization-webhook-cache-unauthorized-ttl != null) "--authorization-webhook-cache-unauthorized-ttl ${cfg.authorization-webhook-cache-unauthorized-ttl}"} \
-            ${optionalString (cfg.contention-profiling != null) "--contention-profiling ${toString cfg.contention-profiling}"} \
+            ${optionalString (cfg.contention-profiling != null) "--contention-profiling ${boolToString cfg.contention-profiling}"} \
             ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
             ${optionalString (cfg.kube-api-content-type != null) "--kube-api-content-type ${cfg.kube-api-content-type}"} \
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${cfg.kubeconfig}"} \
             ${optionalString (cfg.pod-max-in-unschedulable-pods-duration != null) "--pod-max-in-unschedulable-pods-duration ${cfg.pod-max-in-unschedulable-pods-duration}"} \
-            ${optionalString (cfg.profiling != null) "--profiling ${toString cfg.profiling}"} \
-            ${optionalString (cfg.leader-elect != null) "--leader-elect ${toString cfg.leader-elect}"} \
+            ${optionalString (cfg.profiling != null) "--profiling ${boolToString cfg.profiling}"} \
+            ${optionalString (cfg.leader-elect != null) "--leader-elect ${boolToString cfg.leader-elect}"} \
             ${optionalString (cfg.leader-elect-lease-duration != null) "--leader-elect-lease-duration ${cfg.leader-elect-lease-duration}"} \
             ${optionalString (cfg.leader-elect-renew-deadline != null) "--leader-elect-renew-deadline ${cfg.leader-elect-renew-deadline}"} \
             ${optionalString (cfg.leader-elect-resource-lock != null) "--leader-elect-resource-lock ${cfg.leader-elect-resource-lock}"} \
