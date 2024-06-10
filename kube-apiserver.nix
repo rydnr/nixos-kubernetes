@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.services.kube-apiserver;
+  boolToString = b: if b then "true" else "false";
   oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
 in
 {
@@ -1137,7 +1138,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.default-unreachable-toleration-seconds != null
               ) "--default-unreachable-toleration-seconds ${toString cfg.default-unreachable-toleration-seconds}"
             } \
-            ${optionalString (cfg.enable-priority-and-fairness != null) "--enable-priority-and-fairness ${toString cfg.enable-priority-and-fairness}"} \
+            ${optionalString (cfg.enable-priority-and-fairness != null) "--enable-priority-and-fairness ${boolToString cfg.enable-priority-and-fairness}"} \
             ${optionalString (cfg.external-hostname != null) "--external-hostname ${cfg.external-hostname}"} \
             ${optionalString (cfg.feature-gates != null) "--feature-gates \"${concatStringsSep "," cfg.feature-gates}\""} \
             ${optionalString (cfg.goaway-chance != null) "--goaway-chance ${toString cfg.goaway-chance}"} \
