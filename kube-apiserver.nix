@@ -1162,7 +1162,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
                 cfg.shutdown-delay-duration != null
               ) "--shutdown-delay-duration ${toString cfg.shutdown-delay-duration}"
             } \
-            ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after ${bootToString cfg.shutdown-send-retry-after}"} \
+            ${optionalString (cfg.shutdown-send-retry-after != null) "--shutdown-send-retry-after ${boolToString cfg.shutdown-send-retry-after}"} \
             ${
               optionalString (
                 cfg.shutdown-watch-termination-grace-period != null
