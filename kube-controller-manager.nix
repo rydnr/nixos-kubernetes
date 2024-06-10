@@ -1089,7 +1089,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
             ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${toString cfg.kubeconfig}"} \
-            ${optionalString (cfg.master != null) "--master ${toString cfg.master}"} \
+            ${optionalString (cfg.master != null) "--master ${toString cfg.master}"}
       };
     };
   };
