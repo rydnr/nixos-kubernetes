@@ -32,6 +32,7 @@
         kube-apiserver = ./kube-apiserver.nix;
         kube-scheduler = ./kube-scheduler.nix;
         kube-controller-manager = ./kube-controller-manager.nix;
+        kube-proxy = ./kube-proxy.nix;
       };
     });
 }
