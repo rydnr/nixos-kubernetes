@@ -339,7 +339,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
 
     log-json-split-stream = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr types.bool;
       default = null;
       description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
@@ -471,7 +471,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
               ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${toString cfg.kubeconfig}"} \
               ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${toString cfg.log-flush-frequency}"} \
               ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
-              ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream ${toString cfg.log-json-split-stream}"} \
+              ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
               ${optionalString (cfg.logging-format != null) "--logging-format ${toString cfg.logging-format}"} \
               ${optionalString (cfg.machine-id-file != null) "--machine-id-file ${toString cfg.machine-id-file}"} \
               ${optionalString (cfg.masquerade-all != null) "--masquerade-all"} \
