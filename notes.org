@@ -1873,10 +1873,11 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   config = mkIf cfg.enable {
     systemd.services.kube-scheduler = {
       description = "The Kubernetes scheduler is a control plane process which assigns Pods to Nodes. The scheduler determines which Nodes are valid placements for each Pod in the scheduling queue according to constraints and available resources. The scheduler then ranks each valid Node and binds the Pod to a suitable Node. Multiple different schedulers may be used within a cluster; kube-scheduler is the reference implementation. See https://kubernetes.io/docs/concepts/scheduling-eviction/ for more information about scheduling and the kube-scheduler component.";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      after = [ "kube-apiserver.target" ];
+      wantedBy = [ "kubernetes.target" ];
 
       serviceConfig = {
+        Slice = "kubernetes.slice";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-scheduler \
             ${optionalString (cfg.configFile != null) "--config ${cfg.configFile}"} \
@@ -1932,6 +1933,14 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""}
             '';
+        WorkingDirectory = top.dataDir;
+        User = "kubernetes";
+        Group = "kubernetes";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 0;
       };
     };
   };
@@ -2885,10 +2894,13 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   config = mkIf cfg.enable {
     systemd.services.kube-controller-manager = {
       description = "The Kubernetes controller manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      after = [ "kube-apiserver.target" ];
+      wantedBy = [ "kubernetes.target" ];
 
       serviceConfig = {
+        RestartSec = "30s";
+        Restart = "on-failure";
+        Slice = "kubernetes.slice";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-controller-manager \
               ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
@@ -3031,6 +3043,11 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${toString cfg.kubeconfig}"} \
             ${optionalString (cfg.master != null) "--master ${toString cfg.master}"}
         '';
+        User = "kubernetes";
+        Group = "kubernetes";
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 0;
       };
     };
   };
@@ -3474,10 +3491,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   config = mkIf cfg.enable {
     systemd.services.kube-proxy = {
       description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "kubernetes.target" ];
+      after = [ "kube-apiserver.service" ];
+      path = with pkgs; [ iptables conntrack-tools ];
 
       serviceConfig = {
+        Slice = "kubernetes.slice";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-proxy \
               ${optionalString (cfg.bind-address != null) "--bind-address ${toString cfg.bind-address}"} \
@@ -3529,6 +3548,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
               ${optionalString (cfg.show-hidden-metrics-for-version != null) "--show-hidden-metrics-for-version ${toString cfg.show-hidden-metrics-for-version}"} \
               ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
         '';
+        WorkingDirectory = top.dataDir;
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 0;
       };
     };
   };

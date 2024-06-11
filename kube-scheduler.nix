@@ -472,10 +472,11 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   config = mkIf cfg.enable {
     systemd.services.kube-scheduler = {
       description = "The Kubernetes scheduler is a control plane process which assigns Pods to Nodes. The scheduler determines which Nodes are valid placements for each Pod in the scheduling queue according to constraints and available resources. The scheduler then ranks each valid Node and binds the Pod to a suitable Node. Multiple different schedulers may be used within a cluster; kube-scheduler is the reference implementation. See https://kubernetes.io/docs/concepts/scheduling-eviction/ for more information about scheduling and the kube-scheduler component.";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      after = [ "kube-apiserver.target" ];
+      wantedBy = [ "kubernetes.target" ];
 
       serviceConfig = {
+        Slice = "kubernetes.slice";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-scheduler \
             ${optionalString (cfg.configFile != null) "--config ${cfg.configFile}"} \
@@ -531,6 +532,14 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""}
             '';
+        WorkingDirectory = top.dataDir;
+        User = "kubernetes";
+        Group = "kubernetes";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 0;
       };
     };
   };

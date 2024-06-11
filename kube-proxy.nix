@@ -432,10 +432,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   config = mkIf cfg.enable {
     systemd.services.kube-proxy = {
       description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = [ "kubernetes.target" ];
+      after = [ "kube-apiserver.service" ];
+      path = with pkgs; [ iptables conntrack-tools ];
 
       serviceConfig = {
+        Slice = "kubernetes.slice";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-proxy \
               ${optionalString (cfg.bind-address != null) "--bind-address ${toString cfg.bind-address}"} \
@@ -487,6 +489,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
               ${optionalString (cfg.show-hidden-metrics-for-version != null) "--show-hidden-metrics-for-version ${toString cfg.show-hidden-metrics-for-version}"} \
               ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
         '';
+        WorkingDirectory = top.dataDir;
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 0;
       };
     };
   };

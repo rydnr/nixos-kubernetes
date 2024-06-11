@@ -942,10 +942,13 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   config = mkIf cfg.enable {
     systemd.services.kube-controller-manager = {
       description = "The Kubernetes controller manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
+      after = [ "kube-apiserver.target" ];
+      wantedBy = [ "kubernetes.target" ];
 
       serviceConfig = {
+        RestartSec = "30s";
+        Restart = "on-failure";
+        Slice = "kubernetes.slice";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-controller-manager \
               ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
@@ -1088,6 +1091,11 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${toString cfg.kubeconfig}"} \
             ${optionalString (cfg.master != null) "--master ${toString cfg.master}"}
         '';
+        User = "kubernetes";
+        Group = "kubernetes";
+      };
+      unitConfig = {
+        StartLimitIntervalSec = 0;
       };
     };
   };
