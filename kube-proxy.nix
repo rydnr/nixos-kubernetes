@@ -427,6 +427,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       default = null;
       description = "Number for the log level verbosity";
     };
+
+    vmodule = mkOption {
+      type = types.nullOr (types.listOf types.str);
+      default = null;
+      description = "List of pattern=N settings for file-filtered logging (only works for text log format)";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -488,6 +494,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
               ${optionalString (cfg.proxy-port-range != null) "--proxy-port-range ${toString cfg.proxy-port-range}"} \
               ${optionalString (cfg.show-hidden-metrics-for-version != null) "--show-hidden-metrics-for-version ${toString cfg.show-hidden-metrics-for-version}"} \
               ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
+              ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
         '';
         WorkingDirectory = top.dataDir;
         Restart = "on-failure";
