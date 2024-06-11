@@ -532,7 +532,6 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
             ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""}
             '';
-        WorkingDirectory = top.dataDir;
         User = "kubernetes";
         Group = "kubernetes";
         Restart = "on-failure";

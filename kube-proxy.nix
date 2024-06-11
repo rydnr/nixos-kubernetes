@@ -496,7 +496,6 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
               ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
               ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""}
         '';
-        WorkingDirectory = top.dataDir;
         Restart = "on-failure";
         RestartSec = 5;
       };
