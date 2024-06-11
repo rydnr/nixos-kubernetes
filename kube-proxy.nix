@@ -436,8 +436,8 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   };
 
   config = mkIf cfg.enable {
-    systemd.services.kube-proxy = {
-      description = lib.mkForce "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
+    systemd.services.kube-proxy = lib.mkForce {
+      description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
       wantedBy = [ "kubernetes.target" ];
       after = [ "kube-apiserver.service" ];
       path = with pkgs; [ iptables conntrack-tools ];
