@@ -1144,7 +1144,8 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.image-credential-provider-bin-dir != null) "--image-credential-provider-bin-dir ${toString cfg.image-credential-provider-bin-dir}"} \
               ${optionalString (cfg.image-credential-provider-config != null) "--image-credential-provider-config ${toString cfg.image-credential-provider-config}"} \
               ${optionalString (cfg.image-gc-high-threshold != null) "--image-gc-high-threshold ${toString cfg.image-gc-high-threshold}"} \
-              ${optionalString (cfg.image-gc-low-threshold != null) "--image-gc-low-threshold ${toString cfg.image-gc-image-service-endpointlow-threshold}"}               ${optionalString (cfg. != null) "--image-service-endpoint ${toString cfg.image-service-endpoint}"} \
+              ${optionalString (cfg.image-gc-low-threshold != null) "--image-gc-low-threshold ${toString cfg.image-gc-low-threshold}"} \
+              ${optionalString (cfg.image-service-endpoint != null) "--image-service-endpoint ${toString cfg.image-service-endpoint}"} \
               ${optionalString (cfg.keep-terminated-pod-volumes != null) "--keep-terminated-pod-volumes"} \
               ${optionalString (cfg.kernel-memcg-notification != null) "--kernel-memcg-notification ${toString cfg.kernel-memcg-notification}"} \
               ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
