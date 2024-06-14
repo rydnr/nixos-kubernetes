@@ -763,7 +763,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     pod-infra-container-image = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Specified image will not be pruned by the image garbage collector. CRI implementations have their own configuration to set this image. (default "registry.k8s.io/pause:3.9") (DEPRECATED: will be removed in a future release. Image garbage collector will get sandbox image information from CRI.)";
+      description = "Specified image will not be pruned by the image garbage collector. CRI implementations have their own configuration to set this image. (default 'registry.k8s.io/pause:3.9') (DEPRECATED: will be removed in a future release. Image garbage collector will get sandbox image information from CRI.)";
     };
 
     pod-manifest-path = mkOption {
