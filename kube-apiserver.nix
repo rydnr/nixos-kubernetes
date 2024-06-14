@@ -11,55 +11,8 @@ let
   cfg = config.services.kube-apiserver;
   boolToString = b: if b then "true" else "false";
   oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
-in
-{
-  options.services.kube-apiserver = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact..";
-    };
-
-    # Generic flags
-    advertise-address = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "The IP address on which to advertise the apiserver to members of the cluster. This address must be reachable by the rest of the cluster. If blank, the --bind-address will be used. If --bind-address is unspecified, the host's default interface will be used.";
-    };
-    cloud-provider-gce-l7lb-src-cidrs = mkOption {
-      type = types.nullOr (types.listOf types.str);
-      default = null;
-      description = "CIDRs opened in GCE firewall for L7 LB traffic proxy & health checks (default 130.211.0.0/22,35.191.0.0/16)";
-    };
-    cors-allowed-origins = mkOption {
-      type = types.nullOr (types.listOf types.str);
-      default = null;
-      description = "List of allowed origins for CORS, comma separated. An allowed origin can be a regular expression to support subdomain matching. If this list is empty CORS will not be enabled. Please ensure each expression matches the entire hostname by anchoring to the start with '^' or including the '//' prefix, and by anchoring to the end with '$' or including the ':' port separator suffix. Examples of valid expressions are '//example\.com(:|$)' and '^https://example\.com(:|$)'";
-    };
-    default-not-ready-toleration-seconds = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      description = "Indicates the tolerationSeconds of the toleration for notReady:NoExecute that is added by default to every pod that does not already have such a toleration. (default 300)";
-    };
-    default-unreachable-toleration-seconds = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      description = "Indicates the tolerationSeconds of the toleration for unreachable:NoExecute that is added by default to every pod that does not already have such a toleration. (default 300)";
-    };
-    enable-priority-and-fairness = mkOption {
-      type = types.nullOr types.bool;
-      default = null;
-      description = "If true and the APIPriorityAndFairness feature gate is enabled, replace the max-in-flight handler with an enhanced one that queues and dispatches with priority and fairness (default true)";
-    };
-    external-hostname = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "The hostname to use when generating externalized URLs for this master (e.g. Swagger API Docs or OpenID Discovery).";
-    };
-    feature-gates = mkOption {
-      type = types.nullOr (types.listOf types.str);
-      default = null;
-      description = "" "
+  description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact.";
+  featureGatesDescription = """
 A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
   APIResponseCompression=true|false (BETA - default=true)
   APIServerIdentity=true|false (BETA - default=true)
@@ -191,7 +144,56 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinDSR=true|false (ALPHA - default=false)
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
-" "";
+""";
+in
+{
+  options.services.kube-apiserver = {
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      inherit description;
+    };
+
+    # Generic flags
+    advertise-address = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The IP address on which to advertise the apiserver to members of the cluster. This address must be reachable by the rest of the cluster. If blank, the --bind-address will be used. If --bind-address is unspecified, the host's default interface will be used.";
+    };
+    cloud-provider-gce-l7lb-src-cidrs = mkOption {
+      type = types.nullOr (types.listOf types.str);
+      default = null;
+      description = "CIDRs opened in GCE firewall for L7 LB traffic proxy & health checks (default 130.211.0.0/22,35.191.0.0/16)";
+    };
+    cors-allowed-origins = mkOption {
+      type = types.nullOr (types.listOf types.str);
+      default = null;
+      description = "List of allowed origins for CORS, comma separated. An allowed origin can be a regular expression to support subdomain matching. If this list is empty CORS will not be enabled. Please ensure each expression matches the entire hostname by anchoring to the start with '^' or including the '//' prefix, and by anchoring to the end with '$' or including the ':' port separator suffix. Examples of valid expressions are '//example\.com(:|$)' and '^https://example\.com(:|$)'";
+    };
+    default-not-ready-toleration-seconds = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "Indicates the tolerationSeconds of the toleration for notReady:NoExecute that is added by default to every pod that does not already have such a toleration. (default 300)";
+    };
+    default-unreachable-toleration-seconds = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "Indicates the tolerationSeconds of the toleration for unreachable:NoExecute that is added by default to every pod that does not already have such a toleration. (default 300)";
+    };
+    enable-priority-and-fairness = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "If true and the APIPriorityAndFairness feature gate is enabled, replace the max-in-flight handler with an enhanced one that queues and dispatches with priority and fairness (default true)";
+    };
+    external-hostname = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The hostname to use when generating externalized URLs for this master (e.g. Swagger API Docs or OpenID Discovery).";
+    };
+    feature-gates = mkOption {
+      type = types.nullOr (types.listOf types.str);
+      default = null;
+      description = featureGatesDescription;
     };
     goaway-chance = mkOption {
       type = types.nullOr types.float;
@@ -1112,7 +1114,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
   config = mkIf cfg.enable {
     systemd.services.kube-apiserver = {
-      description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact..";
+      inherit description;
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 

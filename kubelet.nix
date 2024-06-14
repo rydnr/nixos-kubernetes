@@ -10,13 +10,7 @@ with lib;
 let
   cfg = config.services.kubelet;
   boolToString = b: if b then "true" else "false";
-in
-{
-  options.services.kubelet = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = "" "
+  description = """
 The kubelet is the primary 'node agent' that runs on each
 node. It can register the node with the apiserver using one of: the hostname; a flag to
 override the hostname; or specific logic for a cloud provider.
@@ -36,7 +30,148 @@ via a flag.
 
 HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint
 is checked every 20 seconds (also configurable with a flag).
-" "";
+""";
+  featureGatesDescription = """
+A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
+  APIResponseCompression=true|false (BETA - default=true)
+  APIServerIdentity=true|false (BETA - default=true)
+  APIServerTracing=true|false (BETA - default=true)
+  APIServingWithRoutine=true|false (BETA - default=true)
+  AllAlpha=true|false (ALPHA - default=false)
+  AllBeta=true|false (BETA - default=false)
+  AnyVolumeDataSource=true|false (BETA - default=true)
+  AppArmor=true|false (BETA - default=true)
+  AppArmorFields=true|false (BETA - default=true)
+  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
+  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
+  CPUManagerPolicyOptions=true|false (BETA - default=true)
+  CRDValidationRatcheting=true|false (BETA - default=true)
+  CSIMigrationPortworx=true|false (BETA - default=false)
+  CSIVolumeHealth=true|false (ALPHA - default=false)
+  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
+  ClusterTrustBundle=true|false (ALPHA - default=false)
+  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
+  ComponentSLIs=true|false (BETA - default=true)
+  ConsistentListFromCache=true|false (ALPHA - default=false)
+  ContainerCheckpoint=true|false (BETA - default=true)
+  ContextualLogging=true|false (BETA - default=true)
+  CronJobsScheduledAnnotation=true|false (BETA - default=true)
+  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
+  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
+  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
+  DevicePluginCDIDevices=true|false (BETA - default=true)
+  DisableCloudProviders=true|false (BETA - default=true)
+  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
+  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
+  DynamicResourceAllocation=true|false (ALPHA - default=false)
+  ElasticIndexedJob=true|false (BETA - default=true)
+  EventedPLEG=true|false (ALPHA - default=false)
+  GracefulNodeShutdown=true|false (BETA - default=true)
+  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
+  HPAScaleToZero=true|false (ALPHA - default=false)
+  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
+  ImageMaximumGCAge=true|false (BETA - default=true)
+  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
+  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
+  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
+  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
+  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
+  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
+  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
+  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
+  InformerResourceVersion=true|false (ALPHA - default=false)
+  JobBackoffLimitPerIndex=true|false (BETA - default=true)
+  JobManagedBy=true|false (ALPHA - default=false)
+  JobPodFailurePolicy=true|false (BETA - default=true)
+  JobPodReplacementPolicy=true|false (BETA - default=true)
+  JobSuccessPolicy=true|false (ALPHA - default=false)
+  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
+  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
+  KubeletInUserNamespace=true|false (ALPHA - default=false)
+  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
+  KubeletPodResourcesGet=true|false (ALPHA - default=false)
+  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
+  KubeletTracing=true|false (BETA - default=true)
+  LoadBalancerIPMode=true|false (BETA - default=true)
+  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
+  LogarithmicScaleDown=true|false (BETA - default=true)
+  LoggingAlphaOptions=true|false (ALPHA - default=false)
+  LoggingBetaOptions=true|false (BETA - default=true)
+  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
+  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
+  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
+  MemoryManager=true|false (BETA - default=true)
+  MemoryQoS=true|false (ALPHA - default=false)
+  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
+  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
+  NFTablesProxyMode=true|false (ALPHA - default=false)
+  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
+  NodeLogQuery=true|false (BETA - default=false)
+  NodeSwap=true|false (BETA - default=true)
+  OpenAPIEnums=true|false (BETA - default=true)
+  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
+  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
+  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
+  PodDeletionCost=true|false (BETA - default=true)
+  PodDisruptionConditions=true|false (BETA - default=true)
+  PodIndexLabel=true|false (BETA - default=true)
+  PodLifecycleSleepAction=true|false (BETA - default=true)
+  PodReadyToStartContainersCondition=true|false (BETA - default=true)
+  PortForwardWebsockets=true|false (ALPHA - default=false)
+  ProcMountType=true|false (ALPHA - default=false)
+  QOSReserved=true|false (ALPHA - default=false)
+  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
+  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
+  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
+  RetryGenerateName=true|false (ALPHA - default=false)
+  RotateKubeletServerCertificate=true|false (BETA - default=true)
+  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
+  SELinuxMount=true|false (ALPHA - default=false)
+  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
+  SchedulerQueueingHints=true|false (BETA - default=false)
+  SeparateCacheWatchRPC=true|false (BETA - default=true)
+  SeparateTaintEvictionController=true|false (BETA - default=true)
+  ServiceAccountTokenJTI=true|false (BETA - default=true)
+  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
+  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
+  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
+  ServiceTrafficDistribution=true|false (ALPHA - default=false)
+  SidecarContainers=true|false (BETA - default=true)
+  SizeMemoryBackedVolumes=true|false (BETA - default=true)
+  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
+  StatefulSetStartOrdinal=true|false (BETA - default=true)
+  StorageNamespaceIndex=true|false (BETA - default=true)
+  StorageVersionAPI=true|false (ALPHA - default=false)
+  StorageVersionHash=true|false (BETA - default=true)
+  StorageVersionMigrator=true|false (ALPHA - default=false)
+  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
+  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
+  TopologyAwareHints=true|false (BETA - default=true)
+  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
+  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
+  TopologyManagerPolicyOptions=true|false (BETA - default=true)
+  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
+  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
+  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
+  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
+  UserNamespacesSupport=true|false (BETA - default=false)
+  VolumeAttributesClass=true|false (ALPHA - default=false)
+  VolumeCapacityPriority=true|false (ALPHA - default=false)
+  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
+  WatchList=true|false (ALPHA - default=false)
+  WatchListClient=true|false (BETA - default=false)
+  WinDSR=true|false (ALPHA - default=false)
+  WinOverlay=true|false (BETA - default=true)
+  WindowsHostNetwork=true|false (ALPHA - default=true)
+""";
+
+in
+{
+  options.services.kubelet = {
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      inherit description;
     };
 
     address = mkOption {
@@ -360,131 +495,10 @@ is checked every 20 seconds (also configurable with a flag).
     feature-gates = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = """
-A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
-  APIListChunking=true|false (BETA - default=true)
-  APIPriorityAndFairness=true|false (BETA - default=true)
-  APIResponseCompression=true|false (BETA - default=true)
-  APIServerIdentity=true|false (BETA - default=true)
-  APIServerTracing=true|false (BETA - default=true)
-  AdmissionWebhookMatchConditions=true|false (BETA - default=true)
-  AggregatedDiscoveryEndpoint=true|false (BETA - default=true)
-  AllAlpha=true|false (ALPHA - default=false)
-  AllBeta=true|false (BETA - default=false)
-  AnyVolumeDataSource=true|false (BETA - default=true)
-  AppArmor=true|false (BETA - default=true)
-  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
-  CPUManagerPolicyOptions=true|false (BETA - default=true)
-  CRDValidationRatcheting=true|false (ALPHA - default=false)
-  CSIMigrationPortworx=true|false (BETA - default=false)
-  CSINodeExpandSecret=true|false (BETA - default=true)
-  CSIVolumeHealth=true|false (ALPHA - default=false)
-  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
-  CloudDualStackNodeIPs=true|false (ALPHA - default=false)
-  ClusterTrustBundle=true|false (ALPHA - default=false)
-  ComponentSLIs=true|false (BETA - default=true)
-  ConsistentListFromCache=true|false (ALPHA - default=false)
-  ContainerCheckpoint=true|false (ALPHA - default=false)
-  ContextualLogging=true|false (ALPHA - default=false)
-  CronJobsScheduledAnnotation=true|false (BETA - default=true)
-  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
-  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
-  CustomResourceValidationExpressions=true|false (BETA - default=true)
-  DevicePluginCDIDevices=true|false (ALPHA - default=false)
-  DisableCloudProviders=true|false (ALPHA - default=false)
-  DisableKubeletCloudCredentialProviders=true|false (ALPHA - default=false)
-  DynamicResourceAllocation=true|false (ALPHA - default=false)
-  ElasticIndexedJob=true|false (BETA - default=true)
-  EventedPLEG=true|false (ALPHA - default=false)
-  GracefulNodeShutdown=true|false (BETA - default=true)
-  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
-  HPAContainerMetrics=true|false (BETA - default=true)
-  HPAScaleToZero=true|false (ALPHA - default=false)
-  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
-  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
-  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
-  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
-  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
-  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
-  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
-  JobBackoffLimitPerIndex=true|false (ALPHA - default=false)
-  JobPodFailurePolicy=true|false (BETA - default=true)
-  JobPodReplacementPolicy=true|false (ALPHA - default=false)
-  JobReadyPods=true|false (BETA - default=true)
-  KMSv2=true|false (BETA - default=true)
-  KMSv2KDF=true|false (BETA - default=false)
-  KubeProxyDrainingTerminatingNodes=true|false (ALPHA - default=false)
-  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
-  KubeletInUserNamespace=true|false (ALPHA - default=false)
-  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
-  KubeletPodResourcesGet=true|false (ALPHA - default=false)
-  KubeletTracing=true|false (BETA - default=true)
-  LegacyServiceAccountTokenCleanUp=true|false (ALPHA - default=false)
-  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
-  LogarithmicScaleDown=true|false (BETA - default=true)
-  LoggingAlphaOptions=true|false (ALPHA - default=false)
-  LoggingBetaOptions=true|false (BETA - default=true)
-  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
-  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
-  MemoryManager=true|false (BETA - default=true)
-  MemoryQoS=true|false (ALPHA - default=false)
-  MinDomainsInPodTopologySpread=true|false (BETA - default=true)
-  MultiCIDRRangeAllocator=true|false (ALPHA - default=false)
-  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
-  NewVolumeManagerReconstruction=true|false (BETA - default=true)
-  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
-  NodeLogQuery=true|false (ALPHA - default=false)
-  NodeSwap=true|false (BETA - default=false)
-  OpenAPIEnums=true|false (BETA - default=true)
-  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
-  PersistentVolumeLastPhaseTransitionTime=true|false (ALPHA - default=false)
-  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
-  PodDeletionCost=true|false (BETA - default=true)
-  PodDisruptionConditions=true|false (BETA - default=true)
-  PodHostIPs=true|false (ALPHA - default=false)
-  PodIndexLabel=true|false (BETA - default=true)
-  PodReadyToStartContainersCondition=true|false (ALPHA - default=false)
-  PodSchedulingReadiness=true|false (BETA - default=true)
-  ProcMountType=true|false (ALPHA - default=false)
-  QOSReserved=true|false (ALPHA - default=false)
-  ReadWriteOncePod=true|false (BETA - default=true)
-  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
-  RemainingItemCount=true|false (BETA - default=true)
-  RotateKubeletServerCertificate=true|false (BETA - default=true)
-  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
-  SchedulerQueueingHints=true|false (BETA - default=false)
-  SecurityContextDeny=true|false (ALPHA - default=false)
-  SeparateCacheWatchRPC=true|false (BETA - default=true)
-  ServiceNodePortStaticSubrange=true|false (BETA - default=true)
-  SidecarContainers=true|false (ALPHA - default=false)
-  SizeMemoryBackedVolumes=true|false (BETA - default=true)
-  SkipReadOnlyValidationGCE=true|false (ALPHA - default=false)
-  StableLoadBalancerNodeSet=true|false (BETA - default=true)
-  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
-  StatefulSetStartOrdinal=true|false (BETA - default=true)
-  StorageVersionAPI=true|false (ALPHA - default=false)
-  StorageVersionHash=true|false (BETA - default=true)
-  TopologyAwareHints=true|false (BETA - default=true)
-  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
-  TopologyManagerPolicyOptions=true|false (BETA - default=true)
-  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=false)
-  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
-  UserNamespacesSupport=true|false (ALPHA - default=false)
-  ValidatingAdmissionPolicy=true|false (BETA - default=false)
-  VolumeCapacityPriority=true|false (ALPHA - default=false)
-  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
-  WatchList=true|false (ALPHA - default=false)
-  WinDSR=true|false (ALPHA - default=false)
-  WinOverlay=true|false (BETA - default=true)
-  WindowsHostNetwork=true|false (ALPHA - default=true)
-""";
+      description = featureGatesDescription;
     };
 
-      file-check-frequency = mkOption {
+    file-check-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "Duration between checking config files for new data (default 20s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
@@ -1051,33 +1065,26 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 
   config = mkIf cfg.enable {
     systemd.services.kubelet = {
-      description = "" "
-The kubelet is the primary 'node agent' that runs on each
-node. It can register the node with the apiserver using one of: the hostname; a flag to
-override the hostname; or specific logic for a cloud provider.
-
-The kubelet works in terms of a PodSpec. A PodSpec is a YAML or JSON object
-that describes a pod. The kubelet takes a set of PodSpecs that are provided through
-various mechanisms (primarily through the apiserver) and ensures that the containers
-described in those PodSpecs are running and healthy. The kubelet doesn't manage
-containers which were not created by Kubernetes.
-
-Other than from an PodSpec from the apiserver, there are two ways that a container
-manifest can be provided to the Kubelet.
-
-File: Path passed as a flag on the command line. Files under this path will be monitored
-periodically for updates. The monitoring period is 20s by default and is configurable
-via a flag.
-
-HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint
-is checked every 20 seconds (also configurable with a flag).
-" "";
+      inherit description;
       wantedBy = [ "kubernetes.target" ];
-      after = [ "network.service" ];
-      path = with pkgs; [ iptables conntrack-tools ];
+      after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
+      path = with pkgs; [
+        gitMinimal
+        openssh
+        util-linux
+        iproute
+        ethtool
+        thin-provisioning-tools
+        iptables
+        socat
+      ] ++ lib.optional config.boot.zfs.enabled config.boot.zfs.package;
 
       serviceConfig = {
         Slice = "kubernetes.slice";
+        CPUAccounting = true;
+        MemoryAccounting = true;
+        Restart = "on-failure";
+        RestartSec = "1000ms";
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kubelet \
               ${optionalString (cfg.address != null) "--address ${toString cfg.address}"} \
