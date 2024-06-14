@@ -112,7 +112,7 @@ is checked every 20 seconds (also configurable with a flag).
     };
 
     cgroup-driver = mkOption {
-      type = types.nullOr (types.enum [ "cgroupfs" "systemd" ];
+      type = types.nullOr (types.enum [ "cgroupfs" "systemd" ]);
       default = null;
       description = "Driver that the kubelet uses to manipulate cgroups on the host.  Possible values: 'cgroupfs', 'systemd' (default 'cgroupfs') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
     };
