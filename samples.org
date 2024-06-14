@@ -1,0 +1,1066 @@
+#+title: Samples
+
+
+* kube-apiserver
+
+#+begin_src nix :tangle kube-apiserver-sample.nix
+{ config, pkgs, ... }:
+
+{
+  services.kube-apiserver = {
+    enable = true;
+    advertise-address = "adv-address";
+    cloud-provider-gce-l7lb-src-cidrs = [
+      "1.1.1.1/1"
+      "2.2.2.2/2"
+    ];
+    cors-allowed-origins = [
+      "3.3.3.3/3"
+      "4.4.4.4/4"
+      "5.5.5.5/5"
+    ];
+    default-not-ready-toleration-seconds = 1;
+    default-unreachable-toleration-seconds = 2;
+    enable-priority-and-fairness = true;
+    external-hostname = "[external-hostname]";
+    feature-gates = [ "feature1" "feature2" ];
+    goaway-chance = 1.0;
+    livez-grace-period = 3;
+    max-mutating-requests-inflight = 4;
+    max-requests-inflight = 5;
+    min-request-timeout = 6;
+    request-timeout = 7;
+    shutdown-delay-duration = 8;
+    shutdown-send-retry-after = true;
+    shutdown-watch-termination-grace-period = 9;
+    strict-transport-security-directives = [ "directive1" "directive2" "directive3" ];
+    delete-collection-workers = 10;
+    enable-garbage-collector = true;
+    encryption-provider-config = "[encryption-provider-config]";
+    encryption-provider-config-automatic-reload = true;
+    etcd-cafile = ./kube-apiserver.nix;
+    etcd-certfile = ./kube-apiserver.nix;
+    etcd-compaction-interval = "[etcd-compaction-interval]";
+    etcd-count-metric-poll-period = "[etcd-count-metric-poll-period]";
+    etcd-db-metric-poll-interval = "[etcd-db-metric-poll-interval]";
+    etcd-healthcheck-timeout = "[etcd-healthcheck-timeout]";
+    etcd-keyfile = ./kube-apiserver.nix;
+    etcd-prefix = "[etcd-prefix]";
+    etcd-readycheck-timeout = "[etcd-readycheck-timeout]";
+    etcd-servers = [ "server1" "server2" ];
+    etcd-servers-overrides = [ "server3" "server4" ];
+    lease-reuse-duration-seconds = 11;
+    storage-backend = "[storage-backend]";
+    storage-media-type = "application/json";
+    watch-cache = true; # !!
+    watch-cache-sizes = [ "size1" "size2" ];
+    bind-address = "[bind-address]";
+    cert-dir = ./.;
+    http2-max-streams-per-connection = 12;
+    permit-address-sharing = true; # !!
+    permit-port-sharing = true; # !!
+    secure-port = 13;
+    tls-cert-file = ./kube-apiserver.nix;
+    tls-cipher-suites = [ "suite1" "suite2" "suite3" ];
+    tls-min-version = "VersionTLS12";
+    tls-private-key-file = ./kube-apiserver.nix;
+    tls-sni-cert-key = [ "example1.crt,example1.key" "example2.crt,example2.key" ]; # !!
+    audit-log-batch-buffer-size = 14;
+    audit-log-batch-max-size = 15;
+    audit-log-batch-max-wait = "[audit-log-batch-max-wait]";
+    audit-log-batch-throttle-burst = 16;
+    audit-log-batch-throttle-enable = true; # !!
+    audit-log-batch-throttle-qps = 0.3;
+    audit-log-compress = true;
+    audit-log-format = "json";
+    audit-log-maxage = 17;
+    audit-log-maxbackup = 18;
+    audit-log-maxsize = 19;
+    audit-log-mode = "batch";
+    audit-log-path = ./.;
+    audit-log-truncate-enabled = true;
+    audit-log-truncate-max-batch-size = 20;
+    audit-log-truncate-max-event-size = 21;
+    audit-log-version = "[audit-log-version]";
+    audit-policy-file = ./kube-apiserver.nix;
+    audit-webhook-batch-buffer-size = 22;
+    audit-webhook-batch-max-size = 23;
+    audit-webhook-batch-max-wait = 24;
+    audit-webhook-batch-throttle-burst = 25;
+    audit-webhook-batch-throttle-enable = true; # !!
+    audit-webhook-batch-throttle-qps = 13.5;
+    audit-webhook-config-file = ./kube-apiserver.nix;
+    audit-webhook-initial-backoff = "[audit-webhook-initial-backoff]";
+    audit-webhook-mode = "blocking";
+    audit-webhook-truncate-enabled = true;
+    audit-webhook-truncate-max-batch-size = 26;
+    audit-webhook-truncate-max-event-size = 27;
+    audit-webhook-version = "[audit-webhook-version]";
+    contention-profiling = true;
+    debug-socket-path = "[debug-socket-path]";
+    profiling = true; # !!
+    anonymous-auth = true; # !!
+    api-audiences = [ "audience1" "audience2" ];
+    authentication-config = ./kube-apiserver.nix;
+    authentication-token-webhook-cache-ttl = "[authentication-token-webhook-cache-ttl]";
+    authentication-token-webhook-config-file = ./kube-apiserver.nix;
+    authentication-token-webhook-version = "[authentication-token-webhook-version]";
+    client-ca-file = ./kube-apiserver.nix;
+    enable-bootstrap-token-auth = true; # !!
+    oidc-ca-file = ./kube-apiserver.nix;
+    oidc-client-id = "[oidc-client-id]";
+    oidc-groups-claim = "[oidc-groups-claim]";
+    oidc-groups-prefix = "[oidc-groups-prefix]";
+    oidc-issuer-url = "[oidc-issuer-url]";
+    oidc-required-claim = [ "key1=value1" "key2=value2" ]; # OK
+    oidc-signing-algs = "RS256";
+    oidc-username-claim = "[oidc-username-claim]";
+    oidc-username-prefix = "[oidc-username-prefix]";
+    requestheader-allowed-names = [ "name1" "name2" ];
+    requestheader-client-ca-file = ./kube-apiserver.nix;
+    requestheader-extra-headers-prefix = [ "extraHeadersPrefix1" "extraHeadersPrefix2" "extraHeadersPrefix3" ];
+    requestheader-group-headers = [ "groupHeader1" "groupHeader2" ];
+    requestheader-username-headers = [ "usernameHeader1" "usernameHeader2" "usernameHeader3" "usernameHeader4" ];
+    service-account-extend-token-expiration = true; # !!
+    service-account-issuer = "[service-account-issuer]";
+    service-account-jwks-uri = "[service-account-jwks-uri]";
+    service-account-key-file = ./kube-apiserver.nix;
+    service-account-lookup = true; # !!
+    service-account-max-token-expiration = "[service-account-max-token-expiration]";
+    token-auth-file = ./kube-apiserver.nix;
+    authorization-config = ./kube-apiserver.nix;
+    authorization-mode = [ "AlwaysAllow" "AlwaysDeny" "ABAC" "Webhook" "RBAC" "Node" ];
+    authorization-policy-file = ./kube-apiserver.nix;
+    authorization-webhook-cache-authorized-ttl = "[authorization-webhook-cache-authorized-ttl]";
+    authorization-webhook-cache-unauthorized-ttl = "[authorization-webhook-cache-unauthorized-ttl]";
+    authorization-webhook-config-file = ./kube-apiserver.nix;
+    authorization-webhook-version = "[authorization-webhook-version]";
+    runtime-config = [ "api/all=true" "api/ga=true" "api/beta=true" "api/alpha=true" ];
+    egress-selector-config-file = ./kube-apiserver.nix;
+    admission-control = [
+        "AlwaysAdmit"
+        "AlwaysDeny"
+        "AlwaysPullImages"
+        "CertificateApproval"
+        "CertificateSigning"
+        "CertificateSubjectRestriction"
+        "ClusterTrustBundleAttest"
+        "DefaultIngressClass"
+        "DefaultStorageClass"
+        "DefaultTolerationSeconds"
+        "DenyServiceExternalIPs"
+        "EventRateLimit"
+        "ExtendedResourceToleration"
+        "ImagePolicyWebhook"
+        "LimitPodHardAntiAffinityTopology"
+        "LimitRanger"
+        "MutatingAdmissionWebhook"
+        "NamespaceAutoProvision"
+        "NamespaceExists"
+        "NamespaceLifecycle"
+        "NodeRestriction"
+        "OwnerReferencesPermissionEnforcement"
+        "PersistentVolumeClaimResize"
+        "PersistentVolumeLabel"
+        "PodNodeSelector"
+        "PodSecurity"
+        "PodTolerationRestriction"
+        "Priority"
+        "ResourceQuota"
+        "RuntimeClass"
+        "ServiceAccount"
+        "StorageObjectInUseProtection"
+        "TaintNodesByCondition"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+    ];
+    admission-control-config-file = ./kube-apiserver.nix;
+    disable-admission-plugins = [
+        "NamespaceLifecycle"
+        "LimitRanger"
+        "ServiceAccount"
+        "TaintNodesByCondition"
+        "PodSecurity"
+        "Priority"
+        "DefaultTolerationSeconds"
+        "DefaultStorageClass"
+        "StorageObjectInUseProtection"
+        "PersistentVolumeClaimResize"
+        "RuntimeClass"
+        "CertificateApproval"
+        "CertificateSigning"
+        "ClusterTrustBundleAttest"
+        "CertificateSubjectRestriction"
+        "DefaultIngressClass"
+        "MutatingAdmissionWebhook"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+        "ResourceQuota"
+    ];
+    enable-admission-plugins = [
+        "AlwaysAdmit"
+        "AlwaysDeny"
+        "AlwaysPullImages"
+        "CertificateApproval"
+        "CertificateSigning"
+        "CertificateSubjectRestriction"
+        "ClusterTrustBundleAttest"
+        "DefaultIngressClass"
+        "DefaultStorageClass"
+        "DefaultTolerationSeconds"
+        "DenyServiceExternalIPs"
+        "EventRateLimit"
+        "ExtendedResourceToleration"
+        "ImagePolicyWebhook"
+        "LimitPodHardAntiAffinityTopology"
+        "LimitRanger"
+        "MutatingAdmissionWebhook"
+        "NamespaceAutoProvision"
+        "NamespaceExists"
+        "NamespaceLifecycle"
+        "NodeRestriction"
+        "OwnerReferencesPermissionEnforcement"
+        "PersistentVolumeClaimResize"
+        "PersistentVolumeLabel"
+        "PodNodeSelector"
+        "PodSecurity"
+        "PodTolerationRestriction"
+        "Priority"
+        "ResourceQuota"
+        "RuntimeClass"
+        "ServiceAccount"
+        "StorageObjectInUseProtection"
+        "TaintNodesByCondition"
+        "ValidatingAdmissionPolicy"
+        "ValidatingAdmissionWebhook"
+    ];
+    allow-metric-labels = [
+      "metric1,label1='v1,v2,v3'" "metric1,label2='v1,v2,v3'" "metric2,label1='v1,v2,v3'"
+    ]; # ?
+    allow-metric-labels-manifest = ./kube-apiserver.nix;
+    disabled-metrics = [ "metric1" "metric2" ];
+    show-hidden-metrics-for-version = "[show-hidden-metrics-for-version]";
+    log-flush-frequency = "[log-flush-frequency]";
+    log-json-info-buffer-size = "[log-json-info-buffer-size]";
+    log-json-split-stream = true;
+    log-text-info-buffer-size = "[log-text-info-buffer-size]";
+    log-text-split-stream = true;
+    logging-format = "text";
+    v = 28;
+    vmodule = [ "pattern1=1" "pattern2=2" ];
+    tracing-config-file = ./kube-apiserver.nix;
+    aggregator-reject-forwarding-redirect = true;
+    allow-privileged = true; # !!
+    enable-aggregator-routing = true;
+    endpoint-reconciler-type = "master-count";
+    event-ttl = "[event-ttl]";
+    kubelet-certificate-authority = ./kube-apiserver.nix;
+    kubelet-client-certificate = ./kube-apiserver.nix;
+    kubelet-client-key = ./kube-apiserver.nix;
+    kubelet-preferred-address-types = [
+      "Hostname" "InternalDNS" "InternalIP" "ExternalDNS" "ExternalIP"
+    ];
+    kubelet-timeout = "[kubelet-timeout]";
+    kubernetes-service-node-port = 29;
+    max-connection-bytes-per-sec = 30;
+    peer-advertise-ip = "[peer-advertise-ip]";
+    peer-advertise-port = 31;
+    peer-ca-file = ./kube-apiserver.nix;
+    proxy-client-cert-file = ./kube-apiserver.nix;
+    proxy-client-key-file = ./kube-apiserver.nix;
+    service-account-signing-key-file = ./kube-apiserver.nix;
+    service-cluster-ip-range = "[service-cluster-ip-range]";
+    service-node-port-range = "[service-node-port-range]";
+  };
+}
+#+end_src
+
+* kube-scheduler
+
+#+begin_src nix :tangle kube-scheduler-sample.nix
+{ config, pkgs, ... }:
+
+{
+  services.kube-scheduler = {
+    enable = true;
+    configFile = ./kube-scheduler.nix;
+    master = "[master]";
+    write-config-to = "[write-config-to]"; # ?
+    bind-address = "[bind-address]";
+    cert-dir = ./.;
+    http2-max-streams-per-connection = 1;
+    permit-address-sharing = true; # !!
+    permit-port-sharing = true; # !!
+    secure-port = 2;
+    tls-cert-file = ./kube-scheduler.nix;
+    tls-cipher-suites = [ "cipher1" "cipher2" ];
+    tls-min-version = "VersionTLS13";
+    tls-private-key-file = ./kube-scheduler.nix;
+    tls-sni-cert-key = [ "example.crt,example.key" "foo.crt,foo.key:*.foo.com,foo.com" ]; # !!
+    authentication-kubeconfig = ./kube-scheduler.nix;
+    authentication-skip-lookup = true; # !!
+    authentication-token-webhook-cache-ttl = "[authentication-token-webhook-cache-ttl]";
+    authentication-tolerate-lookup-failure = true; # !!
+    client-ca-file = ./kube-scheduler.nix;
+    requestheader-allowed-names = [ "name1" "name2" ];
+    requestheader-client-ca-file = ./kube-scheduler.nix;
+    requestheader-extra-headers-prefix = [ "extraHeadersPrefix1" "extraHeadersPrefix2" "extraHeadersPrefix3" ];
+    requestheader-group-headers = [ "groupHeader1" "groupHeader2" ];
+    requestheader-username-headers = [ "usernameHeader1" "usernameHeader2" "usernameHeader3" "usernameHeader4" ];
+    authorization-always-allow-paths = [ "/healthz" "/readyz" "/livez" ];
+    authorization-kubeconfig = ./kube-scheduler.nix;
+    authorization-webhook-cache-authorized-ttl = "[authorization-webhook-cache-authorized-ttl]";
+    authorization-webhook-cache-unauthorized-ttl = "[authorization-webhook-cache-unauthorized-ttl]";
+    contention-profiling = true; # !!
+    kube-api-burst = 3;
+    kube-api-content-type = "[kube-api-content-type]";
+    kube-api-qps = 1.5;
+    kubeconfig = ./kube-scheduler.nix;
+    pod-max-in-unschedulable-pods-duration = "[pod-max-in-unschedulable-pods-duration]";
+    profiling = true; # !!
+    leader-elect = true; ## !!
+    leader-elect-lease-duration = "[leader-elect-lease-duration]";
+    leader-elect-renew-deadline = "[leader-elect-renew-deadline]";
+    leader-elect-resource-lock = "endpointsleases";
+    leader-elect-resource-name = "[leader-elect-resource-name]";
+    leader-elect-resource-namespace = "[leader-elect-resource-namespace]";
+    leader-elect-retry-period = "[leader-elect-retry-period]";
+    feature-gates = [
+      "APIListChunking=true"
+      "APIPriorityAndFairness=true"
+      "APIResponseCompression=true"
+      "APIServerIdentity=true"
+      "APIServerTracing=true"
+      "AdmissionWebhookMatchConditions=true"
+      "AggregatedDiscoveryEndpoint=true"
+      "AllAlpha=true"
+      "AllBeta=true"
+      "AnyVolumeDataSource=true"
+      "AppArmor=true"
+      "CPUManagerPolicyAlphaOptions=true"
+      "CPUManagerPolicyBetaOptions=true"
+      "CPUManagerPolicyOptions=true"
+      "CRDValidationRatcheting=true"
+      "CSIMigrationPortworx=true"
+      "CSINodeExpandSecret=true"
+      "CSIVolumeHealth=true"
+      "CloudControllerManagerWebhook=true"
+      "CloudDualStackNodeIPs=true"
+      "ClusterTrustBundle=true"
+      "ComponentSLIs=true"
+      "ConsistentListFromCache=true"
+      "ContainerCheckpoint=true"
+      "ContextualLogging=true"
+      "CronJobsScheduledAnnotation=true"
+      "CrossNamespaceVolumeDataSource=true"
+      "CustomCPUCFSQuotaPeriod=true"
+      "CustomResourceValidationExpressions=true"
+      "DevicePluginCDIDevices=true"
+      "DisableCloudProviders=true"
+      "DisableKubeletCloudCredentialProviders=true"
+      "DynamicResourceAllocation=true"
+      "ElasticIndexedJob=true"
+      "EventedPLEG=true"
+      "GracefulNodeShutdown=true"
+      "GracefulNodeShutdownBasedOnPodPriority=true"
+      "HPAContainerMetrics=true"
+      "HPAScaleToZero=true"
+      "HonorPVReclaimPolicy=true"
+      "InPlacePodVerticalScaling=true"
+      "InTreePluginAWSUnregister=true"
+      "InTreePluginAzureDiskUnregister=true"
+      "InTreePluginAzureFileUnregister=true"
+      "InTreePluginGCEUnregister=true"
+      "InTreePluginOpenStackUnregister=true"
+      "InTreePluginPortworxUnregister=true"
+      "InTreePluginvSphereUnregister=true"
+      "JobBackoffLimitPerIndex=true"
+      "JobPodFailurePolicy=true"
+      "JobPodReplacementPolicy=true"
+      "JobReadyPods=true"
+      "KMSv2=true"
+      "KMSv2KDF=true"
+      "KubeProxyDrainingTerminatingNodes=true"
+      "KubeletCgroupDriverFromCRI=true"
+      "KubeletInUserNamespace=true"
+      "KubeletPodResourcesDynamicResources=true"
+      "KubeletPodResourcesGet=true"
+      "KubeletTracing=true"
+      "LegacyServiceAccountTokenCleanUp=true"
+      "LocalStorageCapacityIsolationFSQuotaMonitoring=true"
+      "LogarithmicScaleDown=true"
+      "LoggingAlphaOptions=true"
+      "LoggingBetaOptions=true"
+      "MatchLabelKeysInPodTopologySpread=true"
+      "MaxUnavailableStatefulSet=true"
+      "MemoryManager=true"
+      "MemoryQoS=true"
+      "MinDomainsInPodTopologySpread=true"
+      "MultiCIDRRangeAllocator=true"
+      "MultiCIDRServiceAllocator=true"
+      "NewVolumeManagerReconstruction=true"
+      "NodeInclusionPolicyInPodTopologySpread=true"
+      "NodeLogQuery=true"
+      "NodeSwap=true"
+      "OpenAPIEnums=true"
+      "PDBUnhealthyPodEvictionPolicy=true"
+      "PersistentVolumeLastPhaseTransitionTime=true"
+      "PodAndContainerStatsFromCRI=true"
+      "PodDeletionCost=true"
+      "PodDisruptionConditions=true"
+      "PodHostIPs=true"
+      "PodIndexLabel=true"
+      "PodReadyToStartContainersCondition=true"
+      "PodSchedulingReadiness=true"
+      "ProcMountType=true"
+      "QOSReserved=true"
+      "ReadWriteOncePod=true"
+      "RecoverVolumeExpansionFailure=true"
+      "RemainingItemCount=true"
+      "RotateKubeletServerCertificate=true"
+      "SELinuxMountReadWriteOncePod=true"
+      "SchedulerQueueingHints=true"
+      "SecurityContextDeny=true"
+      "SeparateCacheWatchRPC=true"
+      "ServiceNodePortStaticSubrange=true"
+      "SidecarContainers=true"
+      "SizeMemoryBackedVolumes=true"
+      "SkipReadOnlyValidationGCE=true"
+      "StableLoadBalancerNodeSet=true"
+      "StatefulSetAutoDeletePVC=true"
+      "StatefulSetStartOrdinal=true"
+      "StorageVersionAPI=true"
+      "StorageVersionHash=true"
+      "TopologyAwareHints=true"
+      "TopologyManagerPolicyAlphaOptions=true"
+      "TopologyManagerPolicyBetaOptions=true"
+      "TopologyManagerPolicyOptions=true"
+      "UnauthenticatedHTTP2DOSMitigation=true"
+      "UnknownVersionInteroperabilityProxy=true"
+      "UserNamespacesSupport=true"
+      "ValidatingAdmissionPolicy=true"
+      "VolumeCapacityPriority=true"
+      "WatchFromStorageWithoutResourceVersion=true"
+      "WatchList=true"
+      "WinDSR=true"
+      "WinOverlay=true"
+      "WindowsHostNetwork=true"
+    ];
+    allow-metric-labels = [ "metric1,label1='v1,v2,v3'" "metric1,label2='v1,v2,v3'" "metric2,label1='v1,v2,v3'" ]; # ?
+    disabled-metrics = [ "metric1" "metric2" ];
+    show-hidden-metrics-for-version = "[show-hidden-metrics-for-version]";
+    log-flush-frequency = "[log-flush-frequency]";
+    log-json-info-buffer-size = "[log-json-info-buffer-size]";
+    log-json-split-stream = true;
+    logging-format = "json";
+    v = 4;
+    vmodule = [ "pattern1=1" ];
+  };
+}
+#+end_src
+
+* kube-controller-manager
+
+#+begin_src nix :tangle kube-controller-manager-sample.nix
+{ config, pkgs, ... }:
+
+{
+  services.kube-controller-manager = {
+    enable = true;
+    contention-profiling = true;
+    profiling = true;
+    enable-leader-migration = true;
+    leader-migration-config = ./kube-controller-manager.nix;
+    allocate-node-cidrs = true;
+    cidr-allocator-type = "[cidr-allocator-type]";
+    cloud-config = ./kube-controller-manager.nix;
+    cloud-provider = "[cloud-provider]";
+    cluster-cidr = "[cluster-cidr]";
+    cluster-name = "[cluster-name]";
+    configure-cloud-routes = true;
+    controller-start-interval = "[controller-start-interval]";
+    controllers = [ "foo" "-bar" "*" ];
+    external-cloud-volume-plugin = "[external-cloud-volume-plugin]";
+    feature-gates = [ "feature1" "feature2" ];
+    kube-api-burst = 1;
+    kube-api-content-type = "[kube-api-content-type]";
+    kube-api-qps = 0.1;
+    leader-elect = true;
+    leader-elect-lease-duration = "[leader-elect-lease-duration]";
+    leader-elect-renew-deadline = "[leader-elect-renew-deadline]";
+    leader-elect-resource-lock = "configmapsleases";
+    leader-elect-resource-name = "[leader-elect-resource-name]";
+    leader-elect-resource-namespace = "[leader-elect-resource-namespace]";
+    leader-elect-retry-period = "[leader-elect-retry-period]";
+    min-resync-period = "[min-resync-period]";
+    node-monitor-period = "[node-monitor-period]";
+    route-reconciliation-period = "[route-reconciliation-period]";
+    use-service-account-credentials = true;
+    concurrent-service-syncs = 2;
+    bind-address = "[bind-address]";
+    cert-dir = ./.;
+    http2-max-streams-per-connection = 3;
+    permit-address-sharing = true;
+    permit-port-sharing = true;
+    secure-port = 4;
+    tls-cert-file = ./kube-controller-manager.nix;
+    tls-cipher-suites = [ "cipher1" "cipher2" "cipher3" ];
+    tls-min-version = "VersionTLS11";
+    tls-private-key-file = ./kube-controller-manager.nix;
+    tls-sni-cert-key = [ "example.crt,example.key" "foo.crt,foo.key:*.foo.com,foo.com" ];
+    authentication-kubeconfig = ./kube-controller-manager.nix;
+    authentication-skip-lookup = true;
+    authentication-token-webhook-cache-ttl = "[authentication-token-webhook-cache-ttl]";
+    authentication-tolerate-lookup-failure = true;
+    client-ca-file = ./kube-controller-manager.nix;
+    requestheader-allowed-names = [ "name1" "name2" ];
+    requestheader-client-ca-file = ./kube-controller-manager.nix;
+    requestheader-extra-headers-prefix = [ "prefix1" "prefix2" ];
+    requestheader-group-headers = [ "groupHeader1" "groupHeader2" ];
+    requestheader-username-headers = [ "usernameHeader1" "usernameHeader2" "usernameHeader3" "usernameHeader4" ];
+    authorization-always-allow-paths = [ "/healthz" "/readyz" "/livez" ];
+    authorization-kubeconfig = ./kube-controller-manager.nix;
+    authorization-webhook-cache-authorized-ttl = "[authorization-webhook-cache-authorized-ttl]";
+    authorization-webhook-cache-unauthorized-ttl = "[authorization-webhook-cache-unauthorized-ttl]";
+    attach-detach-reconcile-sync-period = "[attach-detach-reconcile-sync-period]";
+    disable-attach-detach-reconcile-sync = true;
+    cluster-signing-cert-file = ./kube-controller-manager.nix;
+    cluster-signing-duration = "[cluster-signing-duration]";
+    cluster-signing-key-file = ./kube-controller-manager.nix;
+    cluster-signing-kube-apiserver-client-cert-file = ./kube-controller-manager.nix;
+    cluster-signing-kube-apiserver-client-key-file = ./kube-controller-manager.nix;
+    cluster-signing-kubelet-client-cert-file = ./kube-controller-manager.nix;
+    cluster-signing-kubelet-client-key-file = ./kube-controller-manager.nix;
+    cluster-signing-kubelet-serving-cert-file = ./kube-controller-manager.nix;
+    cluster-signing-kubelet-serving-key-file = ./kube-controller-manager.nix;
+    cluster-signing-legacy-unknown-cert-file = ./kube-controller-manager.nix;
+    cluster-signing-legacy-unknown-key-file = ./kube-controller-manager.nix;
+    concurrent-deployment-syncs = 5;
+    concurrent-statefulset-syncs = 6;
+    concurrent-endpoint-syncs = 7;
+    endpoint-updates-batch-period = "[endpoint-updates-batch-period]";
+    concurrent-service-endpoint-syncs = 8;
+    endpointslice-updates-batch-period = "[endpointslice-updates-batch-period]";
+    max-endpoints-per-slice = 9;
+    mirroring-concurrent-service-endpoint-syncs = 10;
+    mirroring-endpointslice-updates-batch-period = "[mirroring-endpointslice-updates-batch-period]";
+    mirroring-max-endpoints-per-subset = 11;
+    concurrent-ephemeralvolume-syncs = 12;
+    concurrent-gc-syncs = 13;
+    enable-garbage-collector = true;
+    concurrent-horizontal-pod-autoscaler-syncs = 14;
+    horizontal-pod-autoscaler-cpu-initialization-period = "[horizontal-pod-autoscaler-cpu-initialization-period]";
+    horizontal-pod-autoscaler-downscale-stabilization = "[horizontal-pod-autoscaler-downscale-stabilization]";
+    horizontal-pod-autoscaler-initial-readiness-delay = "[horizontal-pod-autoscaler-initial-readiness-delay]";
+    horizontal-pod-autoscaler-sync-period = "[horizontal-pod-autoscaler-sync-period]";
+    horizontal-pod-autoscaler-tolerance = 0.2;
+    concurrent-job-syncs = 15;
+    concurrent-cron-job-syncs = 16;
+    legacy-service-account-token-clean-up-period = "[legacy-service-account-token-clean-up-period]";
+    concurrent-namespace-syncs = 17;
+    namespace-sync-period = "[namespace-sync-period]";
+    node-cidr-mask-size = 18;
+    node-cidr-mask-size-ipv4 = 19;
+    node-cidr-mask-size-ipv6 = 20;
+    service-cluster-ip-range = "[service-cluster-ip-range]";
+    large-cluster-size-threshold = "[large-cluster-size-threshold]";
+    node-eviction-rate = 0.3;
+    node-monitor-grace-period = "[node-monitor-grace-period]";
+    node-startup-grace-period = "[node-startup-grace-period]";
+    secondary-node-eviction-rate = 0.4;
+    unhealthy-zone-threshold = 0.5;
+    enable-dynamic-provisioning = true;
+    enable-hostpath-provisioner = true;
+    flex-volume-plugin-dir = ./.;
+    pv-recycler-increment-timeout-nfs = 21;
+    pv-recycler-minimum-timeout-hostpath = 22;
+    pv-recycler-minimum-timeout-nfs = 23;
+    pv-recycler-pod-template-filepath-hostpath = ./kube-controller-manager.nix;
+    pv-recycler-pod-template-filepath-nfs = ./kube-controller-manager.nix;
+    pv-recycler-timeout-increment-hostpath = 24;
+    pvclaimbinder-sync-period = "[pvclaimbinder-sync-period]";
+    terminated-pod-gc-threshold = 25;
+    concurrent-replicaset-syncs = 26;
+    concurrent-rc-syncs = 27;
+    concurrent-resource-quota-syncs = 28;
+    resource-quota-sync-period = "[resource-quota-sync-period]";
+    concurrent-serviceaccount-token-syncs = 29;
+    root-ca-file = ./kube-controller-manager.nix;
+    service-account-private-key-file = ./kube-controller-manager.nix;
+    concurrent-ttl-after-finished-syncs = 30;
+    concurrent-validating-admission-policy-status-syncs = 31;
+    allow-metric-labels = [ "metric1,label1='v1,v2,v3'" "metric1,label2='v1,v2,v3'" "metric2,label1='v1,v2,v3'" ];
+    disabled-metrics = [ "metric1" "metric2" ];
+    show-hidden-metrics-for-version = "[show-hidden-metrics-for-version]";
+    log-flush-frequency = "[log-flush-frequency]";
+    log-json-info-buffer-size = "[log-json-info-buffer-size]";
+    log-json-split-stream = true;
+    logging-format = "text";
+    v = 32;
+    vmodule = [ "pattern=1" ];
+    kubeconfig = ./kube-controller-manager.nix;
+    master = "[master]";
+  };
+}
+#+end_src
+
+* kube-proxy
+
+#+begin_src nix :tangle kube-proxy-sample.nix
+{ config, pkgs, ... }:
+
+{
+  services.kube-proxy = {
+    enable = true;
+    bind-address = "[bind-address]";
+    bind-address-hard-fail = true;
+    boot-id-file = [ /proc/sys/kernel/random/boot_id ];
+    cleanup = true;
+    cluster-cidr = "[cluster-cidr]";
+    configFile = ./kube-proxy.nix;
+    config-sync-period = "[config-sync-period]";
+    conntrack-max-per-core = 1;
+    conntrack-min = 2;
+    conntrack-tcp-timeout-close-wait = "[conntrack-tcp-timeout-close-wait]";
+    conntrack-tcp-timeout-established = "[conntrack-tcp-timeout-established]";
+    detect-local-mode = "[detect-local-mode]";
+    feature-gates = [
+      "APIListChunking=true"
+      "APIPriorityAndFairness=true"
+      "APIResponseCompression=true"
+      "APIServerIdentity=true"
+      "APIServerTracing=true"
+      "AdmissionWebhookMatchConditions=true"
+      "AggregatedDiscoveryEndpoint=true"
+      "AllAlpha=true"
+      "AllBeta=true"
+      "AnyVolumeDataSource=true"
+      "AppArmor=true"
+      "CPUManagerPolicyAlphaOptions=true"
+      "CPUManagerPolicyBetaOptions=true"
+      "CPUManagerPolicyOptions=true"
+      "CRDValidationRatcheting=true"
+      "CSIMigrationPortworx=true"
+      "CSINodeExpandSecret=true"
+      "CSIVolumeHealth=true"
+      "CloudControllerManagerWebhook=true"
+      "CloudDualStackNodeIPs=true"
+      "ClusterTrustBundle=true"
+      "ComponentSLIs=true"
+      "ConsistentListFromCache=true"
+      "ContainerCheckpoint=true"
+      "ContextualLogging=true"
+      "CronJobsScheduledAnnotation=true"
+      "CrossNamespaceVolumeDataSource=true"
+      "CustomCPUCFSQuotaPeriod=true"
+      "CustomResourceValidationExpressions=true"
+      "DevicePluginCDIDevices=true"
+      "DisableCloudProviders=true"
+      "DisableKubeletCloudCredentialProviders=true"
+      "DynamicResourceAllocation=true"
+      "ElasticIndexedJob=true"
+      "EventedPLEG=true"
+      "GracefulNodeShutdown=true"
+      "GracefulNodeShutdownBasedOnPodPriority=true"
+      "HPAContainerMetrics=true"
+      "HPAScaleToZero=true"
+      "HonorPVReclaimPolicy=true"
+      "InPlacePodVerticalScaling=true"
+      "InTreePluginAWSUnregister=true"
+      "InTreePluginAzureDiskUnregister=true"
+      "InTreePluginAzureFileUnregister=true"
+      "InTreePluginGCEUnregister=true"
+      "InTreePluginOpenStackUnregister=true"
+      "InTreePluginPortworxUnregister=true"
+      "InTreePluginvSphereUnregister=true"
+      "JobBackoffLimitPerIndex=true"
+      "JobPodFailurePolicy=true"
+      "JobPodReplacementPolicy=true"
+      "JobReadyPods=true"
+      "KMSv2=true"
+      "KMSv2KDF=true"
+      "KubeProxyDrainingTerminatingNodes=true"
+      "KubeletCgroupDriverFromCRI=true"
+      "KubeletInUserNamespace=true"
+      "KubeletPodResourcesDynamicResources=true"
+      "KubeletPodResourcesGet=true"
+      "KubeletTracing=true"
+      "LegacyServiceAccountTokenCleanUp=true"
+      "LocalStorageCapacityIsolationFSQuotaMonitoring=true"
+      "LogarithmicScaleDown=true"
+      "LoggingAlphaOptions=true"
+      "LoggingBetaOptions=true"
+      "MatchLabelKeysInPodTopologySpread=true"
+      "MaxUnavailableStatefulSet=true"
+      "MemoryManager=true"
+      "MemoryQoS=true"
+      "MinDomainsInPodTopologySpread=true"
+      "MultiCIDRRangeAllocator=true"
+      "MultiCIDRServiceAllocator=true"
+      "NewVolumeManagerReconstruction=true"
+      "NodeInclusionPolicyInPodTopologySpread=true"
+      "NodeLogQuery=true"
+      "NodeSwap=true"
+      "OpenAPIEnums=true"
+      "PDBUnhealthyPodEvictionPolicy=true"
+      "PersistentVolumeLastPhaseTransitionTime=true"
+      "PodAndContainerStatsFromCRI=true"
+      "PodDeletionCost=true"
+      "PodDisruptionConditions=true"
+      "PodHostIPs=true"
+      "PodIndexLabel=true"
+      "PodReadyToStartContainersCondition=true"
+      "PodSchedulingReadiness=true"
+      "ProcMountType=true"
+      "QOSReserved=true"
+      "ReadWriteOncePod=true"
+      "RecoverVolumeExpansionFailure=true"
+      "RemainingItemCount=true"
+      "RotateKubeletServerCertificate=true"
+      "SELinuxMountReadWriteOncePod=true"
+      "SchedulerQueueingHints=true"
+      "SecurityContextDeny=true"
+      "SeparateCacheWatchRPC=true"
+      "ServiceNodePortStaticSubrange=true"
+      "SidecarContainers=true"
+      "SizeMemoryBackedVolumes=true"
+      "SkipReadOnlyValidationGCE=true"
+      "StableLoadBalancerNodeSet=true"
+      "StatefulSetAutoDeletePVC=true"
+      "StatefulSetStartOrdinal=true"
+      "StorageVersionAPI=true"
+      "StorageVersionHash=true"
+      "TopologyAwareHints=true"
+      "TopologyManagerPolicyAlphaOptions=true"
+      "TopologyManagerPolicyBetaOptions=true"
+      "TopologyManagerPolicyOptions=true"
+      "UnauthenticatedHTTP2DOSMitigation=true"
+      "UnknownVersionInteroperabilityProxy=true"
+      "UserNamespacesSupport=true"
+      "ValidatingAdmissionPolicy=true"
+      "VolumeCapacityPriority=true"
+      "WatchFromStorageWithoutResourceVersion=true"
+      "WatchList=true"
+      "WinDSR=true"
+      "WinOverlay=true"
+      "WindowsHostNetwork=true"
+    ];
+    healthz-bind-address = "[healthz-bind-address]";
+    hostname-override = "[hostname-override]";
+    iptables-localhost-nodeports = true;
+    iptables-masquerade-bit = 3;
+    iptables-min-sync-period = "[iptables-min-sync-period]";
+    iptables-sync-period = "[iptables-sync-period]";
+    ipvs-exclude-cidrs = [ "cidr1" "cidr2" ];
+    ipvs-min-sync-period = "[ipvs-min-sync-period]";
+    ipvs-scheduler = "[ipvs-scheduler]";
+    ipvs-strict-arp = true;
+    ipvs-sync-period = "[ipvs-sync-period]";
+    ipvs-tcp-timeout = "[ipvs-tcp-timeout]";
+    ipvs-tcpfin-timeout = "[ipvs-tcpfin-timeout]";
+    ipvs-udp-timeout = "[ipvs-udp-timeout]";
+    kube-api-burst = 4;
+    kube-api-content-type = "[kube-api-content-type]";
+    kube-api-qps = 0.1;
+    kubeconfig = ./kube-proxy.nix;
+    log-flush-frequency = "[log-flush-frequency]";
+    log-json-info-buffer-size = "[log-json-info-buffer-size]";
+    log-json-split-stream = true;
+    logging-format = "json";
+    machine-id-file = [ ./kube-proxy.nix ./kube-proxy.nix ];
+    masquerade-all = true;
+    master = "[master]";
+    metrics-bind-address = "[metrics-bind-address]";
+    nodeport-addresses = [ "1.2.3.0/24" "1.2.3.4/32" ];
+    oom-score-adj = 5;
+    pod-bridge-interface = "[pod-bridge-interface]";
+    pod-interface-name-prefix = "[pod-interface-name-prefix]";
+    profiling = true;
+    proxy-mode = "iptables";
+    proxy-port-range = "[proxy-port-range]";
+    show-hidden-metrics-for-version = "[show-hidden-metrics-for-version]";
+    v = 6;
+    vmodule = [ "pattern=1" ];
+  };
+}
+#+end_src
+
+* kubelet
+
+#+begin_src nix :tangle kubelet-sample.nix
+{ config, pkgs, ... }:
+
+{
+  services.kubelet = {
+    enable = true;
+    address = "[address]";
+    allowed-unsafe-sysctls = [ "sys.*" ];
+    anonymous-auth = true;
+    application-metrics-count-limit = 1;
+    authentication-token-webhook = true;
+    authentication-token-webhook-cache-ttl = "[authentication-token-webhook-cache-ttl]";
+    authorization-mode = "[authorization-mode]";
+    authorization-webhook-cache-authorized-ttl = "[authorization-webhook-cache-authorized-ttl]";
+    authorization-webhook-cache-unauthorized-ttl = "[authorization-webhook-cache-unauthorized-ttl]";
+    boot-id-file = [ "/proc/sys/kernel/random/boot_id" ];
+    bootstrap-kubeconfig = ./kubelet.nix;
+    cert-dir = ./.;
+    cgroup-driver = "cgroupfs";
+    cgroup-root = "[cgroup-root]";
+    cgroups-per-qos = false;
+    client-ca-file = ./kubelet.nix;
+    cloud-config = ./kubelet.nix;
+    cloud-provider = "[cloud-provider]";
+    cluster-dns = [ "[cluster-dns-1]" "[cluster-dns-2]" ];
+    cluster-domain = "[cluster-domain]";
+    configFile = ./kubelet.nix;
+    config-dir = ./.;
+    container-hints = ./kubelet.nix;
+    container-log-max-files = 2;
+    container-log-max-size = "[container-log-max-size]";
+    container-runtime-endpoint = "[container-runtime-endpoint]";
+    containerd = ./kubelet.nix;
+    containerd-namespace = "[containerd-namespace]";
+    contention-profiling = true;
+    cpu-cfs-quota = true;
+    cpu-cfs-quota-period = "[cpu-cfs-quota-period]";
+    cpu-manager-policy = "[cpu-manager-policy]";
+    cpu-manager-policy-options = [ "option1" "option2" ];
+    cpu-manager-reconcile-period = "[cpu-manager-reconcile-period]";
+    enable-controller-attach-detach = true;
+    enable-debugging-handlers = true;
+    enable-load-reader = "[enable-load-reader]";
+    enable-server = "[enable-server]";
+    enforce-node-allocatable = [ "none" "pods" "system-reserved" "kube-reserved" ];
+    event-burst = 3;
+    event-qps = 4;
+    event-storage-age-limit = "[event-storage-age-limit]";
+    event-storage-event-limit = "[event-storage-event-limit]";
+    eviction-hard = [ "[eviction-hard-1]" "[eviction-hard-2]" ];
+    eviction-max-pod-grace-period = 5;
+    eviction-minimum-reclaim = [ "[eviction-minimum-reclaim-1]" "[eviction-minimum-reclaim-2]" ];
+    eviction-pressure-transition-period = "[eviction-pressure-transition-period]";
+    eviction-soft = [ "[eviction-soft-1]" "[eviction-soft-2]" ];
+    eviction-soft-grace-period = [ "[eviction-soft-grace-period-1]" "[eviction-soft-grace-period-2]" "[eviction-soft-grace-period-3]" ];
+    exit-on-lock-contention = true;
+    experimental-allocatable-ignore-eviction = true;
+    experimental-mounter-path = ./kubelet.nix;
+    fail-swap-on = true;
+    feature-gates = [
+      "APIListChunking=true"
+      "APIPriorityAndFairness=true"
+      "APIResponseCompression=true"
+      "APIServerIdentity=true"
+      "APIServerTracing=true"
+      "AdmissionWebhookMatchConditions=true"
+      "AggregatedDiscoveryEndpoint=true"
+      "AllAlpha=true"
+      "AllBeta=true"
+      "AnyVolumeDataSource=true"
+      "AppArmor=true"
+      "CPUManagerPolicyAlphaOptions=true"
+      "CPUManagerPolicyBetaOptions=true"
+      "CPUManagerPolicyOptions=true"
+      "CRDValidationRatcheting=true"
+      "CSIMigrationPortworx=true"
+      "CSINodeExpandSecret=true"
+      "CSIVolumeHealth=true"
+      "CloudControllerManagerWebhook=true"
+      "CloudDualStackNodeIPs=true"
+      "ClusterTrustBundle=true"
+      "ComponentSLIs=true"
+      "ConsistentListFromCache=true"
+      "ContainerCheckpoint=true"
+      "ContextualLogging=true"
+      "CronJobsScheduledAnnotation=true"
+      "CrossNamespaceVolumeDataSource=true"
+      "CustomCPUCFSQuotaPeriod=true"
+      "CustomResourceValidationExpressions=true"
+      "DevicePluginCDIDevices=true"
+      "DisableCloudProviders=true"
+      "DisableKubeletCloudCredentialProviders=true"
+      "DynamicResourceAllocation=true"
+      "ElasticIndexedJob=true"
+      "EventedPLEG=true"
+      "GracefulNodeShutdown=true"
+      "GracefulNodeShutdownBasedOnPodPriority=true"
+      "HPAContainerMetrics=true"
+      "HPAScaleToZero=true"
+      "HonorPVReclaimPolicy=true"
+      "InPlacePodVerticalScaling=true"
+      "InTreePluginAWSUnregister=true"
+      "InTreePluginAzureDiskUnregister=true"
+      "InTreePluginAzureFileUnregister=true"
+      "InTreePluginGCEUnregister=true"
+      "InTreePluginOpenStackUnregister=true"
+      "InTreePluginPortworxUnregister=true"
+      "InTreePluginvSphereUnregister=true"
+      "JobBackoffLimitPerIndex=true"
+      "JobPodFailurePolicy=true"
+      "JobPodReplacementPolicy=true"
+      "JobReadyPods=true"
+      "KMSv2=true"
+      "KMSv2KDF=true"
+      "KubeProxyDrainingTerminatingNodes=true"
+      "KubeletCgroupDriverFromCRI=true"
+      "KubeletInUserNamespace=true"
+      "KubeletPodResourcesDynamicResources=true"
+      "KubeletPodResourcesGet=true"
+      "KubeletTracing=true"
+      "LegacyServiceAccountTokenCleanUp=true"
+      "LocalStorageCapacityIsolationFSQuotaMonitoring=true"
+      "LogarithmicScaleDown=true"
+      "LoggingAlphaOptions=true"
+      "LoggingBetaOptions=true"
+      "MatchLabelKeysInPodTopologySpread=true"
+      "MaxUnavailableStatefulSet=true"
+      "MemoryManager=true"
+      "MemoryQoS=true"
+      "MinDomainsInPodTopologySpread=true"
+      "MultiCIDRRangeAllocator=true"
+      "MultiCIDRServiceAllocator=true"
+      "NewVolumeManagerReconstruction=true"
+      "NodeInclusionPolicyInPodTopologySpread=true"
+      "NodeLogQuery=true"
+      "NodeSwap=true"
+      "OpenAPIEnums=true"
+      "PDBUnhealthyPodEvictionPolicy=true"
+      "PersistentVolumeLastPhaseTransitionTime=true"
+      "PodAndContainerStatsFromCRI=true"
+      "PodDeletionCost=true"
+      "PodDisruptionConditions=true"
+      "PodHostIPs=true"
+      "PodIndexLabel=true"
+      "PodReadyToStartContainersCondition=true"
+      "PodSchedulingReadiness=true"
+      "ProcMountType=true"
+      "QOSReserved=true"
+      "ReadWriteOncePod=true"
+      "RecoverVolumeExpansionFailure=true"
+      "RemainingItemCount=true"
+      "RotateKubeletServerCertificate=true"
+      "SELinuxMountReadWriteOncePod=true"
+      "SchedulerQueueingHints=true"
+      "SecurityContextDeny=true"
+      "SeparateCacheWatchRPC=true"
+      "ServiceNodePortStaticSubrange=true"
+      "SidecarContainers=true"
+      "SizeMemoryBackedVolumes=true"
+      "SkipReadOnlyValidationGCE=true"
+      "StableLoadBalancerNodeSet=true"
+      "StatefulSetAutoDeletePVC=true"
+      "StatefulSetStartOrdinal=true"
+      "StorageVersionAPI=true"
+      "StorageVersionHash=true"
+      "TopologyAwareHints=true"
+      "TopologyManagerPolicyAlphaOptions=true"
+      "TopologyManagerPolicyBetaOptions=true"
+      "TopologyManagerPolicyOptions=true"
+      "UnauthenticatedHTTP2DOSMitigation=true"
+      "UnknownVersionInteroperabilityProxy=true"
+      "UserNamespacesSupport=true"
+      "ValidatingAdmissionPolicy=true"
+      "VolumeCapacityPriority=true"
+      "WatchFromStorageWithoutResourceVersion=true"
+      "WatchList=true"
+      "WinDSR=true"
+      "WinOverlay=true"
+      "WindowsHostNetwork=true"
+    ];
+    file-check-frequency = "[file-check-frequency]";
+    global-housekeeping-interval = "[global-housekeeping-interval]";
+    hairpin-mode = "none";
+    healthz-bind-address = "[healthz-bind-address]";
+    healthz-port = 6;
+    hostname-override = "[hostname-override]";
+    housekeeping-interval = "[housekeeping-interval]";
+    http-check-frequency = "[http-check-frequency]";
+    image-credential-provider-bin-dir = ./.;
+    image-credential-provider-config = ./kubelet.nix;
+    image-gc-high-threshold = 7;
+    image-gc-low-threshold = 8;
+    image-service-endpoint = "[image-service-endpoint]";
+    keep-terminated-pod-volumes = true;
+    kernel-memcg-notification = "[kernel-memcg-notification]";
+    kube-api-burst = 9;
+    kube-api-content-type = "[kube-api-content-type]";
+    kube-api-qps = 10;
+    kube-reserved = [ "[kube-reserved-1]" "[kube-reserved-2]" ];
+    kube-reserved-cgroup = "[kube-reserved-cgroup]";
+    kubeconfig = ./kubelet.nix;
+    kubelet-cgroups = "[kubelet-cgroups]";
+    local-storage-capacity-isolation = true;
+    lock-file = ./kubelet.nix;
+    log-cadvisor-usage = true;
+    log-flush-frequency = "[log-flush-frequency]";
+    log-json-info-buffer-size = "[log-json-info-buffer-size]";
+    log-json-split-stream = true;
+    logging-format = "json";
+    machine-id-file = [ ./kubelet.nix ];
+    make-iptables-util-chains = true;
+    manifest-url = "[manifest-url]";
+    manifest-url-header = [ "[manifest-url-header-1]" "[manifest-url-header-2]" ];
+    max-open-files = 11;
+    max-pods = 12;
+    maximum-dead-containers = 13;
+    maximum-dead-containers-per-container = 14;
+    memory-manager-policy = "None";
+    minimum-container-ttl-duration = "[minimum-container-ttl-duration]";
+    minimum-image-ttl-duration = "[minimum-image-ttl-duration]";
+    node-ip = "[node-ip]";
+    node-labels = [ "[node-labels-1]" "[node-labels-2]" ];
+    node-status-max-images = 15;
+    node-status-update-frequency = "[node-status-update-frequency]";
+    oom-score-adj = 16;
+    pod-cidr = "[pod-cidr]";
+    pod-infra-container-image = "[pod-infra-container-image]";
+    pod-manifest-path = ./kubelet.nix;
+    pod-max-pids = 17;
+    pods-per-core = 18;
+    port = 19;
+    protect-kernel-defaults = true;
+    provider-id = "[provider-id]";
+    qos-reserved = [ "[qos-reserved-1]" "[qos-reserved-2]" "[qos-reserved-3]" ];
+    read-only-port = 20;
+    register-node = true;
+    register-schedulable = true;
+    register-with-taints = [ "[register-with-taints-1]" "[register-with-taints-2]" ];
+    registry-burst = 21;
+    registry-qps = 22;
+    reserved-cpus = [ "cpu-1" "cpu-2" "cpu-3" ];
+    reserved-memory = [ "[reserved-memory-1]" "[reserved-memory-2]" ];
+    resolv-conf = ./kubelet.nix;
+    root-dir = ./.;
+    rotate-certificates = true;
+    rotate-server-certificates = true;
+    runonce = true;
+    runtime-cgroups = "[runtime-cgroups]";
+    runtime-request-timeout = "[runtime-request-timeout]";
+    seccomp-default = true;
+    serialize-image-pulls = true;
+    storage-driver-buffer-duration = "[storage-driver-buffer-duration]";
+    storage-driver-db = "[storage-driver-db]";
+    storage-driver-host = "[storage-driver-host]";
+    storage-driver-password = "[storage-driver-password]";
+    storage-driver-secure = true;
+    storage-driver-table = "[storage-driver-table]";
+    storage-driver-user = "[storage-driver-user]";
+    streaming-connection-idle-timeout = "[streaming-connection-idle-timeout]";
+    sync-frequency = "[sync-frequency]";
+    system-cgroups = "[system-cgroups]";
+    system-reserved = [ "[system-reserved-1]" "[system-reserved-2]" ];
+    system-reserved-cgroup = "[system-reserved-cgroup]";
+    tls-cert-file = ./kubelet.nix;
+    tls-cipher-suites = [ "[tls-cipher-suites-1]" "[tls-cipher-suites-2]" "[tls-cipher-suites-3]" "[tls-cipher-suites-4]" ];
+    tls-min-version = "VersionTLS11";
+    tls-private-key-file = ./kubelet.nix;
+    topology-manager-policy = "none";
+    topology-manager-policy-options = [ "[topology-manager-policy-options-1]" "[topology-manager-policy-options-2]" ];
+    topology-manager-scope = "pod";
+    v = 23;
+    vmodule = [ "pattern=1" "pattern=2" ];
+    volume-plugin-dir = ./.;
+    volume-stats-agg-period = "[volume-stats-agg-period]";
+  };
+}
+#+end_src
