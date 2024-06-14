@@ -10,7 +10,8 @@ with lib;
 let
   cfg = config.services.kubelet;
   boolToString = b: if b then "true" else "false";
-  description = "The kubelet is the primary 'node agent' that runs on each
+  description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
+  longDescription = "The kubelet is the primary 'node agent' that runs on each
 node. It can register the node with the apiserver using one of: the hostname; a flag to
 override the hostname; or specific logic for a cloud provider.
 
@@ -1062,8 +1063,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.services.kubelet = lib.mkForce {
-      inherit description;
+    systemd.services.kubelet = {
+      inherit description longDescription;
       wantedBy = [ "kubernetes.target" ];
       after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
       path = with pkgs; [
