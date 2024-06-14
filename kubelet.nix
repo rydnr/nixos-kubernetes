@@ -48,7 +48,7 @@ is checked every 20 seconds (also configurable with a flag).
     allowed-unsafe-sysctls = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "Comma-separated whitelist of unsafe sysctls or unsafe sysctl patterns (ending in *). Use these at your own risk. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Whitelist of unsafe sysctls or unsafe sysctl patterns (ending in *). Use these at your own risk. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
     };
 
     anonymous-auth = mkOption {
@@ -1081,7 +1081,7 @@ is checked every 20 seconds (also configurable with a flag).
         ExecStart = ''
           ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kubelet \
               ${optionalString (cfg.address != null) "--address ${toString cfg.address}"} \
-              ${optionalString (cfg.allowed-unsafe-sysctls != null) "--allowed-unsafe-sysctls ${toString cfg.allowed-unsafe-anonymous-authsysctls}"} \
+              ${optionalString (cfg.allowed-unsafe-sysctls != null) "--allowed-unsafe-sysctls \"${concatStringsSep "," cfg.allowed-unsafe-sysctls}\""} \
               ${optionalString (cfg.anonymous-auth != null) "--anonymous-auth"} \
               ${optionalString (cfg.application-metrics-count-limit != null) "--application-metrics-count-limit ${toString cfg.application-metrics-count-limit}"} \
               ${optionalString (cfg.authentication-token-webhook != null) "--authentication-token-webhook"} \
