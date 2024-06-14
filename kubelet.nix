@@ -1104,7 +1104,8 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
               ${optionalString (cfg.container-hints != null) "--container-hints ${toString cfg.container-hints}"} \
               ${optionalString (cfg.container-log-max-files != null) "--container-log-max-files ${toString cfg.container-log-max-files}"} \
-              ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-container-runtime-endpointmax-size}"}               ${optionalString (cfg. != null) "--container-runtime-endpoint ${toString cfg.container-runtime-endpoint}"} \
+              ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-container-runtime-endpointmax-size}"} \
+              ${optionalString (cfg.container-runtime-endpoint != null) "--container-runtime-endpoint ${toString cfg.container-runtime-endpoint}"} \
 \              ${optionalString (cfg.containerd != null) "--containerd ${toString cfg.containerd}"} \
               ${optionalString (cfg.containerd-namespace != null) "--containerd-namespace ${toString cfg.containerd-namespace}"} \
               ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
@@ -1198,7 +1199,6 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.rotate-certificates != null) "--rotate-certificates"} \
               ${optionalString (cfg.rotate-server-certificates != null) "--rotate-server-certificates"} \
               ${optionalString (cfg.runonce != null) "--runonce ${boolToString cfg.runonce}"} \
-
               ${optionalString (cfg.runtime-cgroups != null) "--runtime-cgroups ${toString cfg.runtime-cgroups}"} \
               ${optionalString (cfg.runtime-request-timeout != null) "--runtime-request-timeout ${toString cfg.runtime-request-timeout}"} \
               ${optionalString (cfg.seccomp-default != null) "--seccomp-default"} \
@@ -1207,7 +1207,8 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.storage-driver-db != null) "--storage-driver-db ${toString cfg.storage-driver-db}"} \
               ${optionalString (cfg.storage-driver-host != null) "--storage-driver-host ${toString cfg.storage-driver-host}"} \
               ${optionalString (cfg.storage-driver-password != null) "--storage-driver-password ${toString cfg.storage-driver-password}"} \
-              ${optionalString (cfg.storage-driver-secure != null) "--storage-driver-secure              ${optionalString (cfg.storage-driver-table != null) "--storage-driver-table ${toString cfg.storage-driver-table}"}"} \ \
+              ${optionalString (cfg.storage-driver-secure != null) "--storage-driver-secure"} \
+              ${optionalString (cfg.storage-driver-table != null) "--storage-driver-table ${toString cfg.storage-driver-table}"} \
               ${optionalString (cfg.storage-driver-user != null) "--storage-driver-user ${toString cfg.storage-driver-user}"} \
               ${optionalString (cfg.streaming-connection-idle-timeout != null) "--streaming-connection-idle-timeout ${toString cfg.streaming-connection-idle-timeout}"} \
               ${optionalString (cfg.sync-frequency != null) "--sync-frequency ${toString cfg.sync-frequency}"} \
@@ -1224,84 +1225,7 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
               ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
               ${optionalString (cfg.volume-plugin-dir != null) "--volume-plugin-dir ${toString cfg.volume-plugin-dir}"} \
-              ${optionalString (cfg.volume-stats-agg-period != null) "--volume-stats-agg-period ${toString cfg.volume-stats-agg-period}"} \
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              ${optionalString (cfg.v != null) "--cpu-cfs-quota-periodv ${toString cfg.cpu-cfs-quota-periodv}"} \
-              ${optionalString (cfg.cpu-manager-policy != null) "--cpu-manager-policy ${toString cfg.cpu-manager-policy}"} \
-              ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmod
-
-ule}\""}
+              ${optionalString (cfg.volume-stats-agg-period != null) "--volume-stats-agg-period ${toString cfg.volume-stats-agg-period}"}
         '';
         Restart = "on-failure";
         RestartSec = 5;
