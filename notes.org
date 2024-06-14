@@ -4687,7 +4687,7 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.enable-debugging-handlers != null) "--enable-debugging-handlers ${boolToString cfg.enable-debugging-handlers}"} \
               ${optionalString (cfg.enable-load-reader != null) "--enable-load-reader"} \
                 ${optionalString (cfg.enable-server != null) "--enable-server ${toString cfg.enable-server}"} \
-              ${optionalString (cfg.enforce-node-allocatable != null) "--enforce-node-allocatable ${concatStringsSep "," cfg.enforce-node-allocatable}\"} \
+              ${optionalString (cfg.enforce-node-allocatable != null) "--enforce-node-allocatable ${concatStringsSep "," cfg.enforce-node-allocatable}\""} \
               ${optionalString (cfg.event-burst != null) "--event-burst ${toString cfg.event-burst}"} \
               ${optionalString (cfg.event-qps != null) "--event-qps ${toString cfg.event-qps}"} \
               ${optionalString (cfg.event-storage-age-limit != null) "--event-storage-age-limit ${toString cfg.event-storage-age-limit}"} \
@@ -4787,7 +4787,7 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.system-reserved != null) "--system-reserved \"${concatStringsSep "," cfg.system-reserved}\""} \
               ${optionalString (cfg.system-reserved-cgroup != null) "--system-reserved-cgroup ${toString cfg.system-reserved-cgroup}"} \
               ${optionalString (cfg.tls-cert-file != null) "--tls-cert-file ${toString cfg.tls-cert-file}"} \
-              ${optionalString (cfg.tls-cipher-suites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
+              ${optionalString (cfg.tls-cipher-suites != null) "---tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
               ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${toString cfg.tls-min-version}"} \
               ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${toString cfg.tls-private-key-file}"} \
               ${optionalString (cfg.topology-manager-policy != null) "--topology-manager-policy ${toString cfg.topology-manager-policy}"} \
