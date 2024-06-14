@@ -10,8 +10,8 @@ with lib;
 let
   cfg = config.services.kubelet;
   boolToString = b: if b then "true" else "false";
-  description = """
-The kubelet is the primary 'node agent' that runs on each
+  description = ''
+The kubelet is the primary "node agent" that runs on each
 node. It can register the node with the apiserver using one of: the hostname; a flag to
 override the hostname; or specific logic for a cloud provider.
 
@@ -30,8 +30,8 @@ via a flag.
 
 HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint
 is checked every 20 seconds (also configurable with a flag).
-""";
-  featureGatesDescription = """
+'';
+  featureGatesDescription = ''
 A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
   APIResponseCompression=true|false (BETA - default=true)
   APIServerIdentity=true|false (BETA - default=true)
@@ -163,7 +163,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinDSR=true|false (ALPHA - default=false)
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
-""";
+'';
 
 in
 {
