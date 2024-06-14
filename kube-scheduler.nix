@@ -491,7 +491,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
       serviceConfig = {
         Slice = "kubernetes.slice";
         ExecStart = ''
-          ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-scheduler \
+          ${pkgs.kubernetes}/bin/kube-scheduler \
             ${optionalString (cfg.configFile != null) "--config ${cfg.configFile}"} \
             ${optionalString (cfg.master != null) "--master ${cfg.master}"} \
             ${optionalString (cfg.write-config-to != null) "--write-config-to ${cfg.write-config-to}"} \

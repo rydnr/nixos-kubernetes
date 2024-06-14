@@ -963,8 +963,8 @@ in
         Restart = "on-failure";
         Slice = "kubernetes.slice";
         ExecStart = ''
-          ${pkgs.coreutils}/bin/echo ${pkgs.kubernetes}/bin/kube-controller-manager \
-              ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
+          ${pkgs.kubernetes}/bin/kube-controller-manager \
+            ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
             ${optionalString (cfg.profiling != null) "--profiling ${boolToString cfg.profiling}"} \
             ${optionalString (cfg.enable-leader-migration != null) "--enable-leader-migration"} \
             ${optionalString (cfg.leader-migration-config != null) "--leader-migration-config ${cfg.leader-migration-config}"} \
