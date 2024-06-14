@@ -1050,7 +1050,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   };
 
   config = mkIf cfg.enable {
-    systemd.services.kubelet = lib.mkForce {
+    systemd.services.kubelet = {
       description = "" "
 The kubelet is the primary 'node agent' that runs on each
 node. It can register the node with the apiserver using one of: the hostname; a flag to
