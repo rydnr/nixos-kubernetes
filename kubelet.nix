@@ -1064,7 +1064,7 @@ in
 
   config = mkIf cfg.enable {
     systemd.services.kubelet = {
-      inherit description;
+      description = lib.mkForce description;
       wantedBy = [ "kubernetes.target" ];
       after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
       path = with pkgs; [
