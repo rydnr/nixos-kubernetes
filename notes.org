@@ -4577,7 +4577,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
 
     topology-manager-policy = mkOption {
-      type = types.nullOr (types.enum [ "none" "best-effort" "restricted" "single-numa-mode" ];
+      type = types.nullOr (types.enum [ "none" "best-effort" "restricted" "single-numa-mode" ]);
       default = null;
       description = "Topology Manager policy to use. Possible values: 'none', 'best-effort', 'restricted', 'single-numa-node'. (default 'none') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
     };
