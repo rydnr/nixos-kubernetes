@@ -1104,9 +1104,9 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
               ${optionalString (cfg.container-hints != null) "--container-hints ${toString cfg.container-hints}"} \
               ${optionalString (cfg.container-log-max-files != null) "--container-log-max-files ${toString cfg.container-log-max-files}"} \
-              ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-container-runtime-endpointmax-size}"} \
+              ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-max-size}"} \
               ${optionalString (cfg.container-runtime-endpoint != null) "--container-runtime-endpoint ${toString cfg.container-runtime-endpoint}"} \
-\              ${optionalString (cfg.containerd != null) "--containerd ${toString cfg.containerd}"} \
+              ${optionalString (cfg.containerd != null) "--containerd ${toString cfg.containerd}"} \
               ${optionalString (cfg.containerd-namespace != null) "--containerd-namespace ${toString cfg.containerd-namespace}"} \
               ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
               ${optionalString (cfg.cpu-cfs-quota != null) "--cpu-cfs-quota ${toString cfg.cpu-cfs-quota}"} \
