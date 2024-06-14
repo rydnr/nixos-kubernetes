@@ -3838,7 +3838,7 @@ is checked every 20 seconds (also configurable with a flag).
     };
 
     enforce-node-allocatable = mkOption {
-      type = types.nullOr (types.listOf types.enum [ "none" "pods" "system-reserved" "kube-reserved" ]);
+      type = types.nullOr (types.listOf (types.enum [ "none" "pods" "system-reserved" "kube-reserved" ]));
       default = null;
       description = "A list of levels of node allocatable enforcement to be enforced by kubelet. Acceptable options are 'none', 'pods', 'system-reserved', and 'kube-reserved'. If the latter two options are specified, '--system-reserved-cgroup' and '--kube-reserved-cgroup' must also be set, respectively. If 'none' is specified, no additional options should be set. See https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ for more details. (default [pods]) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
     };
