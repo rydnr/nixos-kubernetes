@@ -1235,8 +1235,6 @@ in
               ${optionalString (cfg.volume-plugin-dir != null) "--volume-plugin-dir ${toString cfg.volume-plugin-dir}"} \
               ${optionalString (cfg.volume-stats-agg-period != null) "--volume-stats-agg-period ${toString cfg.volume-stats-agg-period}"}
         '';
-        Restart = "on-failure";
-        RestartSec = 5;
       };
       unitConfig = {
         StartLimitIntervalSec = 0;
