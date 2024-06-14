@@ -4564,12 +4564,6 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "List of cipher suites for the server. If omitted, the default Go cipher suites will be used. ";
     };
 
-    configFile = mkOption {
-      type = types.nullOr types.path;
-      default = null;
-      description = "The config file. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
-    };
-
     tls-min-version = mkOption {
       type = types.nullOr (types.enum [ "VersionTLS10" "VersionTLS11" "VersionTLS12" "VersionsTLS13" ]);
       default = null;
@@ -4792,7 +4786,6 @@ is checked every 20 seconds (also configurable with a flag).
               ${optionalString (cfg.system-reserved-cgroup != null) "--system-reserved-cgroup ${toString cfg.system-reserved-cgroup}"} \
               ${optionalString (cfg.tls-cert-file != null) "--tls-cert-file ${toString cfg.tls-cert-file}"} \
               ${optionalString (cfg.tls-cipher-suites != null) "--tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
-              ${optionalString (cfg.configFile != null) "--config ${toString cfg.configFile}"} \
               ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${toString cfg.tls-min-version}"} \
               ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${toString cfg.tls-private-key-file}"} \
               ${optionalString (cfg.topology-manager-policy != null) "--topology-manager-policy ${toString cfg.topology-manager-policy}"} \
