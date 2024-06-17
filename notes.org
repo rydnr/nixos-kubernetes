@@ -131,8 +131,8 @@ Let's write a flake whose output includes a function to create a certificate aut
 
 Let's write a sample flake that makes use of the exported functions.
 
-#+begin_src nix :tangle sample-cert.nix
-# sample-cert.nix
+#+begin_src nix :tangle ../nixos-kubernetes-removeme/flake.nix
+# flake.nix
 #
 # This file shows how to use cert.nix functions.
 #
@@ -155,8 +155,8 @@ Let's write a sample flake that makes use of the exported functions.
   inputs = rec {
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     nixos.url = "github:NixOS/nixpkgs/24.05";
-    cert.url = {
-      url = "path:./cert.nix";
+    cert = {
+      url = "github:rydnr/nixos-kubernetes/109";
       inputs.nixos.follows = "nixos";
     };
   };
