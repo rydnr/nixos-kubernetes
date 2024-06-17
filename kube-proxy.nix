@@ -144,6 +144,30 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
+mkKubeConfig = name: conf: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
+    apiVersion = "v1";
+    kind = "Config";
+    clusters = [{
+      name = "local";
+      cluster.certificate-authority = conf.caFile or cfg.caFile;
+      cluster.server = conf.server;
+    }];
+    users = [{
+      inherit name;
+      user = {
+        client-certificate = conf.certFile;
+        client-key = conf.keyFile;
+      };
+    }];
+    contexts = [{
+      context = {
+        cluster = "local";
+        user = name;
+      };
+      current-context = "local";
+    }];
+  });
+
 in
 {
   options.services.kube-proxy = {
