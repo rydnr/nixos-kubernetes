@@ -1,6 +1,6 @@
-# cert.nix
+# sample-cert.nix
 #
-# This file exports functions to create certificate authorities as a Nix flake.
+# This file shows how to use cert.nix functions.
 #
 # Copyright (C) 2024-today rydnr/nixos-kubernetes
 #
@@ -17,10 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 {
-  description = "Flake to create certificate authority files";
+  description = "Flake to show how to use cert.nix functions";
   inputs = rec {
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     nixos.url = "github:NixOS/nixpkgs/24.05";
+    cert.url = {
+      url = "path:./cert.nix";
+      inputs.nixos.follows = "nixos";
+    };
   };
   outputs = inputs:
     with inputs;
@@ -32,23 +36,8 @@
         defaultSystems ++ [ "armv6l-linux" ];
     in flake-utils.lib.eachSystem supportedSystems (system:
       {
-        functions = rec {
-          secret = { name, path }: "${path}/${name}.pem";
-          caCert = path: secret "ca" path;
-          mkCert = {
-            name, CN, hosts ? [], fields ? {}, action ? "", privateKeyOwner, path
-          }: rec {
-            inherit name caCert CN hosts fields action path;
-            cert = secret name path;
-            key = secret "${name}-key" path;
-            privateKeyOptions = {
-              owner = privateKeyOwner;
-              group = "nogroup";
-              mode = "0600";
-              path = key;
-            };
-          };
-          default = mkCert;
+        packages = {
+          default = cert.mkCert "sample" "dummy";
         };
       });
 }
