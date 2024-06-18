@@ -20,8 +20,12 @@
   description = "Defines NixOS modules for Kubernetes";
 
   inputs = rec {
-    nixos.url = "github:NixOS/nixpkgs/23.11";
+    nixos.url = "github:NixOS/nixpkgs/24.05";
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
+    cert = {
+      url = "github:rydnr/nixos-cert-functions";
+      inputs.nixos.follows = "nixos";
+    };
   };
 
   outputs = inputs:
@@ -29,7 +33,7 @@
     flake-utils.lib.eachDefaultSystem
     (system: {
       nixosModules = {
-        kube-apiserver = ./kube-apiserver.nix;
+        kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
         kube-scheduler = ./kube-scheduler.nix;
         kube-controller-manager = ./kube-controller-manager.nix;
         kube-proxy = ./kube-proxy.nix;

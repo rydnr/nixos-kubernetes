@@ -68,16 +68,68 @@
 #+end_src
 
 
+* flake
+
+#+begin_src nix :tangle flake.nix
+# flake.nix
+#
+# This file packages NixOS modules for Kubernetes as a Nix flake.
+#
+# Copyright (C) 2024-today rydnr/nixos-kubernetes
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+{
+  description = "Defines NixOS modules for Kubernetes";
+
+  inputs = rec {
+    nixos.url = "github:NixOS/nixpkgs/24.05";
+    flake-utils.url = "github:numtide/flake-utils/v1.0.0";
+    cert = {
+      url = "github:rydnr/nixos-cert-functions";
+      inputs.nixos.follows = "nixos";
+    };
+  };
+
+  outputs = inputs:
+    with inputs;
+    flake-utils.lib.eachDefaultSystem
+    (system: {
+      nixosModules = {
+        kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
+        kube-scheduler = ./kube-scheduler.nix;
+        kube-controller-manager = ./kube-controller-manager.nix;
+        kube-proxy = ./kube-proxy.nix;
+        kubelet = ./kubelet.nix;
+      };
+    });
+}
+
+#    outputs = { self, nixos, flake-utils }: {
+#    nixosModules = { kubeApiserver = ./kube-apiserver.nix; };
+#};
+#+end_src
+
 * kubeconfig
 
 Let's write a flake whose output includes a function to create a certificate authority.
 
-#+begin_src nix :tangle cert.nix
-# cert.nix
+#+begin_src nix :tangle ../nixos-cert-functions/flake.nix
+# flake.nix
 #
 # This file exports functions to create certificate authorities as a Nix flake.
 #
-# Copyright (C) 2024-today rydnr/nixos-kubernetes
+# Copyright (C) 2024-today rydnr/nixos-cert-functions
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,35 +149,25 @@ Let's write a flake whose output includes a function to create a certificate aut
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     nixos.url = "github:NixOS/nixpkgs/24.05";
   };
-  outputs = inputs:
-    with inputs;
-    let
-      defaultSystems = flake-utils.lib.defaultSystems;
-      supportedSystems = if builtins.elem "armv6l-linux" defaultSystems then
-        defaultSystems
-      else
-        defaultSystems ++ [ "armv6l-linux" ];
-    in flake-utils.lib.eachSystem supportedSystems (system:
-      {
-        functions = rec {
-          secret = { name, path }: "${path}/${name}.pem";
-          caCert = path: secret "ca" path;
-          mkCert = {
-            name, CN, hosts ? [], fields ? {}, action ? "", privateKeyOwner, path
-          }: rec {
-            inherit name caCert CN hosts fields action path;
-            cert = secret name path;
-            key = secret "${name}-key" path;
-            privateKeyOptions = {
-              owner = privateKeyOwner;
-              group = "nogroup";
-              mode = "0600";
-              path = key;
-            };
-          };
-          default = mkCert;
+  outputs = { self, nixpkgs, ...}: {
+    lib = rec {
+      secret = { name, path }: "${path}/${name}.pem";
+      caCert = path: secret { name = "ca"; inherit path; };
+      mkCert = {
+        name, CN, hosts ? [], fields ? {}, action ? "", privateKeyOwner, path
+      }: rec {
+        inherit name caCert CN hosts fields action path;
+        cert = secret { inherit name path; };
+        key = secret { name = "${name}-key"; inherit path; };
+        privateKeyOptions = {
+          owner = privateKeyOwner;
+          group = "nogroup";
+          mode = "0600";
+          path = key;
         };
-      });
+      };
+    };
+  };
 }
 #+end_src
 
@@ -136,7 +178,7 @@ Let's write a sample flake that makes use of the exported functions.
 #
 # This file shows how to use cert.nix functions.
 #
-# Copyright (C) 2024-today rydnr/nixos-kubernetes
+# Copyright (C) 2024-today rydnr/nixos-kubernetes-removeme
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -156,7 +198,7 @@ Let's write a sample flake that makes use of the exported functions.
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     nixos.url = "github:NixOS/nixpkgs/24.05";
     cert = {
-      url = "github:rydnr/nixos-kubernetes/109";
+      url = "github:rydnr/nixos-cert-functions";
       inputs.nixos.follows = "nixos";
     };
   };
@@ -171,7 +213,15 @@ Let's write a sample flake that makes use of the exported functions.
     in flake-utils.lib.eachSystem supportedSystems (system:
       {
         packages = {
-          default = cert.mkCert "sample" "dummy";
+          default = cert.lib.mkCert {
+            name = "sample";
+            CN = "example.com";
+            hosts = [ "example.com" ];
+            fields = {};
+            action = "";
+            privateKeyOwner = "root";
+            path = "/etc/ssl";
+          };
         };
       });
 }
@@ -185,6 +235,7 @@ Let's write a sample flake that makes use of the exported functions.
   config,
   pkgs,
   lib,
+  mkCert,
   ...
 }:
 
@@ -192,6 +243,7 @@ with lib;
 
 let
   cfg = config.services.kube-apiserver;
+  myCert = traceVal mkCert;
   boolToString = b: if b then "true" else "false";
   oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
   description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact.";
