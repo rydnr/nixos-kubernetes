@@ -33,7 +33,7 @@
     flake-utils.lib.eachDefaultSystem
     (system: {
       nixosModules = {
-        kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
+        kube-apiserver = ./kube-apiserver.nix;
         kube-scheduler = ./kube-scheduler.nix;
         kube-controller-manager = ./kube-controller-manager.nix;
         kube-proxy = ./kube-proxy.nix;
