@@ -33,11 +33,13 @@
     flake-utils.lib.eachDefaultSystem
     (system: {
       nixosModules = {
-        kube-apiserver = ./kube-apiserver.nix;
-        kube-scheduler = ./kube-scheduler.nix;
-        kube-controller-manager = ./kube-controller-manager.nix;
-        kube-proxy = ./kube-proxy.nix;
-        kubelet = ./kubelet.nix;
+        raw-kubernetes-ca = ./kubernetes-ca.nix;
+        raw-kube-scheduler = ./kube-scheduler.nix;
+        raw-kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
+        raw-kube-scheduler = ./kube-scheduler.nix;
+        raw-kube-controller-manager = ./kube-controller-manager.nix;
+        raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs; };
+        raw-kubelet = ./kubelet.nix;
       };
     });
 }

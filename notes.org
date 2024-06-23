@@ -1,72 +1,84 @@
 #+title: Notes
 
-* Macros
+* Creating the certificate authority
 
-#+begin_src elisp
-(defun kebab-to-camel (str)
-  "Convert a kebab-case string STR to camelCase."
-  (let* ((words (split-string str "-"))
-         (camel-case (concat (car words)
-                             (mapconcat 'capitalize (cdr words) ""))))
-    camel-case))
+Let's write a module that creates a CA used to check the signatures of all certificates used by any Kubernetes daemon.
 
-(defun camel-to-kebab (str)
-  "Convert a camelCase string STR to kebab-case."
-  (let ((case-fold-search nil))
-    (downcase (replace-regexp-in-string "\\([a-z0-9]\\)\\([A-Z]\\)" "\\1-\\2" str))))
+#+begin_src nix :tangle kubernetes-ca.nix
+{ config, lib, pkgs, ... }:
 
-(defun replace-kebab-with-camel (search-str)
-  "Search for SEARCH-STR, go to the start of the line, press TAB,
-  and replace the region between the cursor and the next whitespace with camelCase."
-  (interactive "sEnter the search string: ")
-  (when (search-forward search-str nil t)
-    (beginning-of-line)
-    (indent-for-tab-command)
-    (let* ((start (point))
-           (end (progn (skip-chars-forward "^ \t\n") (point)))
-           (kebab (buffer-substring-no-properties start end))
-           (camel (kebab-to-camel kebab)))
-      (delete-region start end)
-      (insert camel))
-    (forward-line 1)))
+let
+  # Define a function to generate the CA certificate
+  generateCaCert = pkgs.writeScriptBin "generate-ca-cert" ''
+    #!/usr/bin/env bash
+    set -e
+    CA_FILE="${1}"
+    DAYS="${2}"
+    CN="${3}"
+    openssl req -x509 -newkey rsa:4096 -keyout "${CA_FILE}.key" -out "${CA_FILE}" -days ${DAYS} -nodes -subj "/CN=${CN}"
+  '';
 
-(defun replace-camel-with-kebab (search-str)
-  "Search for SEARCH-STR, go to the start of the line, press TAB,
-  and replace the region between the cursor and the next whitespace with kebab-case."
-  (interactive "sEnter the search string: ")
-  (when (search-forward search-str nil t)
-    (beginning-of-line)
-    (indent-for-tab-command)
-    (let* ((start (point))
-           (end (progn (skip-chars-forward "^ \t\n") (point)))
-           (camel (buffer-substring-no-properties start end))
-           (kebab (camel-to-kebab camel)))
-      (delete-region start end)
-      (insert kebab))
-    (forward-line 1)))
+in
+{
+  options.services.raw-kubernetes-ca = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable the Kubernetes CA service.";
+    };
+    caFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file. If not provided, one will be generated.";
+    };
+    caName = lib.mkOption {
+      type = lib.types.str;
+      default = null;
+      description = "The name used to identify the certificate authority.";
+    };
+    caCommonName = lib.mkOption {
+      type = lib.types.str;
+      default = null;
+      description = "The common name of the certificate authority.";
+    };
+    caExpirationDays = lib.mkOption {
+      type = lib.types.nullOr lib.types.int;
+      default = 365;
+      description = "The number of days until the certificate authority expires.";
+    };
+  };
 
-(defun replace-camel-with-kebab-in-line (search-str)
-  "Replace all occurrences of SEARCH-STR with kebab-case in the current line."
-  (interactive "sEnter the search string: ")
-  (save-excursion
-    (beginning-of-line)
-    (let ((line-start (point)))
-      (forward-line 1)
-      (let ((line-end (progn (end-of-line) (point))))
-        (goto-char line-start)
-        (while (re-search-forward search-str line-end t)
-          (replace-match (camel-to-kebab search-str))))))
-  (forward-line 2))
+  config = lib.mkIf config.services.raw-kubernetes-ca.enable {
+    systemd.services.raw-kubernetes-ca = {
+      description = "Manages the certificate authority used by Kubernetes";
+      svcManager = "command";
+      wantedBy = [ "multi-user.target" ];
 
-(defmacro kebab-to-camel-macro (search-str)
-  "Macro to call the replace-kebab-with-camel function with SEARCH-STR."
-  `(replace-kebab-with-camel ,search-str))
+      serviceConfig = {
+        ExecStart = ''
+          ${if config.services.raw-kubernetes-ca.caFile == null then
+            "${generateCaCert} /etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem ${config.services.raw-kubernetes-ca.caExpirationDays} ${config.services.raw-kubernetes-ca.caCommonName}"
+          else
+            "echo 'Using ${config.services.raw-kubernetes-ca.caFile} as certificate authority for Kubernetes'"
+          }
+        '';
+      };
 
-(defmacro camel-to-kebab-macro (search-str)
-  "Macro to call the replace-camel-with-kebab function with SEARCH-STR."
-  `(replace-camel-with-kebab ,search-str))
+      # Ensure the service runs only once
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+
+    # Expose the CA file path
+    systemd.services.raw-kubernetes-ca.path = [ pkgs.openssl ];
+
+    environment.etc."ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem".source = if config.services.raw-kubernetes-ca.caFile == null then
+      "/etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem"
+    else
+      config.services.raw-kubernetes-ca.caFile;
+  };
+}
 #+end_src
-
 
 * flake
 
@@ -106,11 +118,13 @@
     flake-utils.lib.eachDefaultSystem
     (system: {
       nixosModules = {
-        kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
-        kube-scheduler = ./kube-scheduler.nix;
-        kube-controller-manager = ./kube-controller-manager.nix;
-        kube-proxy = ./kube-proxy.nix;
-        kubelet = ./kubelet.nix;
+        raw-kubernetes-ca = ./kubernetes-ca.nix;
+        raw-kube-scheduler = ./kube-scheduler.nix;
+        raw-kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
+        raw-kube-scheduler = ./kube-scheduler.nix;
+        raw-kube-controller-manager = ./kube-controller-manager.nix;
+        raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs; };
+        raw-kubelet = ./kubelet.nix;
       };
     });
 }
@@ -120,112 +134,6 @@
 #};
 #+end_src
 
-* kubeconfig
-
-Let's write a flake whose output includes a function to create a certificate authority.
-
-#+begin_src nix :tangle ../nixos-cert-functions/flake.nix
-# flake.nix
-#
-# This file exports functions to create certificate authorities as a Nix flake.
-#
-# Copyright (C) 2024-today rydnr/nixos-cert-functions
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-{
-  description = "Flake to create certificate authority files";
-  inputs = rec {
-    flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    nixos.url = "github:NixOS/nixpkgs/24.05";
-  };
-  outputs = { self, nixpkgs, ...}: {
-    lib = rec {
-      secret = { name, path }: "${path}/${name}.pem";
-      caCert = path: secret { name = "ca"; inherit path; };
-      mkCert = {
-        name, CN, hosts ? [], fields ? {}, action ? "", privateKeyOwner, path
-      }: rec {
-        inherit name caCert CN hosts fields action path;
-        cert = secret { inherit name path; };
-        key = secret { name = "${name}-key"; inherit path; };
-        privateKeyOptions = {
-          owner = privateKeyOwner;
-          group = "nogroup";
-          mode = "0600";
-          path = key;
-        };
-      };
-    };
-  };
-}
-#+end_src
-
-Let's write a sample flake that makes use of the exported functions.
-
-#+begin_src nix :tangle ../nixos-kubernetes-removeme/flake.nix
-# flake.nix
-#
-# This file shows how to use cert.nix functions.
-#
-# Copyright (C) 2024-today rydnr/nixos-kubernetes-removeme
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-{
-  description = "Flake to show how to use cert.nix functions";
-  inputs = rec {
-    flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    nixos.url = "github:NixOS/nixpkgs/24.05";
-    cert = {
-      url = "github:rydnr/nixos-cert-functions";
-      inputs.nixos.follows = "nixos";
-    };
-  };
-  outputs = inputs:
-    with inputs;
-    let
-      defaultSystems = flake-utils.lib.defaultSystems;
-      supportedSystems = if builtins.elem "armv6l-linux" defaultSystems then
-        defaultSystems
-      else
-        defaultSystems ++ [ "armv6l-linux" ];
-    in flake-utils.lib.eachSystem supportedSystems (system:
-      {
-        packages = {
-          default = cert.lib.mkCert {
-            name = "sample";
-            CN = "example.com";
-            hosts = [ "example.com" ];
-            fields = {};
-            action = "";
-            privateKeyOwner = "root";
-            path = "/etc/ssl";
-          };
-        };
-      });
-}
-#+end_src
 
 * kube-apiserver
 
@@ -242,7 +150,7 @@ Let's write a sample flake that makes use of the exported functions.
 with lib;
 
 let
-  cfg = config.services.kube-apiserver;
+  cfg = config.services.raw-kube-apiserver;
   myCert = traceVal mkCer;
   boolToString = b: if b then "true" else "false";
   oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
@@ -382,7 +290,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 '';
 in
 {
-  options.services.kube-apiserver = {
+  options.services.raw-kube-apiserver = {
     enable = mkOption {
       type = types.bool;
       default = false;
@@ -1580,7 +1488,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 with lib;
 
 let
-  cfg = config.services.kube-scheduler;
+  cfg = config.services.raw-kube-scheduler;
   boolToString = b: if b then "true" else "false";
   tls-sni-cert-key-items = if cfg.tls-sni-cert-key != null then map (item: "--tls-sni-cert-key ${item}") cfg.tls-sni-cert-key else [];
   description = "The Kubernetes scheduler is a control plane process which assigns Pods to Nodes. The scheduler determines which Nodes are valid placements for each Pod in the scheduling queue according to constraints and available resources. The scheduler then ranks each valid Node and binds the Pod to a suitable Node. Multiple different schedulers may be used within a cluster; kube-scheduler is the reference implementation. See https://kubernetes.io/docs/concepts/scheduling-eviction/ for more information about scheduling and the kube-scheduler component.";
@@ -1719,7 +1627,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 '';
 in
 {
-  options.services.kube-scheduler = {
+  options.services.raw-kube-scheduler = {
     enable = mkOption {
       type = types.bool;
       default = false;
@@ -2149,7 +2057,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 with lib;
 
 let
-  cfg = config.services.kube-controller-manager;
+  cfg = config.services.raw-kube-controller-manager;
   boolToString = b: if b then "true" else "false";
   description = "The Kubernetes controller manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.";
   featureGatesDescription = ''
@@ -2287,7 +2195,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 '';
 in
 {
-  options.services.kube-controller-manager = {
+  options.services.raw-kube-controller-manager = {
     enable = mkOption {
       type = types.bool;
       default = false;
@@ -3262,6 +3170,55 @@ in
 
 * kube-proxy
 
+** kube-proxy-kubeconfig
+
+We need to create the following file and pass it to the ~kube-proxy~ process.
+
+#+begin_src json :tangle kube-proxy-kubeconfig
+{
+  "apiVersion": "v1",
+  "clusters": [
+    {
+      "cluster": {
+        "certificate-authority": "/var/lib/kubernetes/secrets/ca.pem",
+        "server": "https://reno:6443"
+      },
+      "name": "local"
+    }
+  ],
+  "contexts": [
+    {
+      "context": {
+        "cluster": "local",
+        "user": "kube-proxy"
+      },
+      "name": "local"
+    }
+  ],
+  "current-context": "local",
+  "kind": "Config",
+  "users": [
+    {
+      "name": "kube-proxy",
+      "user": {
+        "client-certificate": "/var/lib/kubernetes/secrets/kube-proxy-client.pem",
+        "client-key": "/var/lib/kubernetes/secrets/kube-proxy-client-key.pem"
+      }
+    }
+  ]
+}
+#+end_src
+
+The parameters we need:
+- The path to the certificate authority (~/var/lib/kubernetes/secrets/ca.pem~)
+- The url of the api server (~https://reno:6443~)
+- The name of the cluster (~local~)
+- The name of the local user (~kube-proxy~)
+- The path to the client certificate (~/var/lib/kubernetes/secrets/kube-proxy-client.pem~)
+- The path to the client key (~/var/lib/kubernetes/secrets/kube-proxy-client-key.pem~)
+
+The logic [[https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/cluster/kubernetes/default.nix][is already in nixpkgs]].
+
 ** kube-proxy.nix
 
 #+begin_src nix :tangle kube-proxy.nix
@@ -3275,7 +3232,19 @@ in
 with lib;
 
 let
-  cfg = config.services.kube-proxy;
+  cfg = config.services.raw-kube-proxy;
+  originalKubernetes = import "${nixpkgs.path}/nixos/modules/services/cluster/kubernetes/default.nix";
+  mkCert = originalKubernetes.mkCert;
+  mkKubeConfig = originalKubernetes.mkKubeConfig;
+  mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
+  getCert = if config.services.raw-kube-proxy.certFile == null
+            then mkCert {
+              name = "kube-proxy";
+              CN = config.services.raw-kube-proxy.commonName;
+              hosts = config.services.raw-kube-proxy.hosts;
+            }
+            else { certFile = config.services.raw-kube-proxy.certFile; keyFile = config.services.raw-kube-proxy.keyFile; };
+
   boolToString = b: if b then "true" else "false";
   description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
   featureGatesDescription = ''
@@ -3411,33 +3380,10 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
-mkKubeConfig = name: conf: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
-    apiVersion = "v1";
-    kind = "Config";
-    clusters = [{
-      name = "local";
-      cluster.certificate-authority = conf.caFile or cfg.caFile;
-      cluster.server = conf.server;
-    }];
-    users = [{
-      inherit name;
-      user = {
-        client-certificate = conf.certFile;
-        client-key = conf.keyFile;
-      };
-    }];
-    contexts = [{
-      context = {
-        cluster = "local";
-        user = name;
-      };
-      current-context = "local";
-    }];
-  });
 
 in
 {
-  options.services.kube-proxy = {
+  options.services.raw-kube-proxy = {
     enable = mkOption {
       type = types.bool;
       default = false;
@@ -3812,43 +3758,7 @@ in
 #+end_src
 
 
-** kube-proxy-kubeconfig
 
-#+begin_src json :tangle kube-proxy-kubeconfig
-{
-  "apiVersion": "v1",
-  "clusters": [
-    {
-      "cluster": {
-        "certificate-authority": "/var/lib/kubernetes/secrets/ca.pem",
-        "server": "https://reno:6443"
-      },
-      "name": "local"
-    }
-  ],
-  "contexts": [
-    {
-      "context": {
-        "cluster": "local",
-        "user": "kube-proxy"
-      },
-      "name": "local"
-    }
-  ],
-  "current-context": "local",
-  "kind": "Config",
-  "users": [
-    {
-      "name": "kube-proxy",
-      "user": {
-        "client-certificate": "/var/lib/kubernetes/secrets/kube-proxy-client.pem",
-        "client-key": "/var/lib/kubernetes/secrets/kube-proxy-client-key.pem"
-      }
-    }
-  ]
-}
-
-#+end_src
 * kubelet
 
 #+begin_src nix :tangle kubelet.nix
@@ -3862,7 +3772,7 @@ in
 with lib;
 
 let
-  cfg = config.services.kubelet;
+  cfg = config.services.raw-kubelet;
   boolToString = b: if b then "true" else "false";
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
   longDescription = "The kubelet is the primary 'node agent' that runs on each
@@ -4020,7 +3930,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 
 in
 {
-  options.services.kubelet = {
+  options.services.raw-kubelet = {
     enable = mkOption {
       type = types.bool;
       default = false;
@@ -5095,4 +5005,73 @@ in
     };
   };
 }
+#+end_src
+
+
+
+* Macros
+
+#+begin_src elisp
+(defun kebab-to-camel (str)
+  "Convert a kebab-case string STR to camelCase."
+  (let* ((words (split-string str "-"))
+         (camel-case (concat (car words)
+                             (mapconcat 'capitalize (cdr words) ""))))
+    camel-case))
+
+(defun camel-to-kebab (str)
+  "Convert a camelCase string STR to kebab-case."
+  (let ((case-fold-search nil))
+    (downcase (replace-regexp-in-string "\\([a-z0-9]\\)\\([A-Z]\\)" "\\1-\\2" str))))
+
+(defun replace-kebab-with-camel (search-str)
+  "Search for SEARCH-STR, go to the start of the line, press TAB,
+  and replace the region between the cursor and the next whitespace with camelCase."
+  (interactive "sEnter the search string: ")
+  (when (search-forward search-str nil t)
+    (beginning-of-line)
+    (indent-for-tab-command)
+    (let* ((start (point))
+           (end (progn (skip-chars-forward "^ \t\n") (point)))
+           (kebab (buffer-substring-no-properties start end))
+           (camel (kebab-to-camel kebab)))
+      (delete-region start end)
+      (insert camel))
+    (forward-line 1)))
+
+(defun replace-camel-with-kebab (search-str)
+  "Search for SEARCH-STR, go to the start of the line, press TAB,
+  and replace the region between the cursor and the next whitespace with kebab-case."
+  (interactive "sEnter the search string: ")
+  (when (search-forward search-str nil t)
+    (beginning-of-line)
+    (indent-for-tab-command)
+    (let* ((start (point))
+           (end (progn (skip-chars-forward "^ \t\n") (point)))
+           (camel (buffer-substring-no-properties start end))
+           (kebab (camel-to-kebab camel)))
+      (delete-region start end)
+      (insert kebab))
+    (forward-line 1)))
+
+(defun replace-camel-with-kebab-in-line (search-str)
+  "Replace all occurrences of SEARCH-STR with kebab-case in the current line."
+  (interactive "sEnter the search string: ")
+  (save-excursion
+    (beginning-of-line)
+    (let ((line-start (point)))
+      (forward-line 1)
+      (let ((line-end (progn (end-of-line) (point))))
+        (goto-char line-start)
+        (while (re-search-forward search-str line-end t)
+          (replace-match (camel-to-kebab search-str))))))
+  (forward-line 2))
+
+(defmacro kebab-to-camel-macro (search-str)
+  "Macro to call the replace-kebab-with-camel function with SEARCH-STR."
+  `(replace-kebab-with-camel ,search-str))
+
+(defmacro camel-to-kebab-macro (search-str)
+  "Macro to call the replace-camel-with-kebab function with SEARCH-STR."
+  `(replace-camel-with-kebab ,search-str))
 #+end_src

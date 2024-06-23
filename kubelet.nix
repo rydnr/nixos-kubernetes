@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.kubelet;
+  cfg = config.services.raw-kubelet;
   boolToString = b: if b then "true" else "false";
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
   longDescription = "The kubelet is the primary 'node agent' that runs on each
@@ -166,7 +166,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 
 in
 {
-  options.services.kubelet = {
+  options.services.raw-kubelet = {
     enable = mkOption {
       type = types.bool;
       default = false;

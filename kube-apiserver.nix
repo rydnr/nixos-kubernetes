@@ -9,7 +9,7 @@
 with lib;
 
 let
-  cfg = config.services.kube-apiserver;
+  cfg = config.services.raw-kube-apiserver;
   myCert = traceVal mkCer;
   boolToString = b: if b then "true" else "false";
   oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
@@ -149,7 +149,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 '';
 in
 {
-  options.services.kube-apiserver = {
+  options.services.raw-kube-apiserver = {
     enable = mkOption {
       type = types.bool;
       default = false;

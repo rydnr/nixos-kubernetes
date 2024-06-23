@@ -8,7 +8,19 @@
 with lib;
 
 let
-  cfg = config.services.kube-proxy;
+  cfg = config.services.raw-kube-proxy;
+  originalKubernetes = import "${nixpkgs.path}/nixos/modules/services/cluster/kubernetes/default.nix";
+  mkCert = originalKubernetes.mkCert;
+  mkKubeConfig = originalKubernetes.mkKubeConfig;
+  mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
+  getCert = if config.services.raw-kube-proxy.certFile == null
+            then mkCert {
+              name = "kube-proxy";
+              CN = config.services.raw-kube-proxy.commonName;
+              hosts = config.services.raw-kube-proxy.hosts;
+            }
+            else { certFile = config.services.raw-kube-proxy.certFile; keyFile = config.services.raw-kube-proxy.keyFile; };
+
   boolToString = b: if b then "true" else "false";
   description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
   featureGatesDescription = ''
@@ -144,33 +156,10 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
-mkKubeConfig = name: conf: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
-    apiVersion = "v1";
-    kind = "Config";
-    clusters = [{
-      name = "local";
-      cluster.certificate-authority = conf.caFile or cfg.caFile;
-      cluster.server = conf.server;
-    }];
-    users = [{
-      inherit name;
-      user = {
-        client-certificate = conf.certFile;
-        client-key = conf.keyFile;
-      };
-    }];
-    contexts = [{
-      context = {
-        cluster = "local";
-        user = name;
-      };
-      current-context = "local";
-    }];
-  });
 
 in
 {
-  options.services.kube-proxy = {
+  options.services.raw-kube-proxy = {
     enable = mkOption {
       type = types.bool;
       default = false;
