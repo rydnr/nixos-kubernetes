@@ -15,7 +15,7 @@ let
     CA_FILE="${1}"
     DAYS="${2}"
     CN="${3}"
-    openssl req -x509 -newkey rsa:4096 -keyout "${CA_FILE}.key" -out "${CA_FILE}" -days ${DAYS} -nodes -subj "/CN=${CN}"
+    openssl req -x509 -newkey rsa:4096 -keyout "$CA_FILE.key" -out "$CA_FILE" -days $DAYS -nodes -subj "/CN=$CN"
   '';
 
 in
