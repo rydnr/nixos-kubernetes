@@ -66,6 +66,7 @@ in
       inherit description;
       wantedBy = [ "multi-user.target" ];
 
+      path = with pkgs; [ bash openssl ];
       serviceConfig = {
         ExecStart = ''
           ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert ${cfg.caName} ${toString cfg.caExpirationDays} ${cfg.caCommonName} ${cfg.sslFolder}"
