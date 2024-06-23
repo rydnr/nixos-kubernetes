@@ -57,7 +57,7 @@ in
       serviceConfig = {
         ExecStart = ''
           ${if config.services.raw-kubernetes-ca.caFile == null then
-            "${generateCaCert} /etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem ${config.services.raw-kubernetes-ca.caExpirationDays} ${config.services.raw-kubernetes-ca.caCommonName}"
+            "${generateCaCert} /etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem ${toString config.services.raw-kubernetes-ca.caExpirationDays} ${config.services.raw-kubernetes-ca.caCommonName}"
           else
             "echo 'Using ${config.services.raw-kubernetes-ca.caFile} as certificate authority for Kubernetes'"
           }
