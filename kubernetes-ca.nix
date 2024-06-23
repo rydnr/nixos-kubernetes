@@ -56,9 +56,6 @@ in
           }
         '';
       };
-
-      # Ensure the service runs only once
-      Type = "oneshot";
     };
 
     # Expose the CA file path
