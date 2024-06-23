@@ -1,4 +1,11 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
 
 let
   cfg = config.services.raw-kubernetes-ca;

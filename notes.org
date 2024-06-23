@@ -5,7 +5,14 @@
 Let's write a module that creates a CA used to check the signatures of all certificates used by any Kubernetes daemon.
 
 #+begin_src nix :tangle kubernetes-ca.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
 
 let
   cfg = config.services.raw-kubernetes-ca;
