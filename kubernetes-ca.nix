@@ -42,7 +42,7 @@ in
   };
 
   config = lib.mkIf config.services.raw-kubernetes-ca.enable {
-    systemd.services.raw-kubernetes-ca = {
+    services.raw-kubernetes-ca = {
       description = "Manages the certificate authority used by Kubernetes";
       svcManager = "command";
       wantedBy = [ "multi-user.target" ];
@@ -59,7 +59,7 @@ in
     };
 
     # Expose the CA file path
-    systemd.services.raw-kubernetes-ca.path = [ pkgs.openssl ];
+    services.raw-kubernetes-ca.path = [ pkgs.openssl ];
 
     environment.etc."ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem".source = if config.services.raw-kubernetes-ca.caFile == null then
       "/etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem"
