@@ -105,11 +105,11 @@ in
   description = "Defines NixOS modules for Kubernetes";
 
   inputs = rec {
-    nixos.url = "github:NixOS/nixpkgs/24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/24.05";
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
     cert = {
       url = "github:rydnr/nixos-cert-functions";
-      inputs.nixos.follows = "nixos";
+      inputs.nixos.follows = "nixpkgs";
     };
   };
 
@@ -122,7 +122,7 @@ in
         raw-kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
         raw-kube-scheduler = ./kube-scheduler.nix;
         raw-kube-controller-manager = ./kube-controller-manager.nix;
-        raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs; };
+        raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs;};
         raw-kubelet = ./kubelet.nix;
       };
     });
