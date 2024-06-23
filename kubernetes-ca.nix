@@ -58,9 +58,6 @@ in
       };
     };
 
-    # Expose the CA file path
-    services.raw-kubernetes-ca.path = [ pkgs.openssl ];
-
     environment.etc."ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem".source = if config.services.raw-kubernetes-ca.caFile == null then
       "/etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem"
     else
