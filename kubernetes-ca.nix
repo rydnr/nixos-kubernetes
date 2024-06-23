@@ -1,16 +1,16 @@
 { config, lib, pkgs, ... }:
 
 let
-  # Define a function to generate the CA certificate
+  cfg = config.services.raw-kubernetes-ca;
   generateCaCert = pkgs.writeScriptBin "generate-ca-cert" ''
     #!/usr/bin/env bash
     set -e
-    CA_FILE="${1}"
-    DAYS="${2}"
-    CN="${3}"
-    openssl req -x509 -newkey rsa:4096 -keyout "$CA_FILE.key" -out "$CA_FILE" -days $DAYS -nodes -subj "/CN=$CN"
+    CA_NAME="$1";
+    DAYS="$2";
+    CN="$3";
+    SSL_FOLDER="$4";
+    openssl req -x509 -newkey rsa:4096 -keyout "$SSL_FOLDER/$CA_NAME.key" -out "$SSL_FOLDER/$CA_NAME.pem" -days $DAYS -nodes -subj "/CN=$CN"
   '';
-
 in
 {
   options.services.raw-kubernetes-ca = {
@@ -24,13 +24,18 @@ in
       default = null;
       description = "Path to the CA file. If not provided, one will be generated.";
     };
+    sslFolder = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "/etc/ssl/certs";
+      description = "The base folder for SSL files.";
+    };
     caName = lib.mkOption {
       type = lib.types.str;
       default = null;
       description = "The name used to identify the certificate authority.";
     };
     caCommonName = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.nullOr lib.types.str;
       default = null;
       description = "The common name of the certificate authority.";
     };
@@ -49,18 +54,17 @@ in
 
       serviceConfig = {
         ExecStart = ''
-          ${if config.services.raw-kubernetes-ca.caFile == null then
-            "${generateCaCert} /etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem ${toString config.services.raw-kubernetes-ca.caExpirationDays} ${config.services.raw-kubernetes-ca.caCommonName}"
+          ${if cfg.caFile == null then "${generateCaCert} ${cfg.caName} ${toString cfg.caExpirationDays} ${cfg.caCommonName} ${cfg.sslFolder}"
           else
-            "echo 'Using ${config.services.raw-kubernetes-ca.caFile} as certificate authority for Kubernetes'"
+            "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
           }
         '';
       };
     };
 
-    environment.etc."ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem".source = if config.services.raw-kubernetes-ca.caFile == null then
-      "/etc/ssl/certs/${config.services.raw-kubernetes-ca.caName}.pem"
+    environment.etc."${cfg.sslFolder}/${cfg.caName}.pem".source = if cfg.caFile == null then
+      "${cfg.sslFolder}/${cfg.caName}.pem"
     else
-      config.services.raw-kubernetes-ca.caFile;
+      cfg.caFile;
   };
 }
