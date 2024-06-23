@@ -57,7 +57,6 @@ in
   config = mkIf cfg.enable {
     systemd.services.raw-kubernetes-ca = {
       inherit description;
-      svcManager = "command";
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
