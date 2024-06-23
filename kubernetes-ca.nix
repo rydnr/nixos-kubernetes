@@ -43,7 +43,7 @@ in
 
   config = lib.mkIf config.services.raw-kubernetes-ca.enable {
     services.raw-kubernetes-ca = {
-      description = "Manages the certificate authority used by Kubernetes";
+#      description = "Manages the certificate authority used by Kubernetes";
       svcManager = "command";
       wantedBy = [ "multi-user.target" ];
 
