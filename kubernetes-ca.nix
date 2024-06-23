@@ -61,7 +61,7 @@ in
 
       serviceConfig = {
         ExecStart = ''
-          ${if cfg.caFile == null then "${generateCaCert} ${cfg.caName} ${toString cfg.caExpirationDays} ${cfg.caCommonName} ${cfg.sslFolder}"
+          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert ${cfg.caName} ${toString cfg.caExpirationDays} ${cfg.caCommonName} ${cfg.sslFolder}"
           else
             "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
           }
