@@ -2,6 +2,7 @@
 
 let
   cfg = config.services.raw-kubernetes-ca;
+  description = "Manages the certificate authority used by Kubernetes";
   generateCaCert = pkgs.writeScriptBin "generate-ca-cert" ''
     #!/usr/bin/env bash
     set -e
@@ -17,7 +18,7 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Enable the Kubernetes CA service.";
+      inherit description;
     };
     caFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
@@ -46,9 +47,9 @@ in
     };
   };
 
-  config = lib.mkIf config.services.raw-kubernetes-ca.enable {
-    services.raw-kubernetes-ca = {
-#      description = "Manages the certificate authority used by Kubernetes";
+  config = mkIf cfg.enable {
+    systemd.services.raw-kubernetes-ca = {
+      inherit description;
       svcManager = "command";
       wantedBy = [ "multi-user.target" ];
 
