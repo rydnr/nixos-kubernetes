@@ -11,7 +11,7 @@ let
   cfg = config.services.raw-kubernetes-ca;
   description = "Manages the certificate authority used by Kubernetes";
   generateCaCert = pkgs.writeScriptBin "generate-ca-cert" ''
-    #!/usr/bin/env bash
+    #!/usr/bin/env /bin/bash
     set -e
     CA_NAME="$1";
     DAYS="$2";
