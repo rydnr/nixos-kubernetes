@@ -144,6 +144,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
+
 in
 {
   options.services.raw-kube-controller-manager = {

@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  nixpkgs,
   ...
 }:
 
@@ -9,11 +10,12 @@ with lib;
 
 let
   cfg = config.services.raw-kube-proxy;
-  originalKubernetes = import "${nixpkgs.path}/nixos/modules/services/cluster/kubernetes/default.nix";
+  nixpkgs_store = import <nixpkgs> {};
+  originalKubernetes = import "${nixpkgs_store.path}/nixos/modules/services/cluster/kubernetes/default.nix";
   mkCert = originalKubernetes.mkCert;
   mkKubeConfig = originalKubernetes.mkKubeConfig;
   mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
-  getCert = if config.services.raw-kube-proxy.certFile == null
+  resolvedCert = if config.services.raw-kube-proxy.certFile == null
             then mkCert {
               name = "kube-proxy";
               CN = config.services.raw-kube-proxy.commonName;

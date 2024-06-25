@@ -4,7 +4,7 @@
 
 Let's write a module that creates a CA used to check the signatures of all certificates used by any Kubernetes daemon.
 
-#+begin_src nix :tangle kubernetes-ca.nix
+#+begin_src nix :noweb yes :tangle kubernetes-ca.nix
 {
   config,
   pkgs,
@@ -85,9 +85,10 @@ in
 }
 #+end_src
 
+
 * flake
 
-#+begin_src nix :tangle flake.nix
+#+begin_src nix :noweb yes :tangle flake.nix
 # flake.nix
 #
 # This file packages NixOS modules for Kubernetes as a Nix flake.
@@ -112,10 +113,6 @@ in
   inputs = rec {
     nixpkgs.url = "github:NixOS/nixpkgs/24.05";
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    cert = {
-      url = "github:rydnr/nixos-cert-functions";
-      inputs.nixos.follows = "nixpkgs";
-    };
   };
 
   outputs = inputs:
@@ -124,7 +121,7 @@ in
     (system: {
       nixosModules = {
         raw-kubernetes-ca = ./kubernetes-ca.nix;
-        raw-kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
+        raw-kube-apiserver = ./kube-apiserver.nix;
         raw-kube-scheduler = ./kube-scheduler.nix;
         raw-kube-controller-manager = ./kube-controller-manager.nix;
         raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs;};
@@ -139,26 +136,19 @@ in
 #+end_src
 
 
-* kube-apiserver
+* Common declarations
 
-** kube-apiserver.nix
-#+begin_src nix :tangle kube-apiserver.nix
-{
-  config,
-  pkgs,
-  lib,
-  mkCert,
-  ...
-}:
+** boolToString
 
-with lib;
+#+NAME: boolToString
+#+BEGIN_SRC nix
+boolToString = b: if b then "true" else "false";
+#+END_SRC
 
-let
-  cfg = config.services.raw-kube-apiserver;
-  myCert = traceVal mkCer;
-  boolToString = b: if b then "true" else "false";
-  oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
-  description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact.";
+** featureGates
+
+#+NAME: featureGatesDescription
+#+BEGIN_SRC nix
   featureGatesDescription = ''
 A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
   APIResponseCompression=true|false (BETA - default=true)
@@ -292,6 +282,88 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
+#+END_SRC
+
+** admission type
+
+#+NAME: admissionType
+#+BEGIN_SRC nix
+type = types.nullOr (types.listOf (types.enum [
+  "AlwaysAdmit"
+  "AlwaysDeny"
+  "AlwaysPullImages"
+  "CertificateApproval"
+  "CertificateSigning"
+  "CertificateSubjectRestriction"
+  "ClusterTrustBundleAttest"
+  "DefaultIngressClass"
+  "DefaultStorageClass"
+  "DefaultTolerationSeconds"
+  "DenyServiceExternalIPs"
+  "EventRateLimit"
+  "ExtendedResourceToleration"
+  "ImagePolicyWebhook"
+  "LimitPodHardAntiAffinityTopology"
+  "LimitRanger"
+  "MutatingAdmissionWebhook"
+  "NamespaceAutoProvision"
+  "NamespaceExists"
+  "NamespaceLifecycle"
+  "NodeRestriction"
+  "OwnerReferencesPermissionEnforcement"
+  "PersistentVolumeClaimResize"
+  "PersistentVolumeLabel"
+  "PodNodeSelector"
+  "PodSecurity"
+  "PodTolerationRestriction"
+  "Priority"
+  "ResourceQuota"
+  "RuntimeClass"
+  "ServiceAccount"
+  "StorageObjectInUseProtection"
+  "TaintNodesByCondition"
+  "ValidatingAdmissionPolicy"
+  "ValidatingAdmissionWebhook"
+]));
+#+END_SRC
+
+
+*** description
+
+#+NAME: admissionTypeDescription
+#+BEGIN_SRC nix
+Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook.
+#+END_SRC
+
+
+* kube-apiserver
+
+** kube-apiserver.nix
+
+*** let block
+
+First, the variables.
+#+BEGIN_SRC nix :noweb yes :tangle kube-apiserver.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
+
+let
+  cfg = config.services.raw-kube-apiserver;
+  <<boolToString>>
+  oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
+  description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact.";
+<<featureGatesDescription>>
+#+END_SRC
+
+*** options block
+
+#+BEGIN_SRC nix :noweb yes :tangle kube-apiserver.nix
 in
 {
   options.services.raw-kube-apiserver = {
@@ -959,45 +1031,9 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "File with apiserver egress selector configuration.";
     };
     admission-control = mkOption {
-      type = types.nullOr (types.listOf (types.enum [
-        "AlwaysAdmit"
-        "AlwaysDeny"
-        "AlwaysPullImages"
-        "CertificateApproval"
-        "CertificateSigning"
-        "CertificateSubjectRestriction"
-        "ClusterTrustBundleAttest"
-        "DefaultIngressClass"
-        "DefaultStorageClass"
-        "DefaultTolerationSeconds"
-        "DenyServiceExternalIPs"
-        "EventRateLimit"
-        "ExtendedResourceToleration"
-        "ImagePolicyWebhook"
-        "LimitPodHardAntiAffinityTopology"
-        "LimitRanger"
-        "MutatingAdmissionWebhook"
-        "NamespaceAutoProvision"
-        "NamespaceExists"
-        "NamespaceLifecycle"
-        "NodeRestriction"
-        "OwnerReferencesPermissionEnforcement"
-        "PersistentVolumeClaimResize"
-        "PersistentVolumeLabel"
-        "PodNodeSelector"
-        "PodSecurity"
-        "PodTolerationRestriction"
-        "Priority"
-        "ResourceQuota"
-        "RuntimeClass"
-        "ServiceAccount"
-        "StorageObjectInUseProtection"
-        "TaintNodesByCondition"
-        "ValidatingAdmissionPolicy"
-        "ValidatingAdmissionWebhook"
-      ]));
+      <<admissionType>>
       default = null;
-      description = "Admission is divided into two phases. In the first phase, only mutating admission plugins run. In the second phase, only validating admission plugins run. The names in the below list may represent a validating plugin, a mutating plugin, or both. The order of plugins in which they are passed to this flag does not matter. Comma-delimited list of: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. (DEPRECATED: Use --enable-admission-plugins or --disable-admission-plugins instead. Will be removed in a future version.)";
+      description = "Admission is divided into two phases. In the first phase, only mutating admission plugins run. In the second phase, only validating admission plugins run. The names in the below list may represent a validating plugin, a mutating plugin, or both. The order of plugins in which they are passed to this flag does not matter. <<admissionTypeDescription>> (DEPRECATED: Use --enable-admission-plugins or --disable-admission-plugins instead. Will be removed in a future version.)";
     };
     admission-control-config-file = mkOption {
       type = types.nullOr types.path;
@@ -1005,71 +1041,14 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "File with admission control configuration.";
     };
     disable-admission-plugins = mkOption {
-      type = types.nullOr (types.listOf (types.enum [
-        "NamespaceLifecycle"
-        "LimitRanger"
-        "ServiceAccount"
-        "TaintNodesByCondition"
-        "PodSecurity"
-        "Priority"
-        "DefaultTolerationSeconds"
-        "DefaultStorageClass"
-        "StorageObjectInUseProtection"
-        "PersistentVolumeClaimResize"
-        "RuntimeClass"
-        "CertificateApproval"
-        "CertificateSigning"
-        "ClusterTrustBundleAttest"
-        "CertificateSubjectRestriction"
-        "DefaultIngressClass"
-        "MutatingAdmissionWebhook"
-        "ValidatingAdmissionPolicy"
-        "ValidatingAdmissionWebhook"
-        "ResourceQuota"
-      ]));
+      <<admissionType>>
       default = null;
-      description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.";
+      description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). <<admissionTypeDescription>> The order of plugins in this flag does not matter.";
     };
     enable-admission-plugins = mkOption {
-      type = types.nullOr (types.listOf (types.enum [
-        "AlwaysAdmit"
-        "AlwaysDeny"
-        "AlwaysPullImages"
-        "CertificateApproval"
-        "CertificateSigning"
-        "CertificateSubjectRestriction"
-        "ClusterTrustBundleAttest"
-        "DefaultIngressClass"
-        "DefaultStorageClass"
-        "DefaultTolerationSeconds"
-        "DenyServiceExternalIPs"
-        "EventRateLimit"
-        "ExtendedResourceToleration"
-        "ImagePolicyWebhook"
-        "LimitPodHardAntiAffinityTopology"
-        "LimitRanger"
-        "MutatingAdmissionWebhook"
-        "NamespaceAutoProvision"
-        "NamespaceExists"
-        "NamespaceLifecycle"
-        "NodeRestriction"
-        "OwnerReferencesPermissionEnforcement"
-        "PersistentVolumeClaimResize"
-        "PersistentVolumeLabel"
-        "PodNodeSelector"
-        "PodSecurity"
-        "PodTolerationRestriction"
-        "Priority"
-        "ResourceQuota"
-        "RuntimeClass"
-        "ServiceAccount"
-        "StorageObjectInUseProtection"
-        "TaintNodesByCondition"
-        "ValidatingAdmissionPolicy"
-        "ValidatingAdmissionWebhook"
-      ]));
+      <<admissionType>>
       default = null;
-      description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.";
+      description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). <<admissionTypeDescription>> The order of plugins in this flag does not matter.";
     };
 
     # Metrics flags
@@ -1258,6 +1237,13 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
       description = "A port range to reserve for services with NodePort visibility.  This must not overlap with the ephemeral port range on nodes.  Example: '30000-32767'. Inclusive at both ends of the range. (default 30000-32767)";
     };
   };
+
+#+end_src
+
+
+*** config block
+
+#+begin_src nix :noweb yes :tangle kube-apiserver.nix
 
   config = mkIf cfg.enable {
     systemd.services.kube-apiserver = {
@@ -1481,7 +1467,9 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
 ** kube-scheduler.nix
 
-#+begin_src nix :tangle kube-scheduler.nix
+*** let block
+
+#+BEGIN_SRC nix :noweb yes :tangle kube-scheduler.nix
 {
   config,
   pkgs,
@@ -1493,142 +1481,17 @@ with lib;
 
 let
   cfg = config.services.raw-kube-scheduler;
-  boolToString = b: if b then "true" else "false";
+  <<boolToString>>
   tls-sni-cert-key-items = if cfg.tls-sni-cert-key != null then map (item: "--tls-sni-cert-key ${item}") cfg.tls-sni-cert-key else [];
   description = "The Kubernetes scheduler is a control plane process which assigns Pods to Nodes. The scheduler determines which Nodes are valid placements for each Pod in the scheduling queue according to constraints and available resources. The scheduler then ranks each valid Node and binds the Pod to a suitable Node. Multiple different schedulers may be used within a cluster; kube-scheduler is the reference implementation. See https://kubernetes.io/docs/concepts/scheduling-eviction/ for more information about scheduling and the kube-scheduler component.";
-  featureGatesDescription = ''
-A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
-  APIResponseCompression=true|false (BETA - default=true)
-  APIServerIdentity=true|false (BETA - default=true)
-  APIServerTracing=true|false (BETA - default=true)
-  APIServingWithRoutine=true|false (BETA - default=true)
-  AllAlpha=true|false (ALPHA - default=false)
-  AllBeta=true|false (BETA - default=false)
-  AnyVolumeDataSource=true|false (BETA - default=true)
-  AppArmor=true|false (BETA - default=true)
-  AppArmorFields=true|false (BETA - default=true)
-  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
-  CPUManagerPolicyOptions=true|false (BETA - default=true)
-  CRDValidationRatcheting=true|false (BETA - default=true)
-  CSIMigrationPortworx=true|false (BETA - default=false)
-  CSIVolumeHealth=true|false (ALPHA - default=false)
-  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
-  ClusterTrustBundle=true|false (ALPHA - default=false)
-  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
-  ComponentSLIs=true|false (BETA - default=true)
-  ConsistentListFromCache=true|false (ALPHA - default=false)
-  ContainerCheckpoint=true|false (BETA - default=true)
-  ContextualLogging=true|false (BETA - default=true)
-  CronJobsScheduledAnnotation=true|false (BETA - default=true)
-  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
-  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
-  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
-  DevicePluginCDIDevices=true|false (BETA - default=true)
-  DisableCloudProviders=true|false (BETA - default=true)
-  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
-  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
-  DynamicResourceAllocation=true|false (ALPHA - default=false)
-  ElasticIndexedJob=true|false (BETA - default=true)
-  EventedPLEG=true|false (ALPHA - default=false)
-  GracefulNodeShutdown=true|false (BETA - default=true)
-  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
-  HPAScaleToZero=true|false (ALPHA - default=false)
-  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
-  ImageMaximumGCAge=true|false (BETA - default=true)
-  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
-  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
-  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
-  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
-  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
-  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
-  InformerResourceVersion=true|false (ALPHA - default=false)
-  JobBackoffLimitPerIndex=true|false (BETA - default=true)
-  JobManagedBy=true|false (ALPHA - default=false)
-  JobPodFailurePolicy=true|false (BETA - default=true)
-  JobPodReplacementPolicy=true|false (BETA - default=true)
-  JobSuccessPolicy=true|false (ALPHA - default=false)
-  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
-  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
-  KubeletInUserNamespace=true|false (ALPHA - default=false)
-  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
-  KubeletPodResourcesGet=true|false (ALPHA - default=false)
-  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
-  KubeletTracing=true|false (BETA - default=true)
-  LoadBalancerIPMode=true|false (BETA - default=true)
-  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
-  LogarithmicScaleDown=true|false (BETA - default=true)
-  LoggingAlphaOptions=true|false (ALPHA - default=false)
-  LoggingBetaOptions=true|false (BETA - default=true)
-  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
-  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
-  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
-  MemoryManager=true|false (BETA - default=true)
-  MemoryQoS=true|false (ALPHA - default=false)
-  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
-  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
-  NFTablesProxyMode=true|false (ALPHA - default=false)
-  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
-  NodeLogQuery=true|false (BETA - default=false)
-  NodeSwap=true|false (BETA - default=true)
-  OpenAPIEnums=true|false (BETA - default=true)
-  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
-  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
-  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
-  PodDeletionCost=true|false (BETA - default=true)
-  PodDisruptionConditions=true|false (BETA - default=true)
-  PodIndexLabel=true|false (BETA - default=true)
-  PodLifecycleSleepAction=true|false (BETA - default=true)
-  PodReadyToStartContainersCondition=true|false (BETA - default=true)
-  PortForwardWebsockets=true|false (ALPHA - default=false)
-  ProcMountType=true|false (ALPHA - default=false)
-  QOSReserved=true|false (ALPHA - default=false)
-  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
-  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
-  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
-  RetryGenerateName=true|false (ALPHA - default=false)
-  RotateKubeletServerCertificate=true|false (BETA - default=true)
-  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
-  SELinuxMount=true|false (ALPHA - default=false)
-  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
-  SchedulerQueueingHints=true|false (BETA - default=false)
-  SeparateCacheWatchRPC=true|false (BETA - default=true)
-  SeparateTaintEvictionController=true|false (BETA - default=true)
-  ServiceAccountTokenJTI=true|false (BETA - default=true)
-  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
-  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
-  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
-  ServiceTrafficDistribution=true|false (ALPHA - default=false)
-  SidecarContainers=true|false (BETA - default=true)
-  SizeMemoryBackedVolumes=true|false (BETA - default=true)
-  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
-  StatefulSetStartOrdinal=true|false (BETA - default=true)
-  StorageNamespaceIndex=true|false (BETA - default=true)
-  StorageVersionAPI=true|false (ALPHA - default=false)
-  StorageVersionHash=true|false (BETA - default=true)
-  StorageVersionMigrator=true|false (ALPHA - default=false)
-  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
-  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
-  TopologyAwareHints=true|false (BETA - default=true)
-  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
-  TopologyManagerPolicyOptions=true|false (BETA - default=true)
-  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
-  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
-  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
-  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
-  UserNamespacesSupport=true|false (BETA - default=false)
-  VolumeAttributesClass=true|false (ALPHA - default=false)
-  VolumeCapacityPriority=true|false (ALPHA - default=false)
-  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
-  WatchList=true|false (ALPHA - default=false)
-  WatchListClient=true|false (BETA - default=false)
-  WinDSR=true|false (ALPHA - default=false)
-  WinOverlay=true|false (BETA - default=true)
-  WindowsHostNetwork=true|false (ALPHA - default=true)
-'';
+<<featureGatesDescription>>
+
+#+END_SRC
+
+
+*** options block
+
+#+begin_src nix :noweb yes :tangle kube-scheduler.nix
 in
 {
   options.services.raw-kube-scheduler = {
@@ -1966,6 +1829,12 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
     };
   };
 
+#+end_src
+
+
+*** config block
+
+#+begin_src nix :noweb yes :tangle kube-scheduler.nix
   config = mkIf cfg.enable {
     systemd.services.kube-scheduler = {
       inherit description;
@@ -2045,12 +1914,13 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 
 ** kube-scheduler-kubeconfig
 
-
 * kube-controller-manager
 
 ** kube-controller-manager.nix
 
-#+begin_src nix :tangle kube-controller-manager.nix
+*** let block
+
+#+BEGIN_SRC nix :noweb yes :tangle kube-controller-manager.nix
 {
   config,
   pkgs,
@@ -2062,141 +1932,16 @@ with lib;
 
 let
   cfg = config.services.raw-kube-controller-manager;
-  boolToString = b: if b then "true" else "false";
+  <<boolToString>>
   description = "The Kubernetes controller manager is a daemon that embeds the core control loops shipped with Kubernetes. In applications of robotics and automation, a control loop is a non-terminating loop that regulates the state of the system. In Kubernetes, a controller is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state. Examples of controllers that ship with Kubernetes today are the replication controller, endpoints controller, namespace controller, and serviceaccounts controller.";
-  featureGatesDescription = ''
-A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
-  APIResponseCompression=true|false (BETA - default=true)
-  APIServerIdentity=true|false (BETA - default=true)
-  APIServerTracing=true|false (BETA - default=true)
-  APIServingWithRoutine=true|false (BETA - default=true)
-  AllAlpha=true|false (ALPHA - default=false)
-  AllBeta=true|false (BETA - default=false)
-  AnyVolumeDataSource=true|false (BETA - default=true)
-  AppArmor=true|false (BETA - default=true)
-  AppArmorFields=true|false (BETA - default=true)
-  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
-  CPUManagerPolicyOptions=true|false (BETA - default=true)
-  CRDValidationRatcheting=true|false (BETA - default=true)
-  CSIMigrationPortworx=true|false (BETA - default=false)
-  CSIVolumeHealth=true|false (ALPHA - default=false)
-  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
-  ClusterTrustBundle=true|false (ALPHA - default=false)
-  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
-  ComponentSLIs=true|false (BETA - default=true)
-  ConsistentListFromCache=true|false (ALPHA - default=false)
-  ContainerCheckpoint=true|false (BETA - default=true)
-  ContextualLogging=true|false (BETA - default=true)
-  CronJobsScheduledAnnotation=true|false (BETA - default=true)
-  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
-  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
-  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
-  DevicePluginCDIDevices=true|false (BETA - default=true)
-  DisableCloudProviders=true|false (BETA - default=true)
-  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
-  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
-  DynamicResourceAllocation=true|false (ALPHA - default=false)
-  ElasticIndexedJob=true|false (BETA - default=true)
-  EventedPLEG=true|false (ALPHA - default=false)
-  GracefulNodeShutdown=true|false (BETA - default=true)
-  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
-  HPAScaleToZero=true|false (ALPHA - default=false)
-  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
-  ImageMaximumGCAge=true|false (BETA - default=true)
-  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
-  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
-  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
-  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
-  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
-  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
-  InformerResourceVersion=true|false (ALPHA - default=false)
-  JobBackoffLimitPerIndex=true|false (BETA - default=true)
-  JobManagedBy=true|false (ALPHA - default=false)
-  JobPodFailurePolicy=true|false (BETA - default=true)
-  JobPodReplacementPolicy=true|false (BETA - default=true)
-  JobSuccessPolicy=true|false (ALPHA - default=false)
-  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
-  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
-  KubeletInUserNamespace=true|false (ALPHA - default=false)
-  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
-  KubeletPodResourcesGet=true|false (ALPHA - default=false)
-  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
-  KubeletTracing=true|false (BETA - default=true)
-  LoadBalancerIPMode=true|false (BETA - default=true)
-  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
-  LogarithmicScaleDown=true|false (BETA - default=true)
-  LoggingAlphaOptions=true|false (ALPHA - default=false)
-  LoggingBetaOptions=true|false (BETA - default=true)
-  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
-  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
-  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
-  MemoryManager=true|false (BETA - default=true)
-  MemoryQoS=true|false (ALPHA - default=false)
-  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
-  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
-  NFTablesProxyMode=true|false (ALPHA - default=false)
-  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
-  NodeLogQuery=true|false (BETA - default=false)
-  NodeSwap=true|false (BETA - default=true)
-  OpenAPIEnums=true|false (BETA - default=true)
-  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
-  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
-  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
-  PodDeletionCost=true|false (BETA - default=true)
-  PodDisruptionConditions=true|false (BETA - default=true)
-  PodIndexLabel=true|false (BETA - default=true)
-  PodLifecycleSleepAction=true|false (BETA - default=true)
-  PodReadyToStartContainersCondition=true|false (BETA - default=true)
-  PortForwardWebsockets=true|false (ALPHA - default=false)
-  ProcMountType=true|false (ALPHA - default=false)
-  QOSReserved=true|false (ALPHA - default=false)
-  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
-  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
-  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
-  RetryGenerateName=true|false (ALPHA - default=false)
-  RotateKubeletServerCertificate=true|false (BETA - default=true)
-  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
-  SELinuxMount=true|false (ALPHA - default=false)
-  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
-  SchedulerQueueingHints=true|false (BETA - default=false)
-  SeparateCacheWatchRPC=true|false (BETA - default=true)
-  SeparateTaintEvictionController=true|false (BETA - default=true)
-  ServiceAccountTokenJTI=true|false (BETA - default=true)
-  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
-  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
-  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
-  ServiceTrafficDistribution=true|false (ALPHA - default=false)
-  SidecarContainers=true|false (BETA - default=true)
-  SizeMemoryBackedVolumes=true|false (BETA - default=true)
-  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
-  StatefulSetStartOrdinal=true|false (BETA - default=true)
-  StorageNamespaceIndex=true|false (BETA - default=true)
-  StorageVersionAPI=true|false (ALPHA - default=false)
-  StorageVersionHash=true|false (BETA - default=true)
-  StorageVersionMigrator=true|false (ALPHA - default=false)
-  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
-  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
-  TopologyAwareHints=true|false (BETA - default=true)
-  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
-  TopologyManagerPolicyOptions=true|false (BETA - default=true)
-  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
-  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
-  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
-  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
-  UserNamespacesSupport=true|false (BETA - default=false)
-  VolumeAttributesClass=true|false (ALPHA - default=false)
-  VolumeCapacityPriority=true|false (ALPHA - default=false)
-  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
-  WatchList=true|false (ALPHA - default=false)
-  WatchListClient=true|false (BETA - default=false)
-  WinDSR=true|false (ALPHA - default=false)
-  WinOverlay=true|false (BETA - default=true)
-  WindowsHostNetwork=true|false (ALPHA - default=true)
-'';
+<<featureGatesDescription>>
+
+#+END_SRC
+
+
+*** options block
+
+#+begin_src nix :noweb yes :tangle kube-controller-manager.nix
 in
 {
   options.services.raw-kube-controller-manager = {
@@ -3005,6 +2750,12 @@ in
     };
   };
 
+#+end_src
+
+
+*** config block
+
+#+begin_src nix :noweb yes :tangle kube-controller-manager.nix
   config = mkIf cfg.enable {
     systemd.services.kube-controller-manager = {
       inherit description;
@@ -3178,7 +2929,7 @@ in
 
 We need to create the following file and pass it to the ~kube-proxy~ process.
 
-#+begin_src json :tangle kube-proxy-kubeconfig
+#+begin_src json :noweb yes :tangle kube-proxy-kubeconfig
 {
   "apiVersion": "v1",
   "clusters": [
@@ -3221,15 +2972,19 @@ The parameters we need:
 - The path to the client certificate (~/var/lib/kubernetes/secrets/kube-proxy-client.pem~)
 - The path to the client key (~/var/lib/kubernetes/secrets/kube-proxy-client-key.pem~)
 
-The logic [[https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/cluster/kubernetes/default.nix][is already in nixpkgs]].
+The logic [[https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/cluster/kubernetes/default.nix][is already in nixpkgs]], so let's use it directly.
+
 
 ** kube-proxy.nix
 
-#+begin_src nix :tangle kube-proxy.nix
+*** let block
+
+#+begin_src nix :noweb yes :tangle kube-proxy.nix
 {
   config,
   pkgs,
   lib,
+  nixpkgs,
   ...
 }:
 
@@ -3237,11 +2992,12 @@ with lib;
 
 let
   cfg = config.services.raw-kube-proxy;
-  originalKubernetes = import "${nixpkgs.path}/nixos/modules/services/cluster/kubernetes/default.nix";
+  nixpkgs_store = import <nixpkgs> {};
+  originalKubernetes = import "${nixpkgs_store.path}/nixos/modules/services/cluster/kubernetes/default.nix";
   mkCert = originalKubernetes.mkCert;
   mkKubeConfig = originalKubernetes.mkKubeConfig;
   mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
-  getCert = if config.services.raw-kube-proxy.certFile == null
+  resolvedCert = if config.services.raw-kube-proxy.certFile == null
             then mkCert {
               name = "kube-proxy";
               CN = config.services.raw-kube-proxy.commonName;
@@ -3249,142 +3005,15 @@ let
             }
             else { certFile = config.services.raw-kube-proxy.certFile; keyFile = config.services.raw-kube-proxy.keyFile; };
 
-  boolToString = b: if b then "true" else "false";
+  <<boolToString>>
   description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
-  featureGatesDescription = ''
-A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
-  APIResponseCompression=true|false (BETA - default=true)
-  APIServerIdentity=true|false (BETA - default=true)
-  APIServerTracing=true|false (BETA - default=true)
-  APIServingWithRoutine=true|false (BETA - default=true)
-  AllAlpha=true|false (ALPHA - default=false)
-  AllBeta=true|false (BETA - default=false)
-  AnyVolumeDataSource=true|false (BETA - default=true)
-  AppArmor=true|false (BETA - default=true)
-  AppArmorFields=true|false (BETA - default=true)
-  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
-  CPUManagerPolicyOptions=true|false (BETA - default=true)
-  CRDValidationRatcheting=true|false (BETA - default=true)
-  CSIMigrationPortworx=true|false (BETA - default=false)
-  CSIVolumeHealth=true|false (ALPHA - default=false)
-  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
-  ClusterTrustBundle=true|false (ALPHA - default=false)
-  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
-  ComponentSLIs=true|false (BETA - default=true)
-  ConsistentListFromCache=true|false (ALPHA - default=false)
-  ContainerCheckpoint=true|false (BETA - default=true)
-  ContextualLogging=true|false (BETA - default=true)
-  CronJobsScheduledAnnotation=true|false (BETA - default=true)
-  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
-  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
-  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
-  DevicePluginCDIDevices=true|false (BETA - default=true)
-  DisableCloudProviders=true|false (BETA - default=true)
-  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
-  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
-  DynamicResourceAllocation=true|false (ALPHA - default=false)
-  ElasticIndexedJob=true|false (BETA - default=true)
-  EventedPLEG=true|false (ALPHA - default=false)
-  GracefulNodeShutdown=true|false (BETA - default=true)
-  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
-  HPAScaleToZero=true|false (ALPHA - default=false)
-  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
-  ImageMaximumGCAge=true|false (BETA - default=true)
-  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
-  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
-  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
-  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
-  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
-  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
-  InformerResourceVersion=true|false (ALPHA - default=false)
-  JobBackoffLimitPerIndex=true|false (BETA - default=true)
-  JobManagedBy=true|false (ALPHA - default=false)
-  JobPodFailurePolicy=true|false (BETA - default=true)
-  JobPodReplacementPolicy=true|false (BETA - default=true)
-  JobSuccessPolicy=true|false (ALPHA - default=false)
-  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
-  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
-  KubeletInUserNamespace=true|false (ALPHA - default=false)
-  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
-  KubeletPodResourcesGet=true|false (ALPHA - default=false)
-  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
-  KubeletTracing=true|false (BETA - default=true)
-  LoadBalancerIPMode=true|false (BETA - default=true)
-  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
-  LogarithmicScaleDown=true|false (BETA - default=true)
-  LoggingAlphaOptions=true|false (ALPHA - default=false)
-  LoggingBetaOptions=true|false (BETA - default=true)
-  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
-  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
-  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
-  MemoryManager=true|false (BETA - default=true)
-  MemoryQoS=true|false (ALPHA - default=false)
-  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
-  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
-  NFTablesProxyMode=true|false (ALPHA - default=false)
-  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
-  NodeLogQuery=true|false (BETA - default=false)
-  NodeSwap=true|false (BETA - default=true)
-  OpenAPIEnums=true|false (BETA - default=true)
-  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
-  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
-  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
-  PodDeletionCost=true|false (BETA - default=true)
-  PodDisruptionConditions=true|false (BETA - default=true)
-  PodIndexLabel=true|false (BETA - default=true)
-  PodLifecycleSleepAction=true|false (BETA - default=true)
-  PodReadyToStartContainersCondition=true|false (BETA - default=true)
-  PortForwardWebsockets=true|false (ALPHA - default=false)
-  ProcMountType=true|false (ALPHA - default=false)
-  QOSReserved=true|false (ALPHA - default=false)
-  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
-  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
-  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
-  RetryGenerateName=true|false (ALPHA - default=false)
-  RotateKubeletServerCertificate=true|false (BETA - default=true)
-  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
-  SELinuxMount=true|false (ALPHA - default=false)
-  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
-  SchedulerQueueingHints=true|false (BETA - default=false)
-  SeparateCacheWatchRPC=true|false (BETA - default=true)
-  SeparateTaintEvictionController=true|false (BETA - default=true)
-  ServiceAccountTokenJTI=true|false (BETA - default=true)
-  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
-  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
-  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
-  ServiceTrafficDistribution=true|false (ALPHA - default=false)
-  SidecarContainers=true|false (BETA - default=true)
-  SizeMemoryBackedVolumes=true|false (BETA - default=true)
-  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
-  StatefulSetStartOrdinal=true|false (BETA - default=true)
-  StorageNamespaceIndex=true|false (BETA - default=true)
-  StorageVersionAPI=true|false (ALPHA - default=false)
-  StorageVersionHash=true|false (BETA - default=true)
-  StorageVersionMigrator=true|false (ALPHA - default=false)
-  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
-  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
-  TopologyAwareHints=true|false (BETA - default=true)
-  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
-  TopologyManagerPolicyOptions=true|false (BETA - default=true)
-  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
-  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
-  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
-  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
-  UserNamespacesSupport=true|false (BETA - default=false)
-  VolumeAttributesClass=true|false (ALPHA - default=false)
-  VolumeCapacityPriority=true|false (ALPHA - default=false)
-  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
-  WatchList=true|false (ALPHA - default=false)
-  WatchListClient=true|false (BETA - default=false)
-  WinDSR=true|false (ALPHA - default=false)
-  WinOverlay=true|false (BETA - default=true)
-  WindowsHostNetwork=true|false (ALPHA - default=true)
-'';
+<<featureGatesDescription>>
+#+end_src
 
+
+*** options block
+
+#+begin_src nix :noweb yes :tangle kube-proxy.nix
 in
 {
   options.services.raw-kube-proxy = {
@@ -3689,6 +3318,13 @@ in
     };
   };
 
+#+end_src
+
+
+*** config block
+
+#+begin_src nix :noweb yes :tangle kube-proxy.nix
+
   config = mkIf cfg.enable {
     systemd.services.kube-proxy = lib.mkForce {
       inherit description;
@@ -3765,7 +3401,9 @@ in
 
 * kubelet
 
-#+begin_src nix :tangle kubelet.nix
+*** let block
+
+#+begin_src nix :noweb yes :tangle kubelet.nix
 {
   config,
   pkgs,
@@ -3777,7 +3415,7 @@ with lib;
 
 let
   cfg = config.services.raw-kubelet;
-  boolToString = b: if b then "true" else "false";
+  <<boolToString>>
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
   longDescription = "The kubelet is the primary 'node agent' that runs on each
 node. It can register the node with the apiserver using one of: the hostname; a flag to
@@ -3798,140 +3436,12 @@ via a flag.
 
 HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint
 is checked every 20 seconds (also configurable with a flag).";
-  featureGatesDescription = ''
-A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
-  APIResponseCompression=true|false (BETA - default=true)
-  APIServerIdentity=true|false (BETA - default=true)
-  APIServerTracing=true|false (BETA - default=true)
-  APIServingWithRoutine=true|false (BETA - default=true)
-  AllAlpha=true|false (ALPHA - default=false)
-  AllBeta=true|false (BETA - default=false)
-  AnyVolumeDataSource=true|false (BETA - default=true)
-  AppArmor=true|false (BETA - default=true)
-  AppArmorFields=true|false (BETA - default=true)
-  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
-  CPUManagerPolicyOptions=true|false (BETA - default=true)
-  CRDValidationRatcheting=true|false (BETA - default=true)
-  CSIMigrationPortworx=true|false (BETA - default=false)
-  CSIVolumeHealth=true|false (ALPHA - default=false)
-  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
-  ClusterTrustBundle=true|false (ALPHA - default=false)
-  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
-  ComponentSLIs=true|false (BETA - default=true)
-  ConsistentListFromCache=true|false (ALPHA - default=false)
-  ContainerCheckpoint=true|false (BETA - default=true)
-  ContextualLogging=true|false (BETA - default=true)
-  CronJobsScheduledAnnotation=true|false (BETA - default=true)
-  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
-  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
-  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
-  DevicePluginCDIDevices=true|false (BETA - default=true)
-  DisableCloudProviders=true|false (BETA - default=true)
-  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
-  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
-  DynamicResourceAllocation=true|false (ALPHA - default=false)
-  ElasticIndexedJob=true|false (BETA - default=true)
-  EventedPLEG=true|false (ALPHA - default=false)
-  GracefulNodeShutdown=true|false (BETA - default=true)
-  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
-  HPAScaleToZero=true|false (ALPHA - default=false)
-  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
-  ImageMaximumGCAge=true|false (BETA - default=true)
-  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
-  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
-  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
-  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
-  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
-  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
-  InformerResourceVersion=true|false (ALPHA - default=false)
-  JobBackoffLimitPerIndex=true|false (BETA - default=true)
-  JobManagedBy=true|false (ALPHA - default=false)
-  JobPodFailurePolicy=true|false (BETA - default=true)
-  JobPodReplacementPolicy=true|false (BETA - default=true)
-  JobSuccessPolicy=true|false (ALPHA - default=false)
-  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
-  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
-  KubeletInUserNamespace=true|false (ALPHA - default=false)
-  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
-  KubeletPodResourcesGet=true|false (ALPHA - default=false)
-  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
-  KubeletTracing=true|false (BETA - default=true)
-  LoadBalancerIPMode=true|false (BETA - default=true)
-  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
-  LogarithmicScaleDown=true|false (BETA - default=true)
-  LoggingAlphaOptions=true|false (ALPHA - default=false)
-  LoggingBetaOptions=true|false (BETA - default=true)
-  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
-  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
-  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
-  MemoryManager=true|false (BETA - default=true)
-  MemoryQoS=true|false (ALPHA - default=false)
-  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
-  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
-  NFTablesProxyMode=true|false (ALPHA - default=false)
-  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
-  NodeLogQuery=true|false (BETA - default=false)
-  NodeSwap=true|false (BETA - default=true)
-  OpenAPIEnums=true|false (BETA - default=true)
-  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
-  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
-  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
-  PodDeletionCost=true|false (BETA - default=true)
-  PodDisruptionConditions=true|false (BETA - default=true)
-  PodIndexLabel=true|false (BETA - default=true)
-  PodLifecycleSleepAction=true|false (BETA - default=true)
-  PodReadyToStartContainersCondition=true|false (BETA - default=true)
-  PortForwardWebsockets=true|false (ALPHA - default=false)
-  ProcMountType=true|false (ALPHA - default=false)
-  QOSReserved=true|false (ALPHA - default=false)
-  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
-  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
-  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
-  RetryGenerateName=true|false (ALPHA - default=false)
-  RotateKubeletServerCertificate=true|false (BETA - default=true)
-  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
-  SELinuxMount=true|false (ALPHA - default=false)
-  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
-  SchedulerQueueingHints=true|false (BETA - default=false)
-  SeparateCacheWatchRPC=true|false (BETA - default=true)
-  SeparateTaintEvictionController=true|false (BETA - default=true)
-  ServiceAccountTokenJTI=true|false (BETA - default=true)
-  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
-  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
-  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
-  ServiceTrafficDistribution=true|false (ALPHA - default=false)
-  SidecarContainers=true|false (BETA - default=true)
-  SizeMemoryBackedVolumes=true|false (BETA - default=true)
-  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
-  StatefulSetStartOrdinal=true|false (BETA - default=true)
-  StorageNamespaceIndex=true|false (BETA - default=true)
-  StorageVersionAPI=true|false (ALPHA - default=false)
-  StorageVersionHash=true|false (BETA - default=true)
-  StorageVersionMigrator=true|false (ALPHA - default=false)
-  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
-  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
-  TopologyAwareHints=true|false (BETA - default=true)
-  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
-  TopologyManagerPolicyOptions=true|false (BETA - default=true)
-  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
-  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
-  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
-  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
-  UserNamespacesSupport=true|false (BETA - default=false)
-  VolumeAttributesClass=true|false (ALPHA - default=false)
-  VolumeCapacityPriority=true|false (ALPHA - default=false)
-  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
-  WatchList=true|false (ALPHA - default=false)
-  WatchListClient=true|false (BETA - default=false)
-  WinDSR=true|false (ALPHA - default=false)
-  WinOverlay=true|false (BETA - default=true)
-  WindowsHostNetwork=true|false (ALPHA - default=true)
-'';
+<<featureGatesDescription>>
+#+end_src
 
+*** options block
+
+#+begin_src nix :noweb yes :tangle kubelet.nix
 in
 {
   options.services.raw-kubelet = {
@@ -4829,7 +4339,12 @@ in
       description = "Specifies interval for kubelet to calculate and cache the volume disk usage for all pods and volumes.  To disable volume calculations, set to a negative number. (default 1m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
     };
   };
+#+end_src
 
+
+*** config block
+
+#+begin_src nix :noweb yes :tangle kubelet.nix
   config = mkIf cfg.enable {
     systemd.services.kubelet = lib.mkForce {
       inherit description;

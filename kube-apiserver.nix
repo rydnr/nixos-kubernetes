@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  mkCert,
   ...
 }:
 
@@ -10,7 +9,6 @@ with lib;
 
 let
   cfg = config.services.raw-kube-apiserver;
-  myCert = traceVal mkCer;
   boolToString = b: if b then "true" else "false";
   oidc-required-claim-items = if cfg.oidc-required-claim != null then map (item: "--oidc-required-claim ${item}") cfg.oidc-required-claim else [];
   description = "The Kubernetes API server validates and configures data for the api objects which include pods, services, replicationcontrollers, and others. The API Server services REST operations and provides the frontend to the cluster's shared state through which all other components interact.";
@@ -147,6 +145,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WinOverlay=true|false (BETA - default=true)
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
+
 in
 {
   options.services.raw-kube-apiserver = {
@@ -852,7 +851,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
         "ValidatingAdmissionWebhook"
       ]));
       default = null;
-      description = "Admission is divided into two phases. In the first phase, only mutating admission plugins run. In the second phase, only validating admission plugins run. The names in the below list may represent a validating plugin, a mutating plugin, or both. The order of plugins in which they are passed to this flag does not matter. Comma-delimited list of: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. (DEPRECATED: Use --enable-admission-plugins or --disable-admission-plugins instead. Will be removed in a future version.)";
+      description = "Admission is divided into two phases. In the first phase, only mutating admission plugins run. In the second phase, only validating admission plugins run. The names in the below list may represent a validating plugin, a mutating plugin, or both. The order of plugins in which they are passed to this flag does not matter. Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. (DEPRECATED: Use --enable-admission-plugins or --disable-admission-plugins instead. Will be removed in a future version.)";
     };
     admission-control-config-file = mkOption {
       type = types.nullOr types.path;
@@ -861,26 +860,41 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
     };
     disable-admission-plugins = mkOption {
       type = types.nullOr (types.listOf (types.enum [
-        "NamespaceLifecycle"
-        "LimitRanger"
-        "ServiceAccount"
-        "TaintNodesByCondition"
-        "PodSecurity"
-        "Priority"
-        "DefaultTolerationSeconds"
-        "DefaultStorageClass"
-        "StorageObjectInUseProtection"
-        "PersistentVolumeClaimResize"
-        "RuntimeClass"
+        "AlwaysAdmit"
+        "AlwaysDeny"
+        "AlwaysPullImages"
         "CertificateApproval"
         "CertificateSigning"
-        "ClusterTrustBundleAttest"
         "CertificateSubjectRestriction"
+        "ClusterTrustBundleAttest"
         "DefaultIngressClass"
+        "DefaultStorageClass"
+        "DefaultTolerationSeconds"
+        "DenyServiceExternalIPs"
+        "EventRateLimit"
+        "ExtendedResourceToleration"
+        "ImagePolicyWebhook"
+        "LimitPodHardAntiAffinityTopology"
+        "LimitRanger"
         "MutatingAdmissionWebhook"
+        "NamespaceAutoProvision"
+        "NamespaceExists"
+        "NamespaceLifecycle"
+        "NodeRestriction"
+        "OwnerReferencesPermissionEnforcement"
+        "PersistentVolumeClaimResize"
+        "PersistentVolumeLabel"
+        "PodNodeSelector"
+        "PodSecurity"
+        "PodTolerationRestriction"
+        "Priority"
+        "ResourceQuota"
+        "RuntimeClass"
+        "ServiceAccount"
+        "StorageObjectInUseProtection"
+        "TaintNodesByCondition"
         "ValidatingAdmissionPolicy"
         "ValidatingAdmissionWebhook"
-        "ResourceQuota"
       ]));
       default = null;
       description = "The admission plugins that should be disabled although they are in the default enabled plugins list (NamespaceLifecycle, LimitRanger, ServiceAccount, TaintNodesByCondition, PodSecurity, Priority, DefaultTolerationSeconds, DefaultStorageClass, StorageObjectInUseProtection, PersistentVolumeClaimResize, RuntimeClass, CertificateApproval, CertificateSigning, ClusterTrustBundleAttest, CertificateSubjectRestriction, DefaultIngressClass, MutatingAdmissionWebhook, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook, ResourceQuota). Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook. The order of plugins in this flag does not matter.";

@@ -22,10 +22,6 @@
   inputs = rec {
     nixpkgs.url = "github:NixOS/nixpkgs/24.05";
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
-    cert = {
-      url = "github:rydnr/nixos-cert-functions";
-      inputs.nixos.follows = "nixpkgs";
-    };
   };
 
   outputs = inputs:
@@ -34,7 +30,7 @@
     (system: {
       nixosModules = {
         raw-kubernetes-ca = ./kubernetes-ca.nix;
-        raw-kube-apiserver = { config, pkgs, lib, ... }: import ./kube-apiserver.nix { inherit config pkgs lib; mkCert = cert.outputs.lib.mkCert; };
+        raw-kube-apiserver = ./kube-apiserver.nix;
         raw-kube-scheduler = ./kube-scheduler.nix;
         raw-kube-controller-manager = ./kube-controller-manager.nix;
         raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs;};
