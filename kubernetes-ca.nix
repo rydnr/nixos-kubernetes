@@ -15,9 +15,14 @@ let
     set -e
     CA_NAME="$1";
     DAYS="$2";
-    CN="$3";
-    SSL_FOLDER="$4";
-    openssl req -x509 -newkey rsa:4096 -keyout "$SSL_FOLDER/$CA_NAME.key" -out "$SSL_FOLDER/$CA_NAME.pem" -days $DAYS -nodes -subj "/CN=$CN"
+    SSL_FOLDER="$3";
+    C="$4";
+    ST="$5";
+    L="$6";
+    O="$7";
+    OU="$8";
+    CN="$9";
+    ${pkgs.openssl}/bin/openssl req -x509 -newkey rsa:4096 -keyout "$SSL_FOLDER/$CA_NAME.key" -out "$SSL_FOLDER/$CA_NAME.pem" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
   '';
 in
 {
@@ -42,15 +47,40 @@ in
       default = null;
       description = "The name used to identify the certificate authority.";
     };
-    caCommonName = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
-      description = "The common name of the certificate authority.";
-    };
     caExpirationDays = lib.mkOption {
       type = lib.types.nullOr lib.types.int;
       default = 365;
       description = "The number of days until the certificate authority expires.";
+    };
+    caCountry = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The two-letter ISO code for the country where the organization of the certificate authority is located.";
+    };
+    caState = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The full name of the state or province where the organization of the certificate authority is located.";
+    };
+    caLocality = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The city or locality where the organization of the certificate authority is located.";
+    };
+    caOrganization = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The legal name of the organization of the certificate authority.";
+    };
+    caOrganizationalUnit = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The organizational unit (division of the organization in charge) of the certificate authority.";
+    };
+    caCommonName = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The name of the individual or organization of the certificate authority.";
     };
   };
 
@@ -59,10 +89,9 @@ in
       inherit description;
       wantedBy = [ "multi-user.target" ];
 
-      path = with pkgs; [ bash openssl ];
       serviceConfig = {
         ExecStart = ''
-          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert ${cfg.caName} ${toString cfg.caExpirationDays} ${cfg.caCommonName} ${cfg.sslFolder}"
+          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${toString cfg.caExpirationDays}' '${cfg.sslFolder}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
           else
             "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
           }
