@@ -31,8 +31,8 @@ let
     [[ ! -e "$CA_DIRECTORY/certs/$CA_NAME.crt" ]] && ${pkgs.openssl}/bin/openssl req -new -x509 -key "$CA_DIRECTORY/private/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$CA_DIRECTORY/certs/$CA_NAME.crt" -days $DAYS -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
     # Initialize database files
-    [[ ! -e ${cfg.caDirectory}/index.txt] && touch ${cfg.caDirectory}/index.txt
-    [[ ! -e ${cfg.caDirectory}/serial] && echo 1000 > ${cfg.caDirectory}/serial
+    [[ ! -e ${cfg.caDirectory}/index.txt ]] && touch ${cfg.caDirectory}/index.txt
+    [[ ! -e ${cfg.caDirectory}/serial ]] && echo 1000 > ${cfg.caDirectory}/serial
   '';
 in
 {
