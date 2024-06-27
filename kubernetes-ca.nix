@@ -102,7 +102,7 @@ in
   config = mkIf cfg.enable {
     systemd.services.raw-kubernetes-ca = {
       inherit description;
-      after [ "network.target" ];
+      after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
       environment.systemPackages = [ pkgs.openssl ];
