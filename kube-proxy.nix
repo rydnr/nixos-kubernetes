@@ -505,7 +505,7 @@ in
             ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
             ${optionalString (cfg.kube-api-content-type != null) "--kube-api-content-type ${toString cfg.kube-api-content-type}"} \
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
-            ${optionalString (cfg.kubeconfig != null) "--kubeconfig \"${toString cfg.kubeconfig}\"" "--kubeconfig \"${generatedKubeConfig}\""} \
+            ${optionalString (cfg.kubeconfig != null) "--kubeconfig \"${toString cfg.kubeconfig}\"" "--kubeconfig \"${toString generatedKubeConfig}\""} \
             ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${toString cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
             ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
