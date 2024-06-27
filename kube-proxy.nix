@@ -15,7 +15,7 @@ let
   mkCert = originalKubernetes.mkCert;
   mkKubeConfig = originalKubernetes.mkKubeConfig;
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg;
-  kubeconfig = trace if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
+  kubeconfig = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
   resolvedCert = if config.services.raw-kube-proxy.certFile == null
             then mkCert {
