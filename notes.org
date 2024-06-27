@@ -131,7 +131,7 @@ in
         ];
       };
 
-      environment.etc."openssl.cnf".text = ''
+      environment.etc."openssl.cnf" = ''
       [ ca ]
       default_ca = CA_default
 
