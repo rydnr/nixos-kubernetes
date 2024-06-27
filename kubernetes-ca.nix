@@ -9,7 +9,7 @@ with lib;
 
 let
   cfg = config.services.raw-kubernetes-ca;
-  description = "Manages the certificate authority used by Kubernetes";
+  description = "An utility to manage the Kubernetes certificate authority";
   generateCaCert = pkgs.writeScriptBin "generate-ca-cert" ''
     #!/usr/bin/env ${pkgs.bash}/bin/bash
     set -e
@@ -24,15 +24,20 @@ let
     OU="$9";
     CN="$10";
 
+    KEY="$CA_DIRECTORY/private/$CA_NAME.key"
+    CRT="$CA_DIRECTORY/certs/$CA_NAME.crt"
+    IDX="$CA_DIRECTORY/index.txt"
+    SRL="$CA_DIRECTORY/serial"
+
     # Generate the private key
-    [[ ! -e "$CA_DIRECTORY/private/$CA_NAME.key" ]] && ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$CA_DIRECTORY/private/$CA_NAME.key" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+    [[ ! -e "$KEY" ]] && ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
 
     # Use the private key to create a self-signed x509 certificate for the certificate authority.
-    [[ ! -e "$CA_DIRECTORY/certs/$CA_NAME.crt" ]] && ${pkgs.openssl}/bin/openssl req -new -x509 -key "$CA_DIRECTORY/private/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$CA_DIRECTORY/certs/$CA_NAME.crt" -days $DAYS -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+    [[ ! -e "$CRT" ]] && ${pkgs.openssl}/bin/openssl req -new -x509 -key "$KEY" -sha256 -passin pass:"$CA_PASSWORD" -out "$CRT" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
     # Initialize database files
-    [[ ! -e ${cfg.caDirectory}/index.txt ]] && touch ${cfg.caDirectory}/index.txt
-    [[ ! -e ${cfg.caDirectory}/serial ]] && echo 1000 > ${cfg.caDirectory}/serial
+    [[ ! -e "$IDX" ]] && touch "$IDX"
+    [[ ! -e "$SRL" ]] && echo 1000 > "$SRL"
   '';
 in
 {
