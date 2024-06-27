@@ -14,7 +14,7 @@ let
   originalKubernetes = import "${nixpkgs_store.path}/nixos/modules/services/cluster/kubernetes/default.nix";
   mkCert = originalKubernetes.mkCert;
   mkKubeConfig = originalKubernetes.mkKubeConfig;
-  generatedKubeConfig = mkKubeConfig { name = "kube-proxy"; conf = cfg; }; };
+  generatedKubeConfig = mkKubeConfig { name = "kube-proxy"; conf = cfg; };
   mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
   resolvedCert = if config.services.raw-kube-proxy.certFile == null
             then mkCert {
