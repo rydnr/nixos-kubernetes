@@ -32,19 +32,20 @@ let
     CRL="$CRLDIR/$CA_NAME-crl.pem"
     CRLN="$CA_DIRECTORY/$CA_NAME-crlnumber"
 
+    # Initialize database files
+    [[ -f "$IDX" ]] || command touch "$IDX"
+    [[ -f "$SRL" ]] || command echo 1000 > "$SRL"
+
+    [[ -d "$CRLDIR" ]] || command mkdir "$CRLDIR"
+    [[ -f "$CRLN" ]] || command echo 01 > "$CRLN"
+
     # Generate the private key
     [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
 
     # Use the private key to create a self-signed x509 certificate for the certificate authority.
     [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl req -new -x509 -key "$KEY" -sha256 -passin pass:"$CA_PASSWORD" -out "$CRT" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
-    # Initialize database files
-    [[ -f "$IDX" ]] || command touch "$IDX"
-    [[ -f "$SRL" ]] || command echo 1000 > "$SRL"
-
     # Generate a CRL if it doesn't exist
-    [[ -d "$CRLDIR" ]] || command mkdir "$CRLDIR"
-    [[ -f "$CRLN" ]] || command echo 01 > "$CRLN"
     [[ -f "$CRL" ]] || ${pkgs.openssl}/bin/openssl ca -gencrl -crldays "$DAYS" -out "$CRL" -passin pass:"$CA_PASSWORD" -config /etc/openssl.cnf
   '';
 in
