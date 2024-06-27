@@ -46,7 +46,7 @@ let
     [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl req -new -x509 -key "$KEY" -sha256 -passin pass:"$CA_PASSWORD" -out "$CRT" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
     # Generate a CRL if it doesn't exist
-    # [[ -f "$CRL" ]] || ${pkgs.openssl}/bin/openssl ca -gencrl -crldays "$DAYS" -out "$CRL" -passin pass:"$CA_PASSWORD" -config /etc/openssl.cnf
+    [[ -f "$CRL" ]] || ${pkgs.openssl}/bin/openssl ca -gencrl -crldays "$DAYS" -out "$CRL" -passin pass:"$CA_PASSWORD" -config /etc/openssl.cnf
   '';
 in
 {
@@ -129,7 +129,7 @@ database = $dir/${cfg.caName}-index.txt
 serial = $dir/${cfg.caName}-serial
 private_key = $dir/private/${cfg.caName}.key
 certificate = $dir/certs/${cfg.caName}.crt
-crlnumber = $crl_dir/${cfg.caName}-crlnumber
+crlnumber = $dir/${cfg.caName}-crlnumber
 crl = $crl_dir/${cfg.caName}-crl.pem
 RANDFILE = $dir/private/.rand
 default_md = sha256
