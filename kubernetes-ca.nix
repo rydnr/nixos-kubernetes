@@ -44,8 +44,8 @@ let
 
     # Generate a CRL if it doesn't exist
     [[ -d "$CRLDIR" ]] || command mkdir "$CRLDIR"
-    [[ -f "$CRL" ]] || ${pkgs.openssl}/bin/openssl ca -gencrl -crldays "$DAYS" -out "$CRL" -passin pass:"$CA_PASSWORD" -config /etc/openssl.cnf
     [[ -f "$CRLN" ]] || command echo 01 > "$CRLN"
+    [[ -f "$CRL" ]] || ${pkgs.openssl}/bin/openssl ca -gencrl -crldays "$DAYS" -out "$CRL" -passin pass:"$CA_PASSWORD" -config /etc/openssl.cnf
   '';
 in
 {
@@ -117,9 +117,9 @@ in
     environment.etc = mkIf (!builtins.pathExists "/etc/openssl.cnf") {
       "openssl.cnf".text = ''
 [ ca ]
-default_ca = CA_default
+default_ca = ${cfg.caName}_ca
 
-[ CA_default ]
+[ ${cfg.caName}_ca ]
 dir = ${cfg.caDirectory}
 certs = $dir/certs
 crl_dir = $dir/crl
