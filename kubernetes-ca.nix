@@ -105,8 +105,6 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
-      environment.systemPackages = [ pkgs.openssl ];
-
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
@@ -124,7 +122,8 @@ in
         ];
       };
 
-      environment.etc."openssl.cnf" = ''
+      environment.systemPackages = [ pkgs.openssl ];
+      environment.etc."openssl.cnf".text = ''
       [ ca ]
       default_ca = CA_default
 
@@ -160,7 +159,7 @@ in
       organizationalUnitName_default = IT
       commonName = ${cfg.caCommonName}
       commonName_default = example.com
-    '';
+      '';
     };
   };
 }
