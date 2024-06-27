@@ -24,7 +24,7 @@ let
     OU="$9";
     CN="$10";
     # Generate the private key
-    ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$SSL_FOLDER/$CA_NAME.key -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+    ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$SSL_FOLDER/$CA_NAME.key" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
     # Use the private key to create a self-signed x509 certificate for the certificate authority.
     ${pkgs.openssl}/bin/openssl req -new -x509 -key "$SSL_FOLDER/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$SSL_FOLDER/$CA_NAME.crt" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
   '';
