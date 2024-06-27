@@ -107,7 +107,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.openssl ];
+    environment.systemPackages = with pkgs; [ coreutils openssl ];
     environment.etc."openssl.cnf".text = ''
       [ ca ]
       default_ca = CA_default
@@ -161,10 +161,10 @@ in
         '';
         ExecStartPre = [
           # Ensure proper permissions
-          ''install -d -m 0700 -o root -g root ${cfg.caDirectory}/private''
-          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/certs''
-          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/crl''
-          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/newcerts''
+          ''${pkgs.coreutils}/bin/install -d -m 0700 -o root -g root ${cfg.caDirectory}/private''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.caDirectory}/certs''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.caDirectory}/crl''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.caDirectory}/newcerts''
         ];
       };
     };
