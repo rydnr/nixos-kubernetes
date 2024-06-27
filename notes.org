@@ -21,15 +21,17 @@ let
     #!/usr/bin/env ${pkgs.bash}/bin/bash
     set -e
     CA_NAME="$1";
-    DAYS="$2";
-    SSL_FOLDER="$3";
-    C="$4";
-    ST="$5";
-    L="$6";
-    O="$7";
-    OU="$8";
-    CN="$9";
-    ${pkgs.openssl}/bin/openssl req -x509 -newkey rsa:4096 -keyout "$SSL_FOLDER/$CA_NAME.key" -out "$SSL_FOLDER/$CA_NAME.pem" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+    CA_PASSWORD="$2";
+    DAYS="$3";
+    SSL_FOLDER="$4";
+    C="$5";
+    ST="$6";
+    L="$7";
+    O="$8";
+    OU="$9";
+    CN="$10";
+    # ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$SSL_FOLDER/$CA_NAME.key -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+    ${pkgs.openssl}/bin/openssl req -x509 -newkey rsa:4096 -pass pass:"$CA_PASSWORD" -keyout "$SSL_FOLDER/$CA_NAME.key" -out "$SSL_FOLDER/$CA_NAME.pem" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
   '';
 in
 {
@@ -53,6 +55,11 @@ in
       type = lib.types.str;
       default = null;
       description = "The name used to identify the certificate authority.";
+    };
+    caPassword = lib.mkOption {
+      type = lib.types.str;
+      default = null;
+      description = "Password for the certificate authority.";
     };
     caExpirationDays = lib.mkOption {
       type = lib.types.nullOr lib.types.int;
@@ -98,7 +105,7 @@ in
 
       serviceConfig = {
         ExecStart = ''
-          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${toString cfg.caExpirationDays}' '${cfg.sslFolder}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
+          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.sslFolder}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
           else
             "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
           }
