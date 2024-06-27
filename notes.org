@@ -107,30 +107,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.services.raw-kubernetes-ca = {
-      inherit description;
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = ''
-          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.caDirectory}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
-          else
-            "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
-          }
-        '';
-        ExecStartPre = [
-          # Ensure proper permissions
-          ''install -d -m 0700 -o root -g root ${cfg.caDirectory}/private''
-          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/certs''
-          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/crl''
-          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/newcerts''
-        ];
-      };
-
-      environment.systemPackages = [ pkgs.openssl ];
-      environment.etc."openssl.cnf".text = ''
+    environment.systemPackages = [ pkgs.openssl ];
+    environment.etc."openssl.cnf".text = ''
       [ ca ]
       default_ca = CA_default
 
@@ -166,7 +144,29 @@ in
       organizationalUnitName_default = IT
       commonName = ${cfg.caCommonName}
       commonName_default = example.com
-      '';
+    '';
+
+    systemd.services.raw-kubernetes-ca = {
+      inherit description;
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.caDirectory}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
+          else
+            "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
+          }
+        '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''install -d -m 0700 -o root -g root ${cfg.caDirectory}/private''
+          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/certs''
+          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/crl''
+          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/newcerts''
+        ];
+      };
     };
   };
 }
