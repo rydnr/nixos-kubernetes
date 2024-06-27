@@ -16,7 +16,7 @@ with lib;
 
 let
   cfg = config.services.raw-kubernetes-ca;
-  description = "An utility to manage the Kubernetes certificate authority";
+  description = "an utility to manage the Kubernetes certificate authority";
   generateCaCert = pkgs.writeScriptBin "generate-ca-cert" ''
     #!/usr/bin/env ${pkgs.bash}/bin/bash
     set -e
@@ -33,18 +33,26 @@ let
 
     KEY="$CA_DIRECTORY/private/$CA_NAME.key"
     CRT="$CA_DIRECTORY/certs/$CA_NAME.crt"
-    IDX="$CA_DIRECTORY/index.txt"
-    SRL="$CA_DIRECTORY/serial"
+    IDX="$CA_DIRECTORY/$CA_NAME-index.txt"
+    SRL="$CA_DIRECTORY/$CA_NAME-serial"
+    CRLDIR="$CA_DIRECTORY/crl"
+    CRL="$CRLDIR/$CA_NAME-crl.pem"
+    CRLN="$CA_DIRECTORY/$CA_NAME-crlnumber"
 
     # Generate the private key
-    [[ ! -e "$KEY" ]] && ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+    [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
 
     # Use the private key to create a self-signed x509 certificate for the certificate authority.
-    [[ ! -e "$CRT" ]] && ${pkgs.openssl}/bin/openssl req -new -x509 -key "$KEY" -sha256 -passin pass:"$CA_PASSWORD" -out "$CRT" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+    [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl req -new -x509 -key "$KEY" -sha256 -passin pass:"$CA_PASSWORD" -out "$CRT" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
     # Initialize database files
-    [[ ! -e "$IDX" ]] && touch "$IDX"
-    [[ ! -e "$SRL" ]] && echo 1000 > "$SRL"
+    [[ -f "$IDX" ]] || command touch "$IDX"
+    [[ -f "$SRL" ]] || command echo 1000 > "$SRL"
+    [[ -f "$CRLN" ]] || command echo 01 > "$CRLN"
+
+    # Generate a CRL if it doesn't exist
+    [[ -d "$CRLDIR" ]] || command mkdir $CRLDIR
+    [[ -e "$CRL" ]] || ${pkgs.openssl}/bin/openssl ca -gencrl -crldays "$DAYS" -out "$CRL" -config /etc/openssl.cnf
   '';
 in
 {
@@ -112,7 +120,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [ coreutils openssl ];
+    environment.systemPackages = with pkgs; [ bash coreutils openssl ];
     environment.etc = mkIf (!builtins.pathExists "/etc/openssl.cnf") {
       "openssl.cnf".text = ''
 [ ca ]
@@ -123,12 +131,12 @@ dir = ${cfg.caDirectory}
 certs = $dir/certs
 crl_dir = $dir/crl
 new_certs_dir = $dir/newcerts
-database = $dir/index.txt
-serial = $dir/serial
+database = $dir/${cfg.caName}-index.txt
+serial = $dir/${cfg.caName}-serial
 private_key = $dir/private/${cfg.caName}.key
 certificate = $dir/certs/${cfg.caName}.crt
-crlnumber = $dir/crlnumber
-crl = $dir/crl.pem
+crlnumber = $crl_dir/${cfg.caName}-crlnumber
+crl = $crl_dir/${cfg.caName}-crl.pem
 RANDFILE = $dir/private/.rand
 
 [ req ]
@@ -150,6 +158,13 @@ organizationalUnitName = ${cfg.caOrganizationalUnit}
 organizationalUnitName_default = IT
 commonName = ${cfg.caCommonName}
 commonName_default = example.com
+commonName_max = 64
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
 '';
     };
 
