@@ -25,14 +25,14 @@ let
     CN="$10";
 
     # Generate the private key
-    ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$CA_DIRECTORY/private/$CA_NAME.key" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+    [[ ! -e "$CA_DIRECTORY/private/$CA_NAME.key" ]] && ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$CA_DIRECTORY/private/$CA_NAME.key" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
 
     # Use the private key to create a self-signed x509 certificate for the certificate authority.
-    ${pkgs.openssl}/bin/openssl req -new -x509 -key "$CA_DIRECTORY/private/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$CA_DIRECTORY/certs/$CA_NAME.crt" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+    [[ ! -e "$CA_DIRECTORY/certs/$CA_NAME.crt" ]] && ${pkgs.openssl}/bin/openssl req -new -x509 -key "$CA_DIRECTORY/private/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$CA_DIRECTORY/certs/$CA_NAME.crt" -days $DAYS -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
     # Initialize database files
-    touch ${cfg.caDirectory}/index.txt
-    echo 1000 > ${cfg.caDirectory}/serial
+    [[ ! -e ${cfg.caDirectory}/index.txt] && touch ${cfg.caDirectory}/index.txt
+    [[ ! -e ${cfg.caDirectory}/serial] && echo 1000 > ${cfg.caDirectory}/serial
   '';
 in
 {
@@ -101,43 +101,45 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ coreutils openssl ];
-    environment.etc."openssl.cnf".text = ''
-      [ ca ]
-      default_ca = CA_default
+    environment.etc = mkIf (!builtins.pathExists "/etc/openssl.cnf") {
+      "openssl.cnf".text = ''
+[ ca ]
+default_ca = CA_default
 
-      [ CA_default ]
-      dir = ${cfg.caDirectory}
-      certs = $dir/certs
-      crl_dir = $dir/crl
-      new_certs_dir = $dir/newcerts
-      database = $dir/index.txt
-      serial = $dir/serial
-      private_key = $dir/private/ca.key
-      certificate = $dir/certs/ca.crt
-      crlnumber = $dir/crlnumber
-      crl = $dir/crl.pem
-      RANDFILE = $dir/private/.rand
+[ CA_default ]
+dir = ${cfg.caDirectory}
+certs = $dir/certs
+crl_dir = $dir/crl
+new_certs_dir = $dir/newcerts
+database = $dir/index.txt
+serial = $dir/serial
+private_key = $dir/private/${cfg.caName}.key
+certificate = $dir/certs/${cfg.caName}.crt
+crlnumber = $dir/crlnumber
+crl = $dir/crl.pem
+RANDFILE = $dir/private/.rand
 
-      [ req ]
-      default_bits = 2048
-      distinguished_name = req_distinguished_name
-      string_mask = utf8only
-      default_md = sha256
+[ req ]
+default_bits = 2048
+distinguished_name = req_distinguished_name
+string_mask = utf8only
+default_md = sha256
 
-      [ req_distinguished_name ]
-      countryName = ${cfg.caCountry}
-      countryName_default = ES
-      stateOrProvinceName = ${cfg.caState}
-      stateOrProvinceName_default = Madrid
-      localityName = ${cfg.caLocality}
-      localityName_default = Madrid
-      organization = ${cfg.caOrganization}
-      organization_default = example
-      organizationalUnitName = ${cfg.caOrganizationalUnit}
-      organizationalUnitName_default = IT
-      commonName = ${cfg.caCommonName}
-      commonName_default = example.com
-    '';
+[ req_distinguished_name ]
+countryName = ${cfg.caCountry}
+countryName_default = ES
+stateOrProvinceName = ${cfg.caState}
+stateOrProvinceName_default = Madrid
+localityName = ${cfg.caLocality}
+localityName_default = Madrid
+organization = ${cfg.caOrganization}
+organization_default = example
+organizationalUnitName = ${cfg.caOrganizationalUnit}
+organizationalUnitName_default = IT
+commonName = ${cfg.caCommonName}
+commonName_default = example.com
+'';
+    };
 
     systemd.services.raw-kubernetes-ca = {
       inherit description;
