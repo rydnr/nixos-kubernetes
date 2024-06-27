@@ -10,8 +10,7 @@ with lib;
 
 let
   cfg = config.services.raw-kube-proxy;
-  nixpkgs_store = import <nixpkgs> {};
-  originalKubernetes = import "${nixpkgs_store.path}/nixos/modules/services/cluster/kubernetes/default.nix";
+  originalKubernetes = import "${nixpkgs}/nixos/modules/services/cluster/kubernetes/default.nix";
   mkCert = originalKubernetes.mkCert;
   mkKubeConfig = originalKubernetes.mkKubeConfig;
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg;
