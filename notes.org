@@ -138,6 +138,8 @@ certificate = $dir/certs/${cfg.caName}.crt
 crlnumber = $crl_dir/${cfg.caName}-crlnumber
 crl = $crl_dir/${cfg.caName}-crl.pem
 RANDFILE = $dir/private/.rand
+default_md = sha256
+string_mask = utf8only
 
 [ req ]
 default_bits = 2048
