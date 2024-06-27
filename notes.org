@@ -23,17 +23,23 @@ let
     CA_NAME="$1";
     CA_PASSWORD="$2";
     DAYS="$3";
-    SSL_FOLDER="$4";
+    CA_DIRECTORY="$4";
     C="$5";
     ST="$6";
     L="$7";
     O="$8";
     OU="$9";
     CN="$10";
+
     # Generate the private key
-    ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$SSL_FOLDER/$CA_NAME.key" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+    ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$CA_DIRECTORY/private/$CA_NAME.key" -pass pass:"$CA_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+
     # Use the private key to create a self-signed x509 certificate for the certificate authority.
-    ${pkgs.openssl}/bin/openssl req -new -x509 -key "$SSL_FOLDER/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$SSL_FOLDER/$CA_NAME.crt" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+    ${pkgs.openssl}/bin/openssl req -new -x509 -key "$CA_DIRECTORY/private/$CA_NAME.key" -sha256 -passin pass:"$CA_PASSWORD" -out "$CA_DIRECTORY/certs/$CA_NAME.crt" -days $DAYS -nodes -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+
+    # Initialize database files
+    touch ${cfg.caDirectory}/index.txt
+    echo 1000 > ${cfg.caDirectory}/serial
   '';
 in
 {
@@ -48,10 +54,10 @@ in
       default = null;
       description = "Path to the CA file. If not provided, one will be generated.";
     };
-    sslFolder = lib.mkOption {
+    caDirectory = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "/etc/ssl/certs";
-      description = "The base folder for SSL files.";
+      default = "/etc/ssl/ca";
+      description = "The base folder for certificate authorities.";
     };
     caName = lib.mkOption {
       type = lib.types.str;
@@ -103,22 +109,75 @@ in
   config = mkIf cfg.enable {
     systemd.services.raw-kubernetes-ca = {
       inherit description;
+      after [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
+      environment.systemPackages = [ pkgs.openssl ];
+
+      # Ensure CA directory structure
+      systemd.tmpfiles.rules = [
+        "d '${cfg.caDirectory}' 0700 root root - -"
+        "d '${cfg.caDirectory}/private' 0700 root root - -"
+        "d '${cfg.caDirectory}/certs' 0755 root root - -"
+        "d '${cfg.caDirectory}/crl' 0755 root root - -"
+        "d '${cfg.caDirectory}/newcerts' 0755 root root - -"
+      ];
+
       serviceConfig = {
+        Type = "oneshot";
         ExecStart = ''
-          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.sslFolder}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
+          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.caDirectory}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
           else
             "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
           }
         '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''install -d -m 0700 -o root -g root ${cfg.caDirectory}/private''
+          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/certs''
+          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/crl''
+          ''install -d -m 0755 -o root -g root ${cfg.caDirectory}/newcerts''
+        ];
       };
-    };
 
-    environment.etc."${cfg.sslFolder}/${cfg.caName}.pem".source = if cfg.caFile == null then
-      "${cfg.sslFolder}/${cfg.caName}.pem"
-    else
-      cfg.caFile;
+      environment.etc."openssl.cnf".text = ''
+      [ ca ]
+      default_ca = CA_default
+
+      [ CA_default ]
+      dir = ${cfg.caDirectory}
+      certs = $dir/certs
+      crl_dir = $dir/crl
+      new_certs_dir = $dir/newcerts
+      database = $dir/index.txt
+      serial = $dir/serial
+      private_key = $dir/private/ca.key
+      certificate = $dir/certs/ca.crt
+      crlnumber = $dir/crlnumber
+      crl = $dir/crl.pem
+      RANDFILE = $dir/private/.rand
+
+      [ req ]
+      default_bits = 2048
+      distinguished_name = req_distinguished_name
+      string_mask = utf8only
+      default_md = sha256
+
+      [ req_distinguished_name ]
+      countryName = ${cfg.caCountry}
+      countryName_default = ES
+      stateOrProvinceName = ${cfg.caState}
+      stateOrProvinceName_default = Madrid
+      localityName = ${cfg.caLocality}
+      localityName_default = Madrid
+      organization = ${cfg.caOrganization}
+      organization_default = example
+      organizationalUnitName = ${cfg.caOrganizationalUnit}
+      organizationalUnitName_default = IT
+      commonName = ${cfg.caCommonName}
+      commonName_default = example.com
+    '';
+    };
   };
 }
 #+end_src
