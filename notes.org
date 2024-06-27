@@ -114,15 +114,6 @@ in
 
       environment.systemPackages = [ pkgs.openssl ];
 
-      # Ensure CA directory structure
-      systemd.tmpfiles.rules = [
-        "d '${cfg.caDirectory}' 0700 root root - -"
-        "d '${cfg.caDirectory}/private' 0700 root root - -"
-        "d '${cfg.caDirectory}/certs' 0755 root root - -"
-        "d '${cfg.caDirectory}/crl' 0755 root root - -"
-        "d '${cfg.caDirectory}/newcerts' 0755 root root - -"
-      ];
-
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
