@@ -206,6 +206,12 @@ in
       description = "List of files to check for boot-id. Use the first one that exists. (default '/proc/sys/kernel/random/boot_id')";
     };
 
+    caFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file. If not provided, one will be generated.";
+    };
+
     cleanup = mkOption {
       type = types.nullOr types.bool;
       default = null;
