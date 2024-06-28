@@ -3207,15 +3207,15 @@ let
   cfg = config.services.raw-kube-proxy;
   <<mkKubeConfig>>
   <<mkKubeConfigOptions>>
-  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeconfigOpts;
-  kubeconfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
-  resolvedCert = if config.services.raw-kube-proxy.certFile == null
+  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts;
+  kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
+  resolvedCert = if cfg.certFile == null
             then mkCert {
               name = "kube-proxy";
-              CN = config.services.raw-kube-proxy.commonName;
-              hosts = config.services.raw-kube-proxy.hosts;
+              CN = cfg.commonName;
+              hosts = cfg.hosts;
             }
-            else { certFile = config.services.raw-kube-proxy.certFile; keyFile = config.services.raw-kube-proxy.keyFile; };
+            else { certFile = cfg.certFile; keyFile = cfg.keyFile; };
 
   <<boolToString>>
   description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
@@ -3253,7 +3253,7 @@ in
       description = "List of files to check for boot-id. Use the first one that exists. (default '/proc/sys/kernel/random/boot_id')";
     };
 
-    kubeconfigOpts = mkKubeConfigOptions "raw-kube-proxy";
+    kubeConfigOpts = mkKubeConfigOptions "raw-kube-proxy";
 
     cleanup = mkOption {
       type = types.nullOr types.bool;
@@ -3580,7 +3580,7 @@ in
             ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
             ${optionalString (cfg.kube-api-content-type != null) "--kube-api-content-type ${toString cfg.kube-api-content-type}"} \
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
-            --kubeconfig \"${toString kubeconfigFile}\"" \
+            --kubeconfig \"${toString kubeConfigFile}\"" \
             ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${toString cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
             ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
