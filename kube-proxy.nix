@@ -533,7 +533,7 @@ in
       serviceConfig = {
         Slice = "raw-kubernetes.slice";
         ExecStart = ''
-          ${pkgs.kubernetes}/bin/kube-proxy \
+          echo ${pkgs.kubernetes}/bin/kube-proxy \
             ${optionalString (cfg.bind-address != null) "--bind-address \"${toString cfg.bind-address}\""} \
             ${optionalString (cfg.bind-address-hard-fail != null) "--bind-address-hard-fail \"${boolToString cfg.bind-address-hard-fail}\""} \
             ${optionalString (cfg.boot-id-file != null) "--boot-id-file \"${concatStringsSep "," cfg.boot-id-file}\""} \
