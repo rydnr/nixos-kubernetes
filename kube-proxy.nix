@@ -44,6 +44,11 @@ let
       default = null;
       description = "Path to the CA file. If not provided, one will be generated.";
     };
+    # TODO: caFile = lib.mkOption {
+    # TODO:   type = lib.types.nullOr lib.types.path;
+    # TODO:   default = null;
+    # TODO:   description = "Path to the CA file. If not provided, one will be generated.";
+    # TODO: }; not replaced
   
     certFile = mkOption {
       description = "${prefix} client certificate file used to connect to kube-apiserver.";
@@ -57,15 +62,29 @@ let
       default = null;
     };
   };
+  mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
+             privateKeyOwner ? "kubernetes" }: rec {
+    inherit name caCert CN hosts fields action;
+    cert = secret name;
+    key = secret "${name}-key";
+    privateKeyOptions = {
+      owner = privateKeyOwner;
+      group = "nogroup";
+      mode = "0600";
+      path = key;
+    };
+  };
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts;
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   resolvedCert = if cfg.certFile == null
-            then mkCert {
-              name = "kube-proxy";
-              CN = cfg.commonName;
-              hosts = cfg.hosts;
-            }
-            else { certFile = cfg.certFile; keyFile = cfg.keyFile; };
+    then mkCert {
+      name = "kube-proxy";
+      CN = cfg.commonName;
+      hosts = cfg.hosts;
+    } else {
+      certFile = cfg.certFile;
+      keyFile = cfg.keyFile;
+    };
 
   boolToString = b: if b then "true" else "false";
   description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
