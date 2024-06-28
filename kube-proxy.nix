@@ -33,6 +33,26 @@ let
       current-context = "local";
     }];
   });
+  mkKubeConfigOptions = prefix: {
+    server = mkOption {
+      description = "${prefix} kube-apiserver server address.";
+      type = types.str;
+    };
+  
+    <<caFile>>
+  
+    certFile = mkOption {
+      description = "${prefix} client certificate file used to connect to kube-apiserver.";
+      type = types.nullOr types.path;
+      default = null;
+    };
+  
+    keyFile = mkOption {
+      description = "${prefix} client key file used to connect to kube-apiserver.";
+      type = types.nullOr types.path;
+      default = null;
+    };
+  };
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeconfigOpts;
   kubeconfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   resolvedCert = if config.services.raw-kube-proxy.certFile == null
