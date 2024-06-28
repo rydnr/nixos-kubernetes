@@ -3563,14 +3563,14 @@ in
 #+begin_src nix :noweb yes :tangle kube-proxy.nix
 
   config = mkIf cfg.enable {
-    systemd.services.kube-proxy = lib.mkForce {
+    systemd.services.raw-kube-proxy = lib.mkForce {
       inherit description;
-      wantedBy = [ "kubernetes.target" ];
-      after = [ "kube-apiserver.service" ];
+      # wantedBy = [ "raw-kubernetes.target" ];
+      # after = [ "raw-kube-apiserver.service" ];
       path = with pkgs; [ iptables conntrack-tools ];
 
       serviceConfig = {
-        Slice = "kubernetes.slice";
+        Slice = "raw-kubernetes.slice";
         ExecStart = ''
           ${pkgs.kubernetes}/bin/kube-proxy \
             ${optionalString (cfg.bind-address != null) "--bind-address ${toString cfg.bind-address}"} \
