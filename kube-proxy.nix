@@ -44,11 +44,6 @@ let
       default = null;
       description = "Path to the CA file. If not provided, one will be generated.";
     };
-    # TODO: caFile = lib.mkOption {
-    # TODO:   type = lib.types.nullOr lib.types.path;
-    # TODO:   default = null;
-    # TODO:   description = "Path to the CA file. If not provided, one will be generated.";
-    # TODO: }; not replaced
   
     certFile = mkOption {
       description = "${prefix} client certificate file used to connect to kube-apiserver.";
