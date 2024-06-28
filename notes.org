@@ -240,6 +240,35 @@ mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON
 });
 #+END_SRC
 
+
+** mkKubeConfigOptions
+
+This function creates the common options a module needs to request to be able to call `mkKubeConfig`.
+
+#+NAME: mkKubeConfigOptions
+#+BEGIN_SRC nix
+  mkKubeConfigOptions = prefix: {
+    server = mkOption {
+      description = "${prefix} kube-apiserver server address.";
+      type = types.str;
+    };
+
+    <<caFile>>
+
+    certFile = mkOption {
+      description = "${prefix} client certificate file used to connect to kube-apiserver.";
+      type = types.nullOr types.path;
+      default = null;
+    };
+
+    keyFile = mkOption {
+      description = "${prefix} client key file used to connect to kube-apiserver.";
+      type = types.nullOr types.path;
+      default = null;
+    };
+  };
+#+END_SRC
+
 ** secret
 
 #+NAME: secret
@@ -3177,8 +3206,8 @@ with lib;
 let
   cfg = config.services.raw-kube-proxy;
   <<mkKubeConfig>>
-  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg;
-  kubeconfig = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
+  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeconfigOpts;
+  kubeconfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   resolvedCert = if config.services.raw-kube-proxy.certFile == null
             then mkCert {
               name = "kube-proxy";
@@ -3223,7 +3252,7 @@ in
       description = "List of files to check for boot-id. Use the first one that exists. (default '/proc/sys/kernel/random/boot_id')";
     };
 
-    <<caFile>>
+    kubeconfigOpts = mkKubeConfigOptions "raw-kube-proxy";
 
     cleanup = mkOption {
       type = types.nullOr types.bool;
@@ -3550,7 +3579,7 @@ in
             ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
             ${optionalString (cfg.kube-api-content-type != null) "--kube-api-content-type ${toString cfg.kube-api-content-type}"} \
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
-            --kubeconfig \"${toString kubeconfig}\"" \
+            --kubeconfig \"${toString kubeconfigFile}\"" \
             ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${toString cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
             ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
