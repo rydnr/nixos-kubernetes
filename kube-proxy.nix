@@ -10,12 +10,31 @@ with lib;
 
 let
   cfg = config.services.raw-kube-proxy;
-  originalKubernetes = import "${pkgs.nixos.modules.services.cluster.kubernetes}.default.nix";
-  mkCert = originalKubernetes.mkCert;
-  mkKubeConfig = originalKubernetes.mkKubeConfig;
+  mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
+    apiVersion = "v1";
+    kind = "Config";
+    clusters = [{
+      name = "local";
+      cluster.certificate-authority = attrs.caFile;
+      cluster.server = attrs.server;
+    }];
+    users = [{
+      inherit name;
+      user = {
+        client-certificate = attrs.certFile;
+        client-key = attrs.keyFile;
+      };
+    }];
+    contexts = [{
+      context = {
+        cluster = "local";
+        user = name;
+      };
+      current-context = "local";
+    }];
+  });
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg;
   kubeconfig = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
-  mkKubeConfigOptions = originalKubernetes.mkKubeConfigOptions;
   resolvedCert = if config.services.raw-kube-proxy.certFile == null
             then mkCert {
               name = "kube-proxy";
