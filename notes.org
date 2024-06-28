@@ -246,7 +246,7 @@ mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON
 This function creates the common options a module needs to request to be able to call `mkKubeConfig`.
 
 #+NAME: mkKubeConfigOptions
-#+BEGIN_SRC nix
+#+BEGIN_SRC nix :noweb yes
 mkKubeConfigOptions = prefix: {
   server = mkOption {
     description = "${prefix} kube-apiserver server address.";

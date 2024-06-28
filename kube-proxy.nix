@@ -39,7 +39,11 @@ let
       type = types.str;
     };
   
-    <<caFile>>
+    caFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file. If not provided, one will be generated.";
+    };
   
     certFile = mkOption {
       description = "${prefix} client certificate file used to connect to kube-apiserver.";
