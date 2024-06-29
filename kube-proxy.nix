@@ -69,13 +69,13 @@ let
       path = key;
     };
   };
-  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts;
+  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // resolvedCert;
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   resolvedCert = if cfg.certFile == null
     then mkCert {
-      name = "kube-proxy";
-      CN = cfg.commonName;
-      hosts = cfg.hosts;
+      name = "kube-proxy-client";
+      CN = "system:kube-proxy";
+      action = "systemctl restart raw-kube-proxy.service";
     } else {
       certFile = cfg.certFile;
       keyFile = cfg.keyFile;

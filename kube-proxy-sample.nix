@@ -154,6 +154,12 @@
     kube-api-content-type = "[kube-api-content-type]";
     kube-api-qps = 0.1;
     kubeconfig = ./kube-proxy.nix;
+    kubeConfigOpts = {
+      caFile = ./raw-kube-proxy.nix;
+      server = "server";
+      certFile = ./raw-kube-proxy.nix;
+      keyFile = ./raw-kube-proxy.nix;
+    };
     log-flush-frequency = "[log-flush-frequency]";
     log-json-info-buffer-size = "[log-json-info-buffer-size]";
     log-json-split-stream = true;
