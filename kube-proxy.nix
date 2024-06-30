@@ -21,8 +21,8 @@ let
     users = [{
       inherit name;
       user = {
-        client-certificate = attrs.certFile;
-        client-key = attrs.keyFile;
+        client-certificate = attrs.certCrtFile;
+        client-key = attrs.certKeyFile;
       };
     }];
     contexts = [{
@@ -48,15 +48,15 @@ let
       default = null;
       description = "Path to the CA key file.";
     };
-    certFile = mkOption {
-      description = "${prefix} client certificate file used to connect to kube-apiserver.";
-      type = types.nullOr types.path;
+    certCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
       default = null;
+      description = "Path to the certificate.";
     };
-    keyFile = mkOption {
-      description = "${prefix} client key file used to connect to kube-apiserver.";
-      type = types.nullOr types.path;
+    certKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
       default = null;
+      description = "Path to the certificate key file.";
     };
   };
   mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
@@ -71,17 +71,8 @@ let
       path = key;
     };
   };
-  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // resolvedCert;
+  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
-  resolvedCert = if cfg.certFile == null
-    then mkCert {
-      name = "kube-proxy-client";
-      CN = "system:kube-proxy";
-      action = "systemctl restart raw-kube-proxy.service";
-    } else {
-      certFile = cfg.certFile;
-      keyFile = cfg.keyFile;
-    };
 
   boolToString = b: if b then "true" else "false";
   description = "The Kubernetes network proxy runs on each node. This reflects services as defined in the Kubernetes API on each node and can do simple TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends. Service cluster IPs and ports are currently found through Docker-links-compatible environment variables specifying ports opened by the service proxy. There is an optional addon that provides cluster DNS for these cluster IPs. The user must create a service with the apiserver API to configure the proxy.";
