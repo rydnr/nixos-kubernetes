@@ -15,7 +15,7 @@ let
     kind = "Config";
     clusters = [{
       name = "local";
-      cluster.certificate-authority = attrs.caFile;
+      cluster.certificate-authority = attrs.caCrtFile;
       cluster.server = attrs.server;
     }];
     users = [{
@@ -38,19 +38,17 @@ let
       description = "${prefix} kube-apiserver server address.";
       type = types.str;
     };
-  
-    caFile = lib.mkOption {
+    
+    caKeyFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
-      description = "Path to the CA file. If not provided, one will be generated.";
+      description = "Path to the CA key file.";
     };
-  
     certFile = mkOption {
       description = "${prefix} client certificate file used to connect to kube-apiserver.";
       type = types.nullOr types.path;
       default = null;
     };
-  
     keyFile = mkOption {
       description = "${prefix} client key file used to connect to kube-apiserver.";
       type = types.nullOr types.path;

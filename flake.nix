@@ -33,6 +33,7 @@
         raw-kube-apiserver = ./kube-apiserver.nix;
         raw-kube-scheduler = ./kube-scheduler.nix;
         raw-kube-controller-manager = ./kube-controller-manager.nix;
+        raw-kube-proxy-certificate = ./kube-proxy-certificate.nix;
         raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs;};
         raw-kubelet = ./kubelet.nix;
       };

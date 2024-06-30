@@ -56,11 +56,7 @@ in
       default = false;
       inherit description;
     };
-    caFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to the CA file. If not provided, one will be generated.";
-    };
+    
     caDirectory = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = "/etc/ssl/ca";
@@ -172,9 +168,9 @@ keyUsage = critical, digitalSignature, cRLSign, keyCertSign
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
-          ${if cfg.caFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.caDirectory}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
+          ${if cfg.caCrtFile == null then "${generateCaCert}/bin/generate-ca-cert '${cfg.caName}' '${cfg.caPassword}' '${toString cfg.caExpirationDays}' '${cfg.caDirectory}' '${cfg.caCountry}' '${cfg.caState}' '${cfg.caLocality}' '${cfg.caOrganization}' '${cfg.caOrganizationalUnit}' '${cfg.caCommonName}'"
           else
-            "echo 'Using ${cfg.caFile} as certificate authority for Kubernetes'"
+            "echo 'Using ${cfg.caCrtFile} as certificate authority for Kubernetes'"
           }
         '';
         ExecStartPre = [
