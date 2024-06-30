@@ -236,6 +236,7 @@ generateCert = pkgs.writeScriptBin "generate-cert" ''
 '';
 #+end_src
 
+
 ** caCrtFile option
 
 #+NAME: caCrtFile
@@ -255,6 +256,29 @@ caKeyFile = lib.mkOption {
   type = lib.types.nullOr lib.types.path;
   default = null;
   description = "Path to the CA key file.";
+};
+#+END_SRC
+
+
+** certCrtFile option
+
+#+NAME: certCrtFile
+#+BEGIN_SRC nix
+certCrtFile = lib.mkOption {
+  type = lib.types.nullOr lib.types.path;
+  default = null;
+  description = "Path to the certificate.";
+};
+#+END_SRC
+
+** certKeyFile option
+
+#+NAME: certKeyFile
+#+BEGIN_SRC nix
+certKeyFile = lib.mkOption {
+  type = lib.types.nullOr lib.types.path;
+  default = null;
+  description = "Path to the certificate key file.";
 };
 #+END_SRC
 
@@ -3236,7 +3260,8 @@ in
       default = "raw-kube-proxy";
       description = "The name of the certificate.";
     };
-    <<caCertFile>>
+    <<certCrtFile>>
+    <<caCrtFile>>
     <<caKeyFile>>
     caPassword = lib.mkOption {
       type = lib.types.str;
@@ -3301,7 +3326,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
-          ${if cfg.certFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${cfg.certPassword}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCertFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${cfg.certPassword}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCertFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
           else
             "echo 'Using ${cfg.certFile} as certificate for kube-proxy'"
           }
