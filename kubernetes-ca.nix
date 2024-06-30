@@ -56,7 +56,11 @@ in
       default = false;
       inherit description;
     };
-    
+    caCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file.";
+    };
     caDirectory = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = "/etc/ssl/ca";

@@ -38,7 +38,11 @@ let
       description = "${prefix} kube-apiserver server address.";
       type = types.str;
     };
-    
+    caCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file.";
+    };
     caKeyFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;

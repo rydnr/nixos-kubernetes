@@ -236,9 +236,9 @@ generateCert = pkgs.writeScriptBin "generate-cert" ''
 '';
 #+end_src
 
-** caCrt option
+** caCrtFile option
 
-#+NAME: caCrt
+#+NAME: caCrtFile
 #+BEGIN_SRC nix
 caCrtFile = lib.mkOption {
   type = lib.types.nullOr lib.types.path;
@@ -249,7 +249,7 @@ caCrtFile = lib.mkOption {
 
 ** caKeyFile option
 
-#+NAME: caKEyFile
+#+NAME: caKeyFile
 #+BEGIN_SRC nix
 caKeyFile = lib.mkOption {
   type = lib.types.nullOr lib.types.path;
