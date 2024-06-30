@@ -3318,7 +3318,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
-          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${cfg.certPassword}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCertFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${cfg.certPassword}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
           else
             "echo 'Using ${cfg.certFile} as certificate for kube-proxy'"
           }
