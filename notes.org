@@ -232,7 +232,7 @@ generateCert = pkgs.writeScriptBin "generate-cert" ''
   [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -passin pass:"$CERT_PASSWORD" -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
   # Sign the request with the certificate authority
-  [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl x509 -req -in "$CSR" -CA "$CA_CRT" -CAkey "$CA_KEY" -CAcreateserial -out "$CRT" -days "$DAYS" -sha256 -passin pass:"$CA_PASSWORD"
+  [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl x509 -req -in "$CSR" -CA "$CA_CRT" -CAkey "$CA_KEY" -out "$CRT" -days "$DAYS" -sha256 -passin pass:"$CA_PASSWORD"
 '';
 #+end_src
 
