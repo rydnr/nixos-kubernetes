@@ -33,7 +33,7 @@ let
   
     # Generate the private key
     # password-protected private keys are not supported by kubernetes [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CERT_PASSWORD" -pkeyopt rsa_keygen_bits:4096
-    [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pkeyopt rsa_keygen_bits:4096
+    [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -out "$KEY" -pkeyopt rsa_keygen_bits:4096
   
     # Use the private key to create a certificate request for the certificate authority.
     # password-protected private keys are not supported by kubernetes [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -passin pass:"$CERT_PASSWORD" -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
