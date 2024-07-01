@@ -208,18 +208,18 @@ generateCert = pkgs.writeScriptBin "generate-cert" ''
   #!/usr/bin/env ${pkgs.bash}/bin/bash
   set -e
   CERT_NAME="$1";
-  CERT_PASSWORD="$2";
-  DAYS="$3";
-  CERT_DIRECTORY="$4";
-  CA_CRT="$5";
-  CA_KEY="$6";
-  CA_PASSWORD="$7";
-  C="$8";
-  ST="$9";
-  L="$10";
-  O="$11";
-  OU="$12";
-  CN="$13";
+  # CERT_PASSWORD="$2"; not supported by kubernetes
+  DAYS="$2";
+  CERT_DIRECTORY="$3";
+  CA_CRT="$4";
+  CA_KEY="$5";
+  CA_PASSWORD="$6";
+  C="$7";
+  ST="$8";
+  L="$9";
+  O="$10";
+  OU="$11";
+  CN="$12";
 
   KEY="$CERT_DIRECTORY/private/$CERT_NAME.key"
   CSR="$CERT_DIRECTORY/csr/$CERT_NAME.csr"
@@ -229,7 +229,8 @@ generateCert = pkgs.writeScriptBin "generate-cert" ''
   [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CERT_PASSWORD" -pkeyopt rsa_keygen_bits:4096
 
   # Use the private key to create a certificate request for the certificate authority.
-  [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -passin pass:"$CERT_PASSWORD" -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+  # password-protected private keys are not supported by kubernetes [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -passin pass:"$CERT_PASSWORD" -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+  [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
 
   # Sign the request with the certificate authority
   [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl x509 -req -in "$CSR" -CA "$CA_CRT" -CAkey "$CA_KEY" -out "$CRT" -days "$DAYS" -sha256 -passin pass:"$CA_PASSWORD"
@@ -3265,11 +3266,6 @@ in
       default = "/etc/ssl";
       description = "The root directory tree where certificate should be stored.";
     };
-    certPassword = lib.mkOption {
-      type = lib.types.str;
-      default = null;
-      description = "Password for the certificate.";
-    };
     certExpirationDays = lib.mkOption {
       type = lib.types.nullOr lib.types.int;
       default = 365;
@@ -3318,7 +3314,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
-          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${cfg.certPassword}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
           else
             "echo 'Using ${cfg.certFile} as certificate for kube-proxy'"
           }
