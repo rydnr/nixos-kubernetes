@@ -38,7 +38,7 @@ let
     [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -x509 -key "$KEY" -sha256 -passin pass:"$CERT_PASSWORD" -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
   
     # Sign the request with the certificate authority
-    [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl x509 -req -in "$CSR" -CA "$CA_CRT" -CAkey "$CA_KEY" -CAcreateserial -out "$CRT" -days "$DAYS" -sha256 -passin pass:"$CA_PASSWORD" -config /etc/openssl.cnf
+    [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl x509 -req -in "$CSR" -CA "$CA_CRT" -CAkey "$CA_KEY" -CAcreateserial -out "$CRT" -days "$DAYS" -sha256 -passin pass:"$CA_PASSWORD"
   '';
 in
 {
@@ -136,6 +136,12 @@ in
             "echo 'Using ${cfg.certFile} as certificate for kube-proxy'"
           }
         '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/certs''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/csr''
+          ''${pkgs.coreutils}/bin/install -d -m 0700 -o root -g root ${cfg.certDirectory}/private''
+        ];
       };
     };
   };
