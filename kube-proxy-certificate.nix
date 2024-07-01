@@ -75,8 +75,8 @@ in
     };
     certDirectory = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
-      default = "/etc/ssl/certs";
-      description = "The directory where certificate should be stored.";
+      default = "/etc/ssl";
+      description = "The root directory tree where certificate should be stored.";
     };
     certPassword = lib.mkOption {
       type = lib.types.str;
