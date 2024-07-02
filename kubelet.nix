@@ -22,7 +22,7 @@ let
     in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 1; }) attrs);
 
   kubeConfigSet = {
-    apiVersion = "kubelet.config.k8s.io/v1beta1";
+    apiVersion = "v1";
     clusters = [{
       name = "local";
       cluster.certificate-authority = cfg.kubeConfigOpts.caCrtFile;
@@ -37,7 +37,7 @@ let
       name = "local";
     }];
     current-context = "local";
-    kind = "KubeletConfiguration";
+    kind = "Config";
     port = cfg.port;
     serializeImagePulls = cfg.serialize-image-pulls;
     users = [{
