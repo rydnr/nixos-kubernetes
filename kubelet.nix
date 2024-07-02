@@ -1117,10 +1117,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.services.kubelet = lib.mkForce {
+    systemd.services.raw-kubelet = lib.mkForce {
       inherit description;
-      wantedBy = [ "kubernetes.target" ];
-      after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
+      # wantedBy = [ "kubernetes.target" ];
+      # after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
       path = with pkgs; [
         gitMinimal
         openssh
@@ -1133,7 +1133,7 @@ in
       ] ++ lib.optional config.boot.zfs.enabled config.boot.zfs.package;
 
       serviceConfig = {
-        Slice = "kubernetes.slice";
+        Slice = "raw-kubernetes.slice";
         CPUAccounting = true;
         MemoryAccounting = true;
         Restart = "on-failure";
