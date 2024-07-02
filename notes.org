@@ -1525,10 +1525,10 @@ let
     apiVersion = "kubelet.config.k8s.io/v1beta1";
     clusters = [{
       name = "local";
-      cluster.certificate-authority = attrs.caCrtFile;
-      cluster.server = attrs.server;
+      cluster.certificate-authority = cfg.caCrtFile;
+      cluster.server = cfg.server;
     }];
-    containerRuntimeEndpoint = attrs.container-runtime-endpoint;
+    containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     contexts = [{
       context = {
         cluster = "local";
@@ -1538,13 +1538,13 @@ let
     }];
     current-context = "local";
     kind = "KubeletConfiguration";
-    port = attrs.port;
-    serializeImagePulls = attrs.serialize-image-pulls;
+    port = cfg.port;
+    serializeImagePulls = cfg.serialize-image-pulls;
     users = [{
       inherit name;
       user = {
-        client-certificate = attrs.certCrtFile;
-        client-key = attrs.certKeyFile;
+        client-certificate = cfg.certCrtFile;
+        client-key = cfg.certKeyFile;
       };
     }];
   } // (if cfg.address != null then { address = cfg.address; } else {})
@@ -1566,10 +1566,10 @@ let
     // (if cfg.tls-cert-file != null then { tlsCertFile = cfg.tls-cert-file; } else {})
     // (if cfg.tls-private-key-file != null then { tlsPrivateKeyFile = cfg.tls-private-key-file; } else {})
     ;
-  mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON kubeConfigSet);
+  mkKubeConfig = name: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON kubeConfigSet);
 
   <<mkKubeConfigOptions>>
-  generatedKubeConfig = mkKubeConfig "kubelet" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
+  generatedKubeConfig = mkKubeConfig "kubelet";
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   <<boolToString>>
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
