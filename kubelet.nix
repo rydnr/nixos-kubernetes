@@ -15,7 +15,7 @@ let
     in { key = builtins.elemAt keyValue 0; value1 = builtins.elemAt keyValue 1; effect = builtins.elemAt parts 1;}) attrs);
   colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
     parts = builtins.split ":" item;
-    in { name2 = builtins.elemAt parts 0; value2 = builtins.elemAt parts 1; }) attrs);
+    in { name1 = builtins.elemAt parts 0; value2 = builtins.elemAt parts 1; }) attrs);
 
   kubeConfigSet = {
     apiVersion = "kubelet.config.k8s.io/v1beta1";
