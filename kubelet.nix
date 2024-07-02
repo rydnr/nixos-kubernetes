@@ -37,7 +37,7 @@ let
     port = cfg.port;
     serializeImagePulls = cfg.serialize-image-pulls;
     users = [{
-      inherit name;
+      name = cfg.name;
       user = {
         client-certificate = cfg.certCrtFile;
         client-key = cfg.certKeyFile;
