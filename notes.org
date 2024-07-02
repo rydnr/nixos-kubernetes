@@ -1549,7 +1549,7 @@ let
       name = "kubelet";
       user = {
         client-certificate = cfg.kubeConfigOpts.certCrtFile;
-        client-key = cfg.kubeConfigOpts.tcertKeyFile;
+        client-key = cfg.kubeConfigOpts.certKeyFile;
       };
     }];
   } // (if cfg.address != null then { address = cfg.address; } else {})
