@@ -59,7 +59,7 @@ let
       description = "Path to the certificate key file.";
     };
   };
-  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
+  generatedKubeConfig = mkKubeConfig "kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
 
   boolToString = b: if b then "true" else "false";
