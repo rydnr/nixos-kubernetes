@@ -9,13 +9,22 @@ with lib;
 
 let
   cfg = config.services.raw-kubelet;
-  mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
-    apiVersion = "v1";
+  taintToAttributeSet = attrs: builtins.listToAttrs (map (item: let
+    parts = builtins.split ":" item;
+    keyValue = builtins.split "=" (builtins.elemAt parts 0);
+    in { key = builtins.elemAt keyValue 0; value = builtins.elemAt keyValue 1; effect = builtins.elemAt parts 1;}) attrs);
+  colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
+    parts = builtins.split ":" item;
+    in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 1; }) attrs);
+
+  kubeConfigSet = {
+    apiVersion = "kubelet.config.k8s.io/v1beta1";
     clusters = [{
       name = "local";
       cluster.certificate-authority = attrs.caCrtFile;
       cluster.server = attrs.server;
     }];
+    containerRuntimeEndpoint = attrs.container-runtime-endpoint;
     contexts = [{
       context = {
         cluster = "local";
@@ -24,7 +33,9 @@ let
       name = "local";
     }];
     current-context = "local";
-    kind = "Config";
+    kind = "KubeletConfiguration";
+    port = attrs.port;
+    serializeImagePulls = attrs.serialize-image-pulls;
     users = [{
       inherit name;
       user = {
@@ -32,7 +43,27 @@ let
         client-key = attrs.certKeyFile;
       };
     }];
-  });
+  } // (if cfg.address != null then { address = cfg.address } else {})
+    // (if cfg.authentication-token-webhook != null then { authentication = { webhook = { enabled = true; } } } else {})
+    // (if cfg.authentication-token-webhook-cache-ttl != null then { authentication = { webhook = { cacheTTL = cfg.authentication-token-webhook-cache-ttl; } } } else {})
+    // (if cfg.authorization-mode != null then { authorization = { mode = cfg.authorization-mode; } } else {})
+    // (if cfg.cgroup-driver != null then { cgroupDriver = cfg.cgroup-driver; } } else {})
+    // (if cfg.client-ca-file != null then { clientCAFile = cfg.client-ca-file; } } else {})
+    // (if cfg.cluster-dns != null then { clusterDNS = cfg.cluster-dns; } } else {})
+    // (if cfg.cluster-domain != null then { clusterDomain = cfg.cluster-domain; } } else {})
+    // (if cfg.eviction-hard != null then { evictionHard = colonListToAttributeSet cfg.eviction-hard else {})
+    // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } } else {})
+    // (if cfg.hairpin-mode != null then { hairpinMode = cfg.hairpin-mode; } } else {})
+    // (if cfg.healthz-bind-address != null then { healthzBindAddress = cfg.healthz-bind-address; } } else {})
+    // (if cfg.healthz-port != null then { healthzPort = toString cfg.healthz-port; } } else {})
+    // (if cfg.port != null then { port = toString cfg.port; } } else {})
+    // (if cfg.register-node != null then { registerNode = boolToString cfg.register-node; } } else {})
+    // (if cfg.register-with-taints != null then { registerWithTaints = taintToAttributeSet cfg.register-with-taints; } } else {})
+    // (if cfg.tls-cert-file != null then { tlsCertFile = cfg.tls-cert-file; } } else {})
+    // (if cfg.tls-private-key-file != null then { tlsPrivateKeyFile = cfg.tls-private-key-file; } } else {})
+    ;
+  mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON kubeConfigSet);
+
   mkKubeConfigOptions = prefix: {
     server = mkOption {
       description = "${prefix} kube-apiserver server address.";
@@ -1140,32 +1171,23 @@ in
         RestartSec = "1000ms";
         ExecStart = ''
           ${pkgs.kubernetes}/bin/kubelet \
-            ${optionalString (cfg.address != null) "--address ${toString cfg.address}"} \
             ${optionalString (cfg.allowed-unsafe-sysctls != null) "--allowed-unsafe-sysctls \"${concatStringsSep "," cfg.allowed-unsafe-sysctls}\""} \
             ${optionalString (cfg.anonymous-auth != null) "--anonymous-auth"} \
             ${optionalString (cfg.application-metrics-count-limit != null) "--application-metrics-count-limit ${toString cfg.application-metrics-count-limit}"} \
-            ${optionalString (cfg.authentication-token-webhook != null) "--authentication-token-webhook"} \
-            ${optionalString (cfg.authentication-token-webhook-cache-ttl != null) "--authentication-token-webhook-cache-ttl ${toString cfg.authentication-token-webhook-cache-ttl}"} \
-            ${optionalString (cfg.authorization-mode != null) "--authorization-mode ${toString cfg.authorization-mode}"} \
             ${optionalString (cfg.authorization-webhook-cache-authorized-ttl != null) "--authorization-webhook-cache-authorized-ttl ${toString cfg.authorization-webhook-cache-authorized-ttl}"} \
             ${optionalString (cfg.authorization-webhook-cache-unauthorized-ttl != null) "--authorization-webhook-cache-unauthorized-ttl ${toString cfg.authorization-webhook-cache-unauthorized-ttl}"} \
             ${optionalString (cfg.boot-id-file != null) "--boot-id-file \"${concatStringsSep "," cfg.boot-id-file}\""} \
             ${optionalString (cfg.bootstrap-kubeconfig != null) "--bootstrap-kubeconfig ${toString cfg.bootstrap-kubeconfig}"} \
             ${optionalString (cfg.cert-dir != null) "--cert-dir ${toString cfg.cert-dir}"} \
-            ${optionalString (cfg.cgroup-driver != null) "--cgroup-driver ${toString cfg.cgroup-driver}"} \
             ${optionalString (cfg.cgroup-root != null) "--cgroup-root ${toString cfg.cgroup-root}"} \
             ${optionalString (cfg.cgroups-per-qos != null) "--cgroups-per-qos ${boolToString cfg.cgroups-per-qos}"} \
-            ${optionalString (cfg.client-ca-file != null) "--client-ca-file ${toString cfg.client-ca-file}"} \
             ${optionalString (cfg.cloud-config != null) "--cloud-config ${toString cfg.cloud-config}"} \
             ${optionalString (cfg.cloud-provider != null) "--cloud-provider ${toString cfg.cloud-provider}"} \
-            ${optionalString (cfg.cluster-dns != null) "--cluster-dns \"${concatStringsSep "," cfg.cluster-dns}\""} \
-            ${optionalString (cfg.cluster-domain != null) "--cluster-domain ${toString cfg.cluster-domain}"} \
             ${optionalString (cfg.configFile != null) "--config ${toString cfg.configFile}"} \
             ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
             ${optionalString (cfg.container-hints != null) "--container-hints ${toString cfg.container-hints}"} \
             ${optionalString (cfg.container-log-max-files != null) "--container-log-max-files ${toString cfg.container-log-max-files}"} \
             ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-max-size}"} \
-            ${optionalString (cfg.container-runtime-endpoint != null) "--container-runtime-endpoint ${toString cfg.container-runtime-endpoint}"} \
             ${optionalString (cfg.containerd != null) "--containerd ${toString cfg.containerd}"} \
             ${optionalString (cfg.containerd-namespace != null) "--containerd-namespace ${toString cfg.containerd-namespace}"} \
             ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
@@ -1191,13 +1213,9 @@ in
             ${optionalString (cfg.exit-on-lock-contention != null) "--exit-on-lock-contention"} \
             ${optionalString (cfg.experimental-allocatable-ignore-eviction != null) "--experimental-allocatable-ignore-eviction ${boolToString cfg.experimental-allocatable-ignore-eviction}"} \
             ${optionalString (cfg.experimental-mounter-path != null) "--experimental-mounter-path ${toString cfg.experimental-mounter-path}"} \
-            ${optionalString (cfg.fail-swap-on != null) "--fail-swap-on ${toString cfg.fail-swap-on}"} \
             ${optionalString (cfg.feature-gates != null) "--feature-gates \"${concatStringsSep "," cfg.feature-gates}\""} \
             ${optionalString (cfg.file-check-frequency != null) "--file-check-frequency ${toString cfg.file-check-frequency}"} \
             ${optionalString (cfg.global-housekeeping-interval != null) "--global-housekeeping-interval ${toString cfg.global-housekeeping-interval}"} \
-            ${optionalString (cfg.hairpin-mode != null) "--hairpin-mode ${toString cfg.hairpin-mode}"} \
-            ${optionalString (cfg.healthz-bind-address != null) "--healthz-bind-address ${toString cfg.healthz-bind-address}"} \
-            ${optionalString (cfg.healthz-port != null) "--healthz-port ${toString cfg.healthz-port}"} \
             ${optionalString (cfg.hostname-override != null) "--hostname-override ${toString cfg.hostname-override}"} \
             ${optionalString (cfg.housekeeping-interval != null) "--housekeeping-interval ${toString cfg.housekeeping-interval}"} \
             ${optionalString (cfg.http-check-frequency != null) "--http-check-frequency ${toString cfg.http-check-frequency}"} \
@@ -1243,14 +1261,11 @@ in
             ${optionalString (cfg.pod-manifest-path != null) "--pod-manifest-path ${toString cfg.pod-manifest-path}"} \
             ${optionalString (cfg.pod-max-pids != null) "--pod-max-pids ${toString cfg.pod-max-pids}"} \
             ${optionalString (cfg.pods-per-core != null) "--pods-per-core ${toString cfg.pods-per-core}"} \
-            ${optionalString (cfg.port != null) "--port ${toString cfg.port}"} \
             ${optionalString (cfg.protect-kernel-defaults != null) "--protect-kernel-defaults"} \
             ${optionalString (cfg.provider-id != null) "--provider-id ${toString cfg.provider-id}"} \
             ${optionalString (cfg.qos-reserved != null) "--qos-reserved \"${concatStringsSep "," cfg.qos-reserved}\""} \
             ${optionalString (cfg.read-only-port != null) "--read-only-port ${toString cfg.read-only-port}"} \
-            ${optionalString (cfg.register-node != null) "--register-node"} \
             ${optionalString (cfg.register-schedulable != null) "--register-schedulable ${boolToString cfg.register-schedulable}"} \
-            ${optionalString (cfg.register-with-taints != null) "--register-with-taints \"${concatStringsSep "," cfg.register-with-taints}\""} \
             ${optionalString (cfg.registry-burst != null) "--registry-burst ${toString cfg.registry-burst}"} \
             ${optionalString (cfg.registry-qps != null) "--registry-qps ${toString cfg.registry-qps}"} \
             ${optionalString (cfg.reserved-cpus != null) "--reserved-cpus \"${concatStringsSep "," cfg.reserved-cpus}\""} \
@@ -1276,10 +1291,8 @@ in
             ${optionalString (cfg.system-cgroups != null) "--system-cgroups ${toString cfg.system-cgroups}"} \
             ${optionalString (cfg.system-reserved != null) "--system-reserved \"${concatStringsSep "," cfg.system-reserved}\""} \
             ${optionalString (cfg.system-reserved-cgroup != null) "--system-reserved-cgroup ${toString cfg.system-reserved-cgroup}"} \
-            ${optionalString (cfg.tls-cert-file != null) "--tls-cert-file ${toString cfg.tls-cert-file}"} \
             ${optionalString (cfg.tls-cipher-suites != null) "---tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
             ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${toString cfg.tls-min-version}"} \
-            ${optionalString (cfg.tls-private-key-file != null) "--tls-private-key-file ${toString cfg.tls-private-key-file}"} \
             ${optionalString (cfg.topology-manager-policy != null) "--topology-manager-policy ${toString cfg.topology-manager-policy}"} \
             ${optionalString (cfg.topology-manager-policy-options != null) "--topology-manager-policy-options \"${concatStringsSep "," cfg.topology-manager-policy-options}\""} \
             ${optionalString (cfg.topology-manager-scope != null) "--topology-manager-scope ${toString cfg.topology-manager-scope}"} \
