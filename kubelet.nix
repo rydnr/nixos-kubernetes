@@ -28,7 +28,7 @@ let
     contexts = [{
       context = {
         cluster = "local";
-        user = name;
+        user = "kubelet";
       };
       name = "local";
     }];
