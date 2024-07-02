@@ -120,7 +120,7 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ bash coreutils openssl ];
 
-    systemd.services.raw-kubelet = {
+    systemd.services.raw-kubelet-certificate = {
       inherit description;
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
