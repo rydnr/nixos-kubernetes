@@ -9,18 +9,22 @@ with lib;
 
 let
   cfg = config.services.raw-kubelet;
-  taintToAttributeSet = attrs: builtins.listToAttrs (map (item: let
+  taintToAttributeSet = attrs: map (item: let
     parts = builtins.split ":" item;
     keyValue = builtins.split "=" (builtins.elemAt parts 0);
-    in { key = builtins.elemAt keyValue 0; value1 = builtins.elemAt keyValue 1; effect = builtins.elemAt parts 1;}) attrs);
+    in {
+      key = builtins.elemAt keyValue 0;
+      value = builtins.elemAt keyValue 1;
+      effect = builtins.elemAt parts 1;
+    }) attrs;
   colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
     parts = builtins.split ":" item;
-    in { name1 = builtins.elemAt parts 0; value2 = builtins.elemAt parts 1; }) attrs);
+    in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 1; }) attrs);
 
   kubeConfigSet = {
     apiVersion = "kubelet.config.k8s.io/v1beta1";
     clusters = [{
-      name3 = "local";
+      name = "local";
       cluster.certificate-authority = cfg.kubeConfigOpts.caCrtFile;
       cluster.server = cfg.kubeConfigOpts.server;
     }];
@@ -30,14 +34,14 @@ let
         cluster = "local";
         user = "kubelet";
       };
-      name4 = "local";
+      name = "local";
     }];
     current-context = "local";
     kind = "KubeletConfiguration";
     port = cfg.port;
     serializeImagePulls = cfg.serialize-image-pulls;
     users = [{
-      name5 = "kubelet";
+      name = "kubelet";
       user = {
         client-certificate = cfg.certCrtFile;
         client-key = cfg.certKeyFile;
