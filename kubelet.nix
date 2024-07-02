@@ -15,12 +15,12 @@ let
     in { key = builtins.elemAt keyValue 0; value = builtins.elemAt keyValue 1; effect = builtins.elemAt parts 1;}) attrs);
   colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
     parts = builtins.split ":" item;
-    in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 1; }) attrs);
+    in { name2 = builtins.elemAt parts 0; value = builtins.elemAt parts 1; }) attrs);
 
   kubeConfigSet = {
     apiVersion = "kubelet.config.k8s.io/v1beta1";
     clusters = [{
-      name = "local";
+      name3 = "local";
       cluster.certificate-authority = cfg.kubeConfigOpts.caCrtFile;
       cluster.server = cfg.kubeConfigOpts.server;
     }];
@@ -30,14 +30,14 @@ let
         cluster = "local";
         user = "kubelet";
       };
-      name = "local";
+      name4 = "local";
     }];
     current-context = "local";
     kind = "KubeletConfiguration";
     port = cfg.port;
     serializeImagePulls = cfg.serialize-image-pulls;
     users = [{
-      name = "kubelet";
+      name5 = "kubelet";
       user = {
         client-certificate = cfg.certCrtFile;
         client-key = cfg.certKeyFile;

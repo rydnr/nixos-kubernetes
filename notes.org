@@ -516,6 +516,7 @@ in
 }
 #+end_src
 
+
 ** mkKubeConfig
 
 #+NAME: mkKubeConfig
@@ -974,6 +975,7 @@ The parameters we need:
 - The path to the client key (~/var/lib/kubernetes/secrets/kube-proxy-client-key.pem~)
 
 The logic [[https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/cluster/kubernetes/default.nix][is already in nixpkgs]], but we can't use it directly. We copied it instead.
+
 
 ** kube-proxy.nix
 
@@ -2665,9 +2667,6 @@ in
   };
 }
 #+end_src
-
-
-
 
 
 * kube-apiserver
