@@ -21,8 +21,8 @@ let
     apiVersion = "kubelet.config.k8s.io/v1beta1";
     clusters = [{
       name = "local";
-      cluster.certificate-authority = kubeConfigOpts.caCrtFile;
-      cluster.server = kubeConfigOpts.server;
+      cluster.certificate-authority = cfg.kubeConfigOpts.caCrtFile;
+      cluster.server = cfg.kubeConfigOpts.server;
     }];
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     contexts = [{
