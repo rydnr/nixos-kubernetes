@@ -35,6 +35,7 @@
         raw-kube-controller-manager = ./kube-controller-manager.nix;
         raw-kube-proxy-certificate = ./kube-proxy-certificate.nix;
         raw-kube-proxy = { config, pkgs, lib, ... }: import ./kube-proxy.nix {inherit config pkgs lib nixpkgs;};
+        raw-kubelet-certificate = ./kubelet-certificate.nix;
         raw-kubelet = ./kubelet.nix;
       };
     });
