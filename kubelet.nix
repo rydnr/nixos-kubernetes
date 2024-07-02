@@ -11,18 +11,10 @@ let
   cfg = config.services.raw-kubelet;
   mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
     apiVersion = "v1";
-    kind = "Config";
     clusters = [{
       name = "local";
       cluster.certificate-authority = attrs.caCrtFile;
       cluster.server = attrs.server;
-    }];
-    users = [{
-      inherit name;
-      user = {
-        client-certificate = attrs.certCrtFile;
-        client-key = attrs.certKeyFile;
-      };
     }];
     contexts = [{
       context = {
@@ -30,9 +22,16 @@ let
         user = name;
       };
       name = "local";
-    };
+    }];
     current-context = "local";
-  ];
+    kind = "Config";
+    users = [{
+      inherit name;
+      user = {
+        client-certificate = attrs.certCrtFile;
+        client-key = attrs.certKeyFile;
+      };
+    }];
   });
   mkKubeConfigOptions = prefix: {
     server = mkOption {
