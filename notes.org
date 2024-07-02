@@ -540,8 +540,10 @@ mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON
       cluster = "local";
       user = name;
     };
-    current-context = "local";
-  }];
+    name = "local";
+  };
+  current-context = "local";
+];
 });
 #+END_SRC
 

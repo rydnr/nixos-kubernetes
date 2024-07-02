@@ -29,8 +29,10 @@ let
         cluster = "local";
         user = name;
       };
-      current-context = "local";
-    }];
+      name = "local";
+    };
+    current-context = "local";
+  ];
   });
   mkKubeConfigOptions = prefix: {
     server = mkOption {
