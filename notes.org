@@ -993,7 +993,6 @@ let
   cfg = config.services.raw-kube-proxy;
   <<mkKubeConfig>>
   <<mkKubeConfigOptions>>
-  <<mkCert>>
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
 
@@ -1014,45 +1013,36 @@ in
       default = false;
       inherit description;
     };
-
     bind-address = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The IP address for the proxy server to serve on (set to '0.0.0.0' for all IPv4 interfaces and '::' for all IPv6 interfaces). This parameter is ignored if a config file is specified by --config. (default 0.0.0.0)";
     };
-
     bind-address-hard-fail = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "If true kube-proxy will treat failure to bind to a port as fatal and exit";
     };
-
     boot-id-file = mkOption {
       type = types.nullOr (types.listOf types.path);
       default = null;
       description = "List of files to check for boot-id. Use the first one that exists. (default '/proc/sys/kernel/random/boot_id')";
     };
-
-    kubeConfigOpts = mkKubeConfigOptions "raw-kube-proxy";
-
     cleanup = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "If true cleanup iptables and ipvs rules and exit.";
     };
-
     cluster-cidr = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The CIDR range of pods in the cluster. When configured, traffic sent to a Service cluster IP from outside this range will be masqueraded and traffic sent from pods to an external LoadBalancer IP will be directed to the respective cluster IP instead. For dual-stack clusters, a comma-separated list is accepted with at least one CIDR per IP family (IPv4 and IPv6). This parameter is ignored if a config file is specified by --config.";
     };
-
     configFile = mkOption {
       type = types.nullOr types.path;
       default = null;
       description = "The path to the configuration file.";
     };
-
     config-sync-period = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -1202,6 +1192,8 @@ in
       default = null;
       description = "Path to kubeconfig file with authorization information (the master location can be overridden by the master flag).";
     };
+
+    kubeConfigOpts = mkKubeConfigOptions "raw-kube-proxy";
 
     log-flush-frequency = mkOption {
       type = types.nullOr types.str;
@@ -1520,6 +1512,10 @@ with lib;
 
 let
   cfg = config.services.raw-kubelet;
+  <<mkKubeConfig>>
+  <<mkKubeConfigOptions>>
+  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
+  kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   <<boolToString>>
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
   longDescription = "The kubelet is the primary 'node agent' that runs on each
@@ -2005,6 +2001,8 @@ in
       default = null;
       description = "Path to a kubeconfig file, specifying how to connect to the API server. Providing --kubeconfig enables API server mode, omitting --kubeconfig enables standalone mode.";
     };
+
+    kubeConfigOpts = mkKubeConfigOptions "raw-kubelet";
 
     kubelet-cgroups = mkOption {
       type = types.nullOr types.str;
@@ -2547,7 +2545,7 @@ in
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kube-reserved != null) "--kube-reserved \"${concatStringsSep "," cfg.kube-reserved}\""} \
             ${optionalString (cfg.kube-reserved-cgroup != null) "--kube-reserved-cgroup ${toString cfg.kube-reserved-cgroup}"} \
-            ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${toString cfg.kubeconfig}"} \
+            --kubeconfig "${toString kubeConfigFile}" \
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.local-storage-capacity-isolation != null) "--local-storage-capacity-isolation ${boolToString cfg.local-storage-capacity-isolation}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \

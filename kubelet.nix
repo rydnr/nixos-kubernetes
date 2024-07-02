@@ -9,6 +9,57 @@ with lib;
 
 let
   cfg = config.services.raw-kubelet;
+  mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
+    apiVersion = "v1";
+    kind = "Config";
+    clusters = [{
+      name = "local";
+      cluster.certificate-authority = attrs.caCrtFile;
+      cluster.server = attrs.server;
+    }];
+    users = [{
+      inherit name;
+      user = {
+        client-certificate = attrs.certCrtFile;
+        client-key = attrs.certKeyFile;
+      };
+    }];
+    contexts = [{
+      context = {
+        cluster = "local";
+        user = name;
+      };
+      current-context = "local";
+    }];
+  });
+  mkKubeConfigOptions = prefix: {
+    server = mkOption {
+      description = "${prefix} kube-apiserver server address.";
+      type = types.str;
+    };
+    caCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file.";
+    };
+    caKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA key file.";
+    };
+    certCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the certificate.";
+    };
+    certKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the certificate key file.";
+    };
+  };
+  generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
+  kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   boolToString = b: if b then "true" else "false";
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
   longDescription = "The kubelet is the primary 'node agent' that runs on each
@@ -623,6 +674,8 @@ in
       description = "Path to a kubeconfig file, specifying how to connect to the API server. Providing --kubeconfig enables API server mode, omitting --kubeconfig enables standalone mode.";
     };
 
+    kubeConfigOpts = mkKubeConfigOptions "raw-kubelet";
+
     kubelet-cgroups = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -1159,7 +1212,7 @@ in
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kube-reserved != null) "--kube-reserved \"${concatStringsSep "," cfg.kube-reserved}\""} \
             ${optionalString (cfg.kube-reserved-cgroup != null) "--kube-reserved-cgroup ${toString cfg.kube-reserved-cgroup}"} \
-            ${optionalString (cfg.kubeconfig != null) "--kubeconfig ${toString cfg.kubeconfig}"} \
+            --kubeconfig "${toString kubeConfigFile}" \
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.local-storage-capacity-isolation != null) "--local-storage-capacity-isolation ${boolToString cfg.local-storage-capacity-isolation}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \

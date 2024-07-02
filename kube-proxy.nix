@@ -59,18 +59,6 @@ let
       description = "Path to the certificate key file.";
     };
   };
-  mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
-             privateKeyOwner ? "kubernetes" }: rec {
-    inherit name caCert CN hosts fields action;
-    cert = secret name;
-    key = secret "${name}-key";
-    privateKeyOptions = {
-      owner = privateKeyOwner;
-      group = "nogroup";
-      mode = "0600";
-      path = key;
-    };
-  };
   generatedKubeConfig = mkKubeConfig "raw-kube-proxy" cfg.kubeConfigOpts // { certCrtFile = cfg.certCrtFile; certKeyFile = cfg.certKeyFile; };
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
 
@@ -218,45 +206,36 @@ in
       default = false;
       inherit description;
     };
-
     bind-address = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The IP address for the proxy server to serve on (set to '0.0.0.0' for all IPv4 interfaces and '::' for all IPv6 interfaces). This parameter is ignored if a config file is specified by --config. (default 0.0.0.0)";
     };
-
     bind-address-hard-fail = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "If true kube-proxy will treat failure to bind to a port as fatal and exit";
     };
-
     boot-id-file = mkOption {
       type = types.nullOr (types.listOf types.path);
       default = null;
       description = "List of files to check for boot-id. Use the first one that exists. (default '/proc/sys/kernel/random/boot_id')";
     };
-
-    kubeConfigOpts = mkKubeConfigOptions "raw-kube-proxy";
-
     cleanup = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "If true cleanup iptables and ipvs rules and exit.";
     };
-
     cluster-cidr = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "The CIDR range of pods in the cluster. When configured, traffic sent to a Service cluster IP from outside this range will be masqueraded and traffic sent from pods to an external LoadBalancer IP will be directed to the respective cluster IP instead. For dual-stack clusters, a comma-separated list is accepted with at least one CIDR per IP family (IPv4 and IPv6). This parameter is ignored if a config file is specified by --config.";
     };
-
     configFile = mkOption {
       type = types.nullOr types.path;
       default = null;
       description = "The path to the configuration file.";
     };
-
     config-sync-period = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -406,6 +385,8 @@ in
       default = null;
       description = "Path to kubeconfig file with authorization information (the master location can be overridden by the master flag).";
     };
+
+    kubeConfigOpts = mkKubeConfigOptions "raw-kube-proxy";
 
     log-flush-frequency = mkOption {
       type = types.nullOr types.str;
