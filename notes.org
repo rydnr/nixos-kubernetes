@@ -1541,7 +1541,7 @@ let
     port = cfg.port;
     serializeImagePulls = cfg.serialize-image-pulls;
     users = [{
-      name = cfg.name;
+      name = "kubelet";
       user = {
         client-certificate = cfg.certCrtFile;
         client-key = cfg.certKeyFile;
