@@ -1519,12 +1519,12 @@ let
     keyValue = builtins.split "=" (builtins.elemAt parts 0);
     in {
       key = builtins.elemAt keyValue 0;
-      value = builtins.elemAt keyValue 1;
-      effect = builtins.elemAt parts 1;
+      value = builtins.elemAt keyValue 2;
+      effect = builtins.elemAt parts 2;
     }) attrs;
   colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
     parts = builtins.split ":" item;
-    in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 1; }) attrs);
+    in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 2; }) attrs);
 
   kubeConfigSet = {
     apiVersion = "v1";
@@ -2214,11 +2214,11 @@ in
       description = "The CIDR to use for pod IP addresses, only used in standalone mode.  In cluster mode, this is obtained from the master. For IPv6, the maximum number of IP's allocated is 65536 (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
     };
 
-    pod-infra-container-image = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "Specified image will not be pruned by the image garbage collector. CRI implementations have their own configuration to set this image. (default 'registry.k8s.io/pause:3.9') (DEPRECATED: will be removed in a future release. Image garbage collector will get sandbox image information from CRI.)";
-    };
+    #pod-infra-container-image = mkOption {
+    #  type = types.nullOr types.str;
+    #  default = null;
+    #  description = "Specified image will not be pruned by the image garbage collector. CRI implementations have their own configuration to set this image. (default 'registry.k8s.io/pause:3.9') (DEPRECATED: will be removed in a future release. Image garbage collector will get sandbox image information from CRI.)";
+    #};
 
     pod-manifest-path = mkOption {
       type = types.nullOr types.path;
@@ -2618,7 +2618,6 @@ in
             ${optionalString (cfg.node-status-update-frequency != null) "--node-status-update-frequency ${toString cfg.node-status-update-frequency}"} \
             ${optionalString (cfg.oom-score-adj != null) "--oom-score-adj ${toString cfg.oom-score-adj}"} \
             ${optionalString (cfg.pod-cidr != null) "--pod-cidr ${toString cfg.pod-cidr}"} \
-            ${optionalString (cfg.pod-infra-container-image != null) "--pod-infra-container-image ${toString cfg.pod-infra-container-image}"} \
             ${optionalString (cfg.pod-manifest-path != null) "--pod-manifest-path ${toString cfg.pod-manifest-path}"} \
             ${optionalString (cfg.pod-max-pids != null) "--pod-max-pids ${toString cfg.pod-max-pids}"} \
             ${optionalString (cfg.pods-per-core != null) "--pods-per-core ${toString cfg.pods-per-core}"} \
