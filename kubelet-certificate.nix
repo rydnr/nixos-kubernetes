@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.raw-kubelet;
+  cfg = config.services.raw-kubelet-certificate;
   description = "an utility to manage the kubelet";
   generateCert = pkgs.writeScriptBin "generate-cert" ''
     #!/usr/bin/env ${pkgs.bash}/bin/bash

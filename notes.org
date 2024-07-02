@@ -1411,7 +1411,7 @@ As with ~kube-proxy~, we'll create a service that creates a certificate for ~kub
 with lib;
 
 let
-  cfg = config.services.raw-kubelet;
+  cfg = config.services.raw-kubelet-certificate;
   description = "an utility to manage the kubelet";
   <<generateCert>>
 in
