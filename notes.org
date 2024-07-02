@@ -203,7 +203,7 @@ Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullIm
 ** generateCert
 
 #+NAME: generateCert
-#+begin_src nix :noweb tangle
+#+begin_src nix :noweb yes
 generateCert = pkgs.writeScriptBin "generate-cert" ''
   #!/usr/bin/env ${pkgs.bash}/bin/bash
   set -e
@@ -288,7 +288,7 @@ certKeyFile = lib.mkOption {
 ** certificate options
 
 #+NAME: certificateOptions
-#+begin_src nix :noweb tangle :exports none
+#+begin_src nix :noweb yes :exports none
 enable = lib.mkOption {
   type = lib.types.bool;
   default = false;
@@ -360,11 +360,11 @@ echo "This is a test with ${foo} and ${bar}"
 #+END_SRC
 
 *** Outputs
-#+BEGIN_SRC sh :tangle output1.txt :noweb tangle
+#+BEGIN_SRC sh :tangle output1.txt :noweb yes
 <<foobar(foo="bar",bar="qux")>>
 #+END_SRC
 
-#+BEGIN_SRC sh :tangle output2.txt :noweb tangle
+#+BEGIN_SRC sh :tangle output2.txt :noweb yes
 <<foobar(foo="bar2", bar="qux2")>>
 #+END_SRC
 
@@ -421,7 +421,7 @@ in
 *** certificateModule1
 
 #+NAME: certificateModule1
-#+begin_src nix :noweb tangle
+#+begin_src nix :noweb yes
 {
   config,
   pkgs,
@@ -468,7 +468,7 @@ let
 *** certificateModule3
 
 #+NAME: certificateModule
-#+begin_src nix :var serviceName="replaceme" :noweb tangle :exports none
+#+begin_src nix :var serviceName="replaceme" :noweb yes :exports none
 {
   config,
   pkgs,
@@ -551,7 +551,7 @@ mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON
 This function creates the common options a module needs to request to be able to call `mkKubeConfig`.
 
 #+NAME: mkKubeConfigOptions
-#+BEGIN_SRC nix :noweb tangle
+#+BEGIN_SRC nix :noweb yes
 mkKubeConfigOptions = prefix: {
   server = mkOption {
     description = "${prefix} kube-apiserver server address.";
@@ -624,7 +624,7 @@ oom_score = 0
 
 Let's write a module that creates a CA used to check the signatures of all certificates used by any Kubernetes daemon.
 
-#+begin_src nix :noweb tangle :tangle kubernetes-ca.nix
+#+begin_src nix :noweb yes :tangle kubernetes-ca.nix
 {
   config,
   pkgs,
@@ -820,7 +820,7 @@ keyUsage = critical, digitalSignature, cRLSign, keyCertSign
 
 Let's create a certificate for ~kube-proxy~ explicitly.
 
-#+begin_src nix :noweb tangle :tangle kube-proxy-certificate.nix
+#+begin_src nix :noweb yes :tangle kube-proxy-certificate.nix
 {
   config,
   pkgs,
@@ -929,7 +929,7 @@ in
 
 We need to create the following file and pass it to the ~kube-proxy~ process.
 
-#+begin_src json :noweb tangle :tangle kube-proxy-kubeconfig
+#+begin_src json :noweb yes :tangle kube-proxy-kubeconfig
 {
   "apiVersion": "v1",
   "clusters": [
@@ -978,7 +978,7 @@ The logic [[https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/
 
 *** let block
 
-#+begin_src nix :noweb tangle :tangle kube-proxy.nix
+#+begin_src nix :noweb yes :tangle kube-proxy.nix
 {
   config,
   pkgs,
@@ -1005,7 +1005,7 @@ let
 
 *** options block
 
-#+begin_src nix :noweb tangle :tangle kube-proxy.nix
+#+begin_src nix :noweb yes :tangle kube-proxy.nix
 in
 {
   options.services.raw-kube-proxy = {
@@ -1317,7 +1317,7 @@ in
 
 *** config block
 
-#+begin_src nix :noweb tangle :tangle kube-proxy.nix
+#+begin_src nix :noweb yes :tangle kube-proxy.nix
 
   config = mkIf cfg.enable {
     systemd.services.raw-kube-proxy = lib.mkForce {
@@ -1400,7 +1400,7 @@ in
 
 As with ~kube-proxy~, we'll create a service that creates a certificate for ~kubelet~ if it doesn't exist. I tried to abstract this into a parameterized template, parameter substitution seem to work only when evaluating code blocks, and that's not suitable for our scenario.
 
-#+begin_src nix :noweb tangle :tangle kubelet-certificate.nix
+#+begin_src nix :noweb yes :tangle kubelet-certificate.nix
 {
   config,
   pkgs,
@@ -1508,7 +1508,7 @@ in
 
 ** let block
 
-#+begin_src nix :noweb tangle :tangle kubelet.nix
+#+begin_src nix :noweb yes :tangle kubelet.nix
 {
   config,
   pkgs,
@@ -1546,7 +1546,7 @@ is checked every 20 seconds (also configurable with a flag).";
 
 ** options block
 
-#+begin_src nix :noweb tangle :tangle kubelet.nix
+#+begin_src nix :noweb yes :tangle kubelet.nix
 in
 {
   options.services.raw-kubelet = {
@@ -2449,7 +2449,7 @@ in
 
 ** config block
 
-#+begin_src nix :noweb tangle :tangle kubelet.nix
+#+begin_src nix :noweb yes :tangle kubelet.nix
   config = mkIf cfg.enable {
     systemd.services.kubelet = lib.mkForce {
       inherit description;
@@ -2643,7 +2643,7 @@ in
 *** let block
 
 First, the variables.
-#+BEGIN_SRC nix :noweb tangle :tangle kube-apiserver.nix
+#+BEGIN_SRC nix :noweb yes :tangle kube-apiserver.nix
 {
   config,
   pkgs,
@@ -2663,7 +2663,7 @@ let
 
 *** options block
 
-#+BEGIN_SRC nix :noweb tangle :tangle kube-apiserver.nix
+#+BEGIN_SRC nix :noweb yes :tangle kube-apiserver.nix
 in
 {
   options.services.raw-kube-apiserver = {
@@ -3543,7 +3543,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
 *** config block
 
-#+begin_src nix :noweb tangle :tangle kube-apiserver.nix
+#+begin_src nix :noweb yes :tangle kube-apiserver.nix
 
   config = mkIf cfg.enable {
     systemd.services.kube-apiserver = {
@@ -3765,7 +3765,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
 * flake
 
-#+begin_src nix :noweb tangle :tangle flake.nix
+#+begin_src nix :noweb yes :tangle flake.nix
 # flake.nix
 #
 # This file packages NixOS modules for Kubernetes as a Nix flake.
@@ -3821,7 +3821,7 @@ A set of key=value pairs that enable or disable built-in APIs. Supported options
 
 *** let block
 
-#+BEGIN_SRC nix :noweb tangle :tangle kube-scheduler.nix
+#+BEGIN_SRC nix :noweb yes :tangle kube-scheduler.nix
 {
   config,
   pkgs,
@@ -3843,7 +3843,7 @@ let
 
 *** options block
 
-#+begin_src nix :noweb tangle :tangle kube-scheduler.nix
+#+begin_src nix :noweb yes :tangle kube-scheduler.nix
 in
 {
   options.services.raw-kube-scheduler = {
@@ -4186,7 +4186,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 
 *** config block
 
-#+begin_src nix :noweb tangle :tangle kube-scheduler.nix
+#+begin_src nix :noweb yes :tangle kube-scheduler.nix
   config = mkIf cfg.enable {
     systemd.services.kube-scheduler = {
       inherit description;
@@ -4273,7 +4273,7 @@ Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_R
 
 *** let block
 
-#+BEGIN_SRC nix :noweb tangle :tangle kube-controller-manager.nix
+#+BEGIN_SRC nix :noweb yes :tangle kube-controller-manager.nix
 {
   config,
   pkgs,
@@ -4294,7 +4294,7 @@ let
 
 *** options block
 
-#+begin_src nix :noweb tangle :tangle kube-controller-manager.nix
+#+begin_src nix :noweb yes :tangle kube-controller-manager.nix
 in
 {
   options.services.raw-kube-controller-manager = {
@@ -5108,7 +5108,7 @@ in
 
 *** config block
 
-#+begin_src nix :noweb tangle :tangle kube-controller-manager.nix
+#+begin_src nix :noweb yes :tangle kube-controller-manager.nix
   config = mkIf cfg.enable {
     systemd.services.kube-controller-manager = {
       inherit description;

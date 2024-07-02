@@ -38,10 +38,26 @@ let
       description = "${prefix} kube-apiserver server address.";
       type = types.str;
     };
-    <<caCrtFile>>
-    <<caKeyFile>>
-    <<certCrtFile>>
-    <<certKeyFile>>
+    caCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA file.";
+    };
+    caKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the CA key file.";
+    };
+    certCrtFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the certificate.";
+    };
+    certKeyFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Path to the certificate key file.";
+    };
   };
   mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
              privateKeyOwner ? "kubernetes" }: rec {
