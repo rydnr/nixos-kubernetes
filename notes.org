@@ -1550,7 +1550,7 @@ let
   } // (if cfg.address != null then { address = cfg.address; } else {})
     // (if cfg.authentication-token-webhook != null then { authentication = { webhook = { enabled = true; }; }; } else {})
     // (if cfg.authentication-token-webhook-cache-ttl != null then { authentication = { webhook = { cacheTTL = cfg.authentication-token-webhook-cache-ttl; }; }; } else {})
-    // (if cfg.authorization-mode != null then { authorization = { mode = cfg.authorization-mode; } } else {})
+    // (if cfg.authorization-mode != null then { authorization = { mode = cfg.authorization-mode; }; } else {})
     // (if cfg.cgroup-driver != null then { cgroupDriver = cfg.cgroup-driver; } else {})
     // (if cfg.client-ca-file != null then { clientCAFile = cfg.client-ca-file; } else {})
     // (if cfg.cluster-dns != null then { clusterDNS = cfg.cluster-dns; } else {})
