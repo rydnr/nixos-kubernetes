@@ -81,8 +81,6 @@ let
     // (if cfg.eviction-pressure-transition-period != null then { evictionPressureTransitionPeriod = cfg.eviction-pressure-transition-period; } else {})
     // (if cfg.enable-controller-attach-detach != null then { enableControllerAttachDetach = cfg.enable-controller-attach-detach; } else {})
     // (if cfg.make-iptables-util-chains != null then { makeIPTablesUtilChains = cfg.make-iptables-util-chains; } else {})
-    // (if cfg.iptables-masquerade-bit != null then { iptablesMasqueradeBit = cfg.iptables-masquerade-bit; } else {})
-    // (if cfg.iptables-drop-bit != null then { iptablesDropBit = cfg.iptables-drop-bit; } else {})
     // (if cfg.feature-gates != null then { featureGate = listToFeatureGate cfg.feature-gates; } else {})
     // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } else {})
     // (if cfg.memory-swap != null then { memorySwap = cfg.memory-swap; } else {})
