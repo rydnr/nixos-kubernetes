@@ -105,7 +105,7 @@ let
     // (if cfg.local-storage-capacity-isolation != null then { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
     // (if cfg.container-runtime-endpoint != null then { containerRuntimeEnpoint = cfg.container-runtime-endpoint; } else {})
     ;
-  generatedConfig = pkgs.writeText "kubelete-config" (builtins.toJSON configSet);
+  generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
 
   mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
@@ -550,6 +550,12 @@ in
       type = types.nullOr types.str;
       default = null;
       description = "Whether to enable cpu load reader.";
+    };
+
+    enable-profiling-handler = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Enables profiling via web interface host:port/debug/pprof/ (efault true).";
     };
 
     enable-server = mkOption {
