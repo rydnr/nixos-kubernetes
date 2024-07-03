@@ -83,7 +83,7 @@ let
     // (if cfg.make-iptables-util-chains != null then { makeIPTablesUtilChains = cfg.make-iptables-util-chains; } else {})
     // (if cfg.feature-gates != null then { featureGate = listToFeatureGate cfg.feature-gates; } else {})
     // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } else {})
-    // (if cfg.memory-swap != null then { memorySwap = cfg.memory-swap; } else {})
+    // (if cfg.memory-swap != null then { memorySwap = { swapBehavior = cfg.memory-swap; }; } else {})
     // (if cfg.container-log-max-size != null then { containerLogMaxSize = cfg.container-log-max-size; } else {})
     // (if cfg.container-log-max-files != null then { containerLogMaxFiles = cfg.container-log-max-files; } else {})
     // (if cfg.config-map-and-secret-change-detection-strategy != null then { configMapAndSecretChangeDetectionStrategy = cfg.config-map-and-secret-change-detection-strategy; } else {})
@@ -453,7 +453,13 @@ in
     config-dir = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Path to a directory to specify drop-ins, allows the user to optionally specify additional configs to overwrite what is provided by default and in the KubeletConfigFile flag. Note: Set the 'KUBELET_CONFIG_DROPIN_DIR_ALPHA' environment variable to specify the directory. [default='']";
+      description = "Path to a directory to specify drop-ins, allows the user to optionally specify additional configs to overwrite what is provided by default and in the KubeletConfigFile flag. Note: Set the 'KUBELET_CONFIG_DROPIN_DIR_ALPHA' environment variable to specify the directory (default '').";
+    };
+
+    config-map-and-secret-change-detection-strategy = mkOption {
+      type = types.nullOr (types.enumOf [ "Get" "Cache" "Watch" ])
+      default = null;
+      description = "Mode in which ConfigMap and Secret managers are running. Valid values include: 'Get': kubelet fetches necessary objects directly from the API server; 'Cache': kubelet uses TTL cache for object fetched from the API server; 'Watch': kubelet uses watches to observe changes to objects that are in its interest (default: 'Watch').";
     };
 
     container-hints = mkOption {
