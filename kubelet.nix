@@ -94,7 +94,7 @@ let
     // (if cfg.logging-format != null then { logging = { format = cfg.logging-format; }; } else {})
     // (if cfg.logging-flush-frequency != null then { logging = { flushFrequency = cfg.logging-flush-frequency; }; } else {})
     // (if cfg.v != null then { logging = { verbosity = cfg.v; }; } else {})
-    // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; })
+    // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; } else {})
     // (if cfg.enable-system-log-handler != null then { enableSystemLogHandler = cfg.enable-system-log-handler; } else {})
     // (if cfg.enable-system-log-query != null then { enableSystemLogQuery = cfg.enable-system-log-query; } else {})
     // (if cfg.shutdown-grace-period != null then { shutdownGracePeriod = cfg.shutdown-grace-period; } else {})
