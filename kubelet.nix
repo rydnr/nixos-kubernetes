@@ -878,6 +878,12 @@ in
       description = "Memory Manager policy to use. Possible values: 'None', 'Static' (default 'None').";
     };
 
+    memory-swap = mkOption {
+      type = types.nullOr (types.enum [ "" "NoSwap" "LimitedSwap" ]);
+      default = null;
+      description = "Swap memory available to container workloads. May be one of ''; 'NoSwap': workloads can not use swap (default option); 'LimitedSwap': workload swap usage is limited. The swap limit is proportionate to the container's memory request.";
+    };
+
     minimum-container-ttl-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
