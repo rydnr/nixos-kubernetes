@@ -457,7 +457,7 @@ in
     };
 
     config-map-and-secret-change-detection-strategy = mkOption {
-      type = types.nullOr (types.enumOf [ "Get" "Cache" "Watch" ])
+      type = types.nullOr (types.enum [ "Get" "Cache" "Watch" ]);
       default = null;
       description = "Mode in which ConfigMap and Secret managers are running. Valid values include: 'Get': kubelet fetches necessary objects directly from the API server; 'Cache': kubelet uses TTL cache for object fetched from the API server; 'Watch': kubelet uses watches to observe changes to objects that are in its interest (default: 'Watch').";
     };
