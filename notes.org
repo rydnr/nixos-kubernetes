@@ -1526,53 +1526,96 @@ let
     parts = builtins.split ":" item;
     in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 2; }) attrs);
 
-  kubeConfigSet = {
-    apiVersion = "v1";
-    clusters = [{
-      name = "local";
-      cluster.certificate-authority = cfg.kubeConfigOpts.caCrtFile;
-      cluster.server = cfg.kubeConfigOpts.server;
-    }];
+  configSet = {
+    apiVersion = "kubelet.config.k8s.io/v1";
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
-    contexts = [{
-      context = {
-        cluster = "local";
-        user = "kubelet";
-      };
-      name = "local";
-    }];
-    current-context = "local";
-    kind = "Config";
-    port = cfg.port;
+    kind = "KubeletConfiguration";
     serializeImagePulls = cfg.serialize-image-pulls;
-    users = [{
-      name = "kubelet";
-      user = {
-        client-certificate = cfg.kubeConfigOpts.certCrtFile;
-        client-key = cfg.kubeConfigOpts.certKeyFile;
-      };
-    }];
-  } // (if cfg.address != null then { address = cfg.address; } else {})
+  } // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
+    // (if cfg.static-pod-path != null then { staticPodPath = cfg.static-pod-path; } else {})
+    // (if cfg.sync-frequency != null then { syncFrequency = cfg.sync-frequency; } else {})
+    // (if cfg.file-check-frequency != null then { fileCheckFrequency = cfg.file-check-frequency; } else {})
+    // (if cfg.http-check-frequency != null then { httpCheckFrequency = cfg.http-check-frequency; } else {})
+    // (if cfg.address != null then { address = cfg.address; } else {})
+    // (if cfg.anonymous-auth != null then { authorization = { anonymous = { enabled = cfg.anonymous-auth; }; }; } else {})
     // (if cfg.authentication-token-webhook != null then { authentication = { webhook = { enabled = true; }; }; } else {})
     // (if cfg.authentication-token-webhook-cache-ttl != null then { authentication = { webhook = { cacheTTL = cfg.authentication-token-webhook-cache-ttl; }; }; } else {})
     // (if cfg.authorization-mode != null then { authorization = { mode = cfg.authorization-mode; }; } else {})
+    // (if cfg.authorization-webhook-cache-authorized-ttl != null then { authorization = { webhook = { cacheAuthorizedTTL = cfg.authorization-webhook-cache-authorized-ttl; }; }; } else {})
+    // (if cfg.authorization-webhook-cache-unauthorized-ttl != null then { authorization = { webhook = { cacheUnauthorizedTTL = cfg.authorization-webhook-cache-unauthorized-ttl; }; }; } else {})
     // (if cfg.cgroup-driver != null then { cgroupDriver = cfg.cgroup-driver; } else {})
-    // (if cfg.client-ca-file != null then { clientCAFile = cfg.client-ca-file; } else {})
+    // (if cfg.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.client-ca-file; }; }; } else {})
     // (if cfg.cluster-dns != null then { clusterDNS = cfg.cluster-dns; } else {})
     // (if cfg.cluster-domain != null then { clusterDomain = cfg.cluster-domain; } else {})
     // (if cfg.eviction-hard != null then { evictionHard = colonListToAttributeSet cfg.eviction-hard; } else {})
-    // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } else {})
     // (if cfg.hairpin-mode != null then { hairpinMode = cfg.hairpin-mode; } else {})
     // (if cfg.healthz-bind-address != null then { healthzBindAddress = cfg.healthz-bind-address; } else {})
-    // (if cfg.healthz-port != null then { healthzPort = toString cfg.healthz-port; } else {})
+    // (if cfg.healthz-port != null then { healthzPort = cfg.healthz-port; } else {})
     // (if cfg.port != null then { port = toString cfg.port; } else {})
-    // (if cfg.register-node != null then { registerNode = boolToString cfg.register-node; } else {})
+    // (if cfg.register-node != null then { registerNode = cfg.register-node; } else {})
     // (if cfg.register-with-taints != null then { registerWithTaints = taintToAttributeSet cfg.register-with-taints; } else {})
     // (if cfg.tls-cert-file != null then { tlsCertFile = cfg.tls-cert-file; } else {})
     // (if cfg.tls-private-key-file != null then { tlsPrivateKeyFile = cfg.tls-private-key-file; } else {})
+    // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
+    // (if cfg.registry-burst != null then { registryPullQPS = cfg.registry-burst; } else {})
+    // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
+    // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
+    // (if cfg.enable-debugging-handlers != null then { enableDebuggingHandlers = cfg.enableDebuggingHandlers; } else {})
+    // (if cfg.oom-score-adj != null then { oomScoreAdj = cfg.oom-score-adj; } else {})
+    // (if cfg.streaming-connection-idle-timeout != null then { streamingConnectionIdleTimeout = cfg.streaming-connection-idle-timeout; } else {})
+    // (if cfg.node-status-update-frequency != null then { nodeStatusUpdateFrequency = cfg.node-status-update-frequency; } else {})
+    // (if cfg.image-gc-high-threshold != null then { imageGCHighThresholdPercent = cfg.image-gc-high-threshold; } else {})
+    // (if cfg.image-gc-low-threshold != null then { imageGCLowThresholdPercent = cfg.image-gc-low-threshold; } else {})
+    // (if cfg.volume-stats-agg-period != null then { volumeStatsAggPeriod = cfg.volume-stats-agg-period; } else {})
+    // (if cfg.cgroups-per-qos != null then { cgroupsPerQOS = cfg.cgroups-per-qos; } else {})
+    // (if cfg.cpu-manager-policy != null then { cpuManagerPolicy = cfg.cpu-manager-policy; } else {})
+    // (if cfg.cpu-manager-reconcile-period != null then { cpuManagerReconcilePeriod = cfg.cpu-manager-reconcile-period; } else {})
+    // (if cfg.memory-manager-policy != null then { memoryManagerPolicy = cfg.memory-manager-policy; } else {})
+    // (if cfg.topology-manager-policy != null then { topologyManagerPolicy = cfg.topology-manager-policy; } else {})
+    // (if cfg.topology-manager-scope != null then { topologyManagerScope = cfg.topology-manager-scope; } else {})
+    // (if cfg.runtime-request-timeout != null then { runtimeRequestTimeout = cfg.runtime-request-timeout; } else {})
+    // (if cfg.max-pods != null then { maxPods = cfg.max-pods; } else {})
+    // (if cfg.resolv-conf != null then { resolvConf = cfg.resolv-conf; } else {})
+    // (if cfg.cpu-cfs-quota != null then { cpuCfsQuota = cfg.cpu-cfs-quota; } else {})
+    // (if cfg.cpu-cfs-quota-period != null then { cpuCfsQuotaPeriod = cfg.cpu-cfs-quota-period; } else {})
+    // (if cfg.node-status-max-images != null then { nodeStatusMaxImages = cfg.node-status-max-images; } else {})
+    // (if cfg.max-open-files != null then { maxOpenFiles = cfg.max-open-files; } else {})
+    // (if cfg.kube-api-content-type != null then { contentType = cfg.kube-api-content-type; } else {})
+    // (if cfg.kube-api-qps != null then { kubeAPIQPS = cfg.kube-api-qps; } else {})
+    // (if cfg.kube-api-burst != null then { kubeAPIBurst = cfg.kube-api-burst; } else {})
+    // (if cfg.eviction-pressure-transition-period != null then { evictionPressureTransitionPeriod = cfg.eviction-pressure-transition-period; } else {})
+    // (if cfg.enable-controller-attach-detach != null then { enableControllerAttachDetach = cfg.enable-controller-attach-detach; } else {})
+    // (if cfg.make-iptables-util-chains != null then { makeIPTablesUtilChains = cfg.make-iptables-util-chains; } else {})
+    // (if cfg.iptables-masquerade-bit != null then { iptablesMasqueradeBit = cfg.iptables-masquerade-bit; } else {})
+    // (if cfg.iptables-drop-bit != null then { iptablesDropBit = cfg.iptables-drop-bit; } else {})
+    // (if cfg.feature-gates != null then { featureGate = listToFeatureGate cfg.feature-gates; } else {})
+    // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } else {})
+    // (if cfg.memory-swap != null then { memorySwap = cfg.memory-swap; } else {})
+    // (if cfg.container-log-max-size != null { containerLogMaxSize = cfg.container-log-max-size; } else {})
+    // (if cfg.container-log-max-files != null { containerLogMaxFiles = cfg.container-log-max-files; } else {})
+    // (if cfg.config-map-and-secret-change-detection-strategy != null { configMapAndSecretChangeDetectionStrategy = cfg.config-map-and-secret-change-detection-strategy; } else {})
+    // (if cfg.enforce-node-allocatable != null { enforceNodeAllocatable = cfg.enforce-node-allocatable; } else {})
+    // (if cfg.volume-plugin-dir != null { volumePluginDir = cfg.volume-plugin-dir; } else {})
+    // (if cfg.logging-format != null { logging = { format = cfg.logging-format; }; } else {})
+    // (if cfg.logging-flush-frequency != null { logging = { flushFrequency = cfg.logging-flush-frequency; }; } else {})
+    // (if cfg.v != null { logging = { verbosity = cfg.v; }; } else {})
+    // (if cfg.log-json-info-buffer-size != null { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; })
+    // (if cfg.enable-system-log-handler != null { enableSystemLogHandler = cfg.enable-system-log-handler; } else {})
+    // (if cfg.enable-system-log-query != null { enableSystemLogQuery = cfg.enable-system-log-query; } else {})
+    // (if cfg.shutdown-grace-period != null { shutdownGracePeriod = cfg.shutdown-grace-period; } else {})
+    // (if cfg.shutdown-grace-period-critical-pods != null { shutdownGracePeriodCriticalPods = cfg.shutdown-grace-period-critical-pods; } else {})
+    // (if cfg.enable-profiling-handler != null { enableProfilingHandler = cfg.enable-profiling-handler; } else {})
+    // (if cfg.enable-debug-flags-handler != null { enableDebugFlagsHandler = cfg.enable-debug-flags-handler; } else {})
+    // (if cfg.seccomp-default != null { seccompDefault = cfg.seccomp-default; } else {})
+    // (if cfg.memory-throttling-factor != null { memoryThrottlingFactor = cfg.memory-throttling-factor; } else {})
+    // (if cfg.register-node != null { registerNode = cfg.register-node; } else {})
+    // (if cfg.local-storage-capacity-isolation != null { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
+    // (if cfg.container-runtime-endpoint != null { containerRuntimeEnpoint = cfg.container-runtime-endpoint; } else {})
     ;
-  mkKubeConfig = name: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON kubeConfigSet);
+  generatedConfig = pkgs.writeText "kubelete-config" (builtins.toJSON configSet);
+  actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
 
+  <<mkKubeConfig>>
   <<mkKubeConfigOptions>>
   generatedKubeConfig = mkKubeConfig "kubelet";
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
@@ -1615,61 +1658,61 @@ in
     address = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The IP address for the Kubelet to serve on (set to '0.0.0.0' or '::' for listening on all interfaces and IP address families) (default 0.0.0.0) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The IP address for the Kubelet to serve on (set to '0.0.0.0' or '::' for listening on all interfaces and IP address families) (default 0.0.0.0).";
     };
 
     allowed-unsafe-sysctls = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "Whitelist of unsafe sysctls or unsafe sysctl patterns (ending in *). Use these at your own risk. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Whitelist of unsafe sysctls or unsafe sysctl patterns (ending in *). Use these at your own risk.";
     };
 
     anonymous-auth = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enables anonymous requests to the Kubelet server. Requests that are not rejected by another authentication method are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated. (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enables anonymous requests to the Kubelet server. Requests that are not rejected by another authentication method are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated (default true).";
     };
 
     application-metrics-count-limit = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Max number of application metrics to store (per container) (default 100) (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Max number of application metrics to store (per container) (default 100).";
     };
 
     authentication-token-webhook = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Use the TokenReview API to determine authentication for bearer tokens. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Use the TokenReview API to determine authentication for bearer tokens.";
     };
 
     authentication-token-webhook-cache-ttl = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The duration to cache responses from the webhook token authenticator. (default 2m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The duration to cache responses from the webhook token authenticator (default 2m0s).";
     };
 
     authorization-mode = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Authorization mode for Kubelet server. Valid options are AlwaysAllow or Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization. (default 'AlwaysAllow') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Authorization mode for Kubelet server. Valid options are AlwaysAllow or Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization (default 'AlwaysAllow').";
     };
 
     authorization-webhook-cache-authorized-ttl = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The duration to cache 'authorized' responses from the webhook authorizer. (default 5m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The duration to cache 'authorized' responses from the webhook authorizer (default 5m0s).";
     };
 
     authorization-webhook-cache-unauthorized-ttl = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The duration to cache 'unauthorized' responses from the webhook authorizer. (default 30s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The duration to cache 'unauthorized' responses from the webhook authorizer (default 30s).";
     };
 
     boot-id-file = mkOption {
       type = types.nullOr (types.listOf types.path);
       default = null;
-      description = "Comma-separated list of files to check for boot-id. Use the first one that exists. (default '/proc/sys/kernel/random/boot_id') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Comma-separated list of files to check for boot-id. Use the first one that exists (default '/proc/sys/kernel/random/boot_id').";
     };
 
     bootstrap-kubeconfig = mkOption {
@@ -1687,49 +1730,49 @@ in
     cgroup-driver = mkOption {
       type = types.nullOr (types.enum [ "cgroupfs" "systemd" ]);
       default = null;
-      description = "Driver that the kubelet uses to manipulate cgroups on the host.  Possible values: 'cgroupfs', 'systemd' (default 'cgroupfs') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Driver that the kubelet uses to manipulate cgroups on the host.  Possible values: 'cgroupfs', 'systemd' (default 'cgroupfs').";
     };
 
     cgroup-root = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Optional root cgroup to use for pods. This is handled by the container runtime on a best effort basis. Default: '', which means use the container runtime default. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Optional root cgroup to use for pods. This is handled by the container runtime on a best effort basis. Default: '', which means use the container runtime default.";
     };
 
     cgroups-per-qos = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enable creation of QoS cgroup hierarchy, if true top level QoS and pod cgroups are created. (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enable creation of QoS cgroup hierarchy, if true top level QoS and pod cgroups are created (default true).";
     };
 
     client-ca-file = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.";
     };
 
     cloud-config = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "The path to the cloud provider configuration file. Empty string for no configuration file. (DEPRECATED: will be removed in 1.25 or later, in favor of removing cloud provider code from Kubelet.)";
+      description = "The path to the cloud provider configuration file. Empty string for no configuration file.";
     };
 
     cloud-provider = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The provider for cloud services. Set to empty string for running with no cloud provider. If set, the cloud provider determines the name of the node (consult cloud provider documentation to determine if and how the hostname is used). (DEPRECATED: will be removed in 1.25 or later, in favor of removing cloud provider code from Kubelet.)";
+      description = "The provider for cloud services. Set to empty string for running with no cloud provider. If set, the cloud provider determines the name of the node (consult cloud provider documentation to determine if and how the hostname is used).";
     };
 
     cluster-dns = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "Comma-separated list of DNS server IP address.  This value is used for containers DNS server in case of Pods with 'dnsPolicy=ClusterFirst'. Note: all DNS servers appearing in the list MUST serve the same set of records otherwise name resolution within the cluster may not work correctly. There is no guarantee as to which DNS server may be contacted for name resolution. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Comma-separated list of DNS server IP address.  This value is used for containers DNS server in case of Pods with 'dnsPolicy=ClusterFirst'. Note: all DNS servers appearing in the list MUST serve the same set of records otherwise name resolution within the cluster may not work correctly. There is no guarantee as to which DNS server may be contacted for name resolution.";
     };
 
     cluster-domain = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Domain for this cluster.  If set, kubelet will configure all containers to search this domain in addition to the host's search domains (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Domain for this cluster.  If set, kubelet will configure all containers to search this domain in addition to the host's search domains.";
     };
 
     configFile = mkOption {
@@ -1747,163 +1790,163 @@ in
     container-hints = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Location of the container hints file (default '/etc/cadvisor/container_hints.json') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Location of the container hints file (default '/etc/cadvisor/container_hints.json').";
     };
 
     container-log-max-files = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "<Warning: Beta feature> Set the maximum number of container log files that can be present for a container. The number must be >= 2. (default 5) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "<Warning: Beta feature> Set the maximum number of container log files that can be present for a container. The number must be >= 2 (default 5).";
     };
 
     container-log-max-size = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "<Warning: Beta feature> Set the maximum size (e.g. 10Mi) of container log file before it is rotated. (default "10Mi") (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "<Warning: Beta feature> Set the maximum size (e.g. 10Mi) of container log file before it is rotated (default '10Mi').";
     };
 
     container-runtime-endpoint = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The endpoint of container runtime service. Unix Domain Sockets are supported on Linux, while npipe and tcp endpoints are supported on Windows. Examples:'unix:///path/to/runtime.sock', 'npipe:////./pipe/runtime' (default 'unix:///run/containerd/containerd.sock') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The endpoint of container runtime service. Unix Domain Sockets are supported on Linux, while npipe and tcp endpoints are supported on Windows. Examples:'unix:///path/to/runtime.sock', 'npipe:////./pipe/runtime' (default 'unix:///run/containerd/containerd.sock').";
     };
 
     containerd = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Containerd endpoint (default '/run/containerd/containerd.sock') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Containerd endpoint (default '/run/containerd/containerd.sock').";
     };
 
     containerd-namespace = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "containerd namespace (default 'k8s.io') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "containerd namespace (default 'k8s.io').";
     };
 
     contention-profiling = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enable block profiling, if profiling is enabled (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enable block profiling, if profiling is enabled.";
     };
 
     cpu-cfs-quota = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enable CPU CFS quota enforcement for containers that specify CPU limits (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enable CPU CFS quota enforcement for containers that specify CPU limits (default true).";
     };
 
     cpu-cfs-quota-period = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Sets CPU CFS quota period value, cpu.cfs_period_us, defaults to Linux Kernel default (default 100ms) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Sets CPU CFS quota period value, cpu.cfs_period_us, defaults to Linux Kernel default (default 100ms).";
     };
 
     cpu-manager-policy = mkOption {
       type = types.nullOr (types.enum [ "none" "static" ]);
       default = null;
-      description = "CPU Manager policy to use. Possible values: 'none', 'static'. (default "none") (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "CPU Manager policy to use. Possible values: 'none', 'static' (default 'none').";
     };
 
     cpu-manager-policy-options = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of key=value CPU Manager policy options to use, to fine tune their behaviour. If not supplied, keep the default behaviour. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of key=value CPU Manager policy options to use, to fine tune their behaviour. If not supplied, keep the default behaviour.";
     };
 
     cpu-manager-reconcile-period = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "<Warning: Alpha feature> CPU Manager reconciliation period. Examples: '10s', or '1m'. If not supplied, defaults to 'NodeStatusUpdateFrequency' (default 10s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "<Warning: Alpha feature> CPU Manager reconciliation period. Examples: '10s', or '1m'. If not supplied, defaults to 'NodeStatusUpdateFrequency' (default 10s).";
     };
 
     enable-controller-attach-detach = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enables the Attach/Detach controller to manage attachment/detachment of volumes scheduled to this node, and disables kubelet from executing any attach/detach operations (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enables the Attach/Detach controller to manage attachment/detachment of volumes scheduled to this node, and disables kubelet from executing any attach/detach operations (default true).";
     };
 
     enable-debugging-handlers = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enables server endpoints for log collection and local running of containers and commands (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enables server endpoints for log collection and local running of containers and commands (default true).";
     };
 
     enable-load-reader = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Whether to enable cpu load reader (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Whether to enable cpu load reader.";
     };
 
     enable-server = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Enable the Kubelet's server (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Enable the Kubelet's server (default true).";
     };
 
     enforce-node-allocatable = mkOption {
       type = types.nullOr (types.listOf (types.enum [ "none" "pods" "system-reserved" "kube-reserved" ]));
       default = null;
-      description = "A list of levels of node allocatable enforcement to be enforced by kubelet. Acceptable options are 'none', 'pods', 'system-reserved', and 'kube-reserved'. If the latter two options are specified, '--system-reserved-cgroup' and '--kube-reserved-cgroup' must also be set, respectively. If 'none' is specified, no additional options should be set. See https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ for more details. (default [pods]) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A list of levels of node allocatable enforcement to be enforced by kubelet. Acceptable options are 'none', 'pods', 'system-reserved', and 'kube-reserved'. If the latter two options are specified, '--system-reserved-cgroup' and '--kube-reserved-cgroup' must also be set, respectively. If 'none' is specified, no additional options should be set. See https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ for more details (default [pods]).";
     };
 
     event-burst = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Maximum size of a bursty event records, temporarily allows event records to burst to this number, while still not exceeding event-qps. The number must be >= 0. If 0 will use DefaultBurst: 10. (default 100) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Maximum size of a bursty event records, temporarily allows event records to burst to this number, while still not exceeding event-qps. The number must be >= 0. If 0 will use DefaultBurst: 10 (default 100).";
     };
 
     event-qps = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "QPS to limit event creations. The number must be >= 0. If 0 will use DefaultQPS: 5. (default 50) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "QPS to limit event creations. The number must be >= 0. If 0 will use DefaultQPS: 5 (default 50).";
     };
 
     event-storage-age-limit = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Max length of time for which to store events (per type). Value is a comma separated list of key values, where the keys are event types (e.g.: creation, oom) or 'default' and the value is a duration. Default is applied to all non-specified event types (default 'default=0') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Max length of time for which to store events (per type). Value is a comma separated list of key values, where the keys are event types (e.g.: creation, oom) or 'default' and the value is a duration. Default is applied to all non-specified event types (default 'default=0').";
     };
 
     event-storage-event-limit = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Max number of events to store (per type). Value is a comma separated list of key values, where the keys are event types (e.g.: creation, oom) or 'default' and the value is an integer. Default is applied to all non-specified event types (default 'default=0') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Max number of events to store (per type). Value is a comma separated list of key values, where the keys are event types (e.g.: creation, oom) or 'default' and the value is an integer. Default is applied to all non-specified event types (default 'default=0').";
     };
 
     eviction-hard = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of eviction thresholds (e.g. memory.available<1Gi) that if met would trigger a pod eviction. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of eviction thresholds (e.g. memory.available<1Gi) that if met would trigger a pod eviction.";
     };
 
     eviction-max-pod-grace-period = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Maximum allowed grace period (in seconds) to use when terminating pods in response to a soft eviction threshold being met.  If negative, defer to pod specified value. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Maximum allowed grace period (in seconds) to use when terminating pods in response to a soft eviction threshold being met.  If negative, defer to pod specified value.";
     };
 
     eviction-minimum-reclaim = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of minimum reclaims (e.g. imagefs.available=2Gi) that describes the minimum amount of resource the kubelet will reclaim when performing a pod eviction if that resource is under pressure. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of minimum reclaims (e.g. imagefs.available=2Gi) that describes the minimum amount of resource the kubelet will reclaim when performing a pod eviction if that resource is under pressure.";
     };
 
     eviction-pressure-transition-period = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Duration for which the kubelet has to wait before transitioning out of an eviction pressure condition. (default 5m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Duration for which the kubelet has to wait before transitioning out of an eviction pressure condition (default 5m0s).";
     };
 
     eviction-soft = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of eviction thresholds (e.g. memory.available<1.5Gi) that if met over a corresponding grace period would trigger a pod eviction. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of eviction thresholds (e.g. memory.available<1.5Gi) that if met over a corresponding grace period would trigger a pod eviction.";
     };
 
     eviction-soft-grace-period = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of eviction grace periods (e.g. memory.available=1m30s) that correspond to how long a soft eviction threshold must hold before triggering a pod eviction. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of eviction grace periods (e.g. memory.available=1m30s) that correspond to how long a soft eviction threshold must hold before triggering a pod eviction.";
     };
 
     exit-on-lock-contention = mkOption {
@@ -1915,19 +1958,19 @@ in
     experimental-allocatable-ignore-eviction = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "When set to 'true', Hard Eviction Thresholds will be ignored while calculating Node Allocatable. See https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ for more details. [default=false] (DEPRECATED: will be removed in 1.25 or later.)";
+      description = "When set to 'true', Hard Eviction Thresholds will be ignored while calculating Node Allocatable. See https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/ for more details [default=false]";
     };
 
     experimental-mounter-path = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "[Experimental] Path of mounter binary. Leave empty to use the default mount. (DEPRECATED: will be removed in 1.25 or later. in favor of using CSI.)";
+      description = "[Experimental] Path of mounter binary. Leave empty to use the default mount.";
     };
 
     fail-swap-on = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Makes the Kubelet fail to start if swap is enabled on the node.  (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Makes the Kubelet fail to start if swap is enabled on the node.  (default true)";
     };
 
     feature-gates = mkOption {
@@ -1939,31 +1982,31 @@ in
     file-check-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Duration between checking config files for new data (default 20s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Duration between checking config files for new data (default 20s).";
     };
 
     global-housekeeping-interval = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Interval between global housekeepings (default 1m0s) (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Interval between global housekeepings (default 1m0s).";
     };
 
     hairpin-mode = mkOption {
       type = types.nullOr (types.enum [ "promiscuous-bridge" "hairpin-veth" "none" ]);
       default = null;
-      description = "How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back to themselves if they should try to access their own Service. Valid values are 'promiscuous-bridge', 'hairpin-veth' and 'none'. (default 'promiscuous-bridge') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "How should the kubelet setup hairpin NAT. This allows endpoints of a Service to loadbalance back to themselves if they should try to access their own Service. Valid values are 'promiscuous-bridge', 'hairpin-veth' and 'none'. (default 'promiscuous-bridge').";
     };
 
     healthz-bind-address = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The IP address for the healthz server to serve on (set to '0.0.0.0' or '::' for listening on all interfaces and IP address families) (default 127.0.0.1) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The IP address for the healthz server to serve on (set to '0.0.0.0' or '::' for listening on all interfaces and IP address families) (default 127.0.0.1).";
     };
 
     healthz-port = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The port of the localhost healthz endpoint (set to 0 to disable) (default 10248) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The port of the localhost healthz endpoint (set to 0 to disable) (default 10248).";
     };
 
     hostname-override = mkOption {
@@ -1981,7 +2024,7 @@ in
     http-check-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Duration between checking http for new data (default 20s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Duration between checking http for new data (default 20s).";
     };
 
     image-credential-provider-bin-dir = mkOption {
@@ -1999,61 +2042,61 @@ in
     image-gc-high-threshold = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The percent of disk usage after which image garbage collection is always run. Values must be within the range [0, 100], To disable image garbage collection, set to 100.  (default 85) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The percent of disk usage after which image garbage collection is always run. Values must be within the range [0, 100], To disable image garbage collection, set to 100 (default 85).";
     };
 
     image-gc-low-threshold = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The percent of disk usage before which image garbage collection is never run. Lowest disk usage to garbage collect to. Values must be within the range [0, 100] and must be less than that of --image-gc-high-threshold. (default 80) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The percent of disk usage before which image garbage collection is never run. Lowest disk usage to garbage collect to. Values must be within the range [0, 100] and must be less than that of --image-gc-high-threshold (default 80).";
     };
 
     image-service-endpoint = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The endpoint of container image service. If not specified, it will be the same with --container-runtime-endpoint by default. Unix Domain Socket are supported on Linux, while npipe and tcp endpoints are supported on Windows. Examples:'unix:///path/to/runtime.sock', 'npipe:////./pipe/runtime' (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The endpoint of container image service. If not specified, it will be the same with --container-runtime-endpoint by default. Unix Domain Socket are supported on Linux, while npipe and tcp endpoints are supported on Windows. Examples:'unix:///path/to/runtime.sock', 'npipe:////./pipe/runtime'.";
     };
 
     keep-terminated-pod-volumes = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Keep terminated pod volumes mounted to the node after the pod terminates.  Can be useful for debugging volume related issues. (DEPRECATED: will be removed in a future version)";
+      description = "Keep terminated pod volumes mounted to the node after the pod terminates.  Can be useful for debugging volume related issues.";
     };
 
     kernel-memcg-notification = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "If enabled, the kubelet will integrate with the kernel memcg notification to determine if memory eviction thresholds are crossed rather than polling. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "If enabled, the kubelet will integrate with the kernel memcg notification to determine if memory eviction thresholds are crossed rather than polling.";
     };
 
     kube-api-burst = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Burst to use while talking with kubernetes apiserver. The number must be >= 0. If 0 will use DefaultBurst: 100. Doesn't cover events and node heartbeat apis which rate limiting is controlled by a different set of flags (default 100) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Burst to use while talking with kubernetes apiserver. The number must be >= 0. If 0 will use DefaultBurst: 100. Doesn't cover events and node heartbeat apis which rate limiting is controlled by a different set of flags (default 100).";
     };
 
     kube-api-content-type = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Content type of requests sent to apiserver. (default "application/vnd.kubernetes.protobuf") (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Content type of requests sent to apiserver (default 'application/vnd.kubernetes.protobuf').";
     };
 
     kube-api-qps = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "QPS to use while talking with kubernetes apiserver. The number must be >= 0. If 0 will use DefaultQPS: 50. Doesn't cover events and node heartbeat apis which rate limiting is controlled by a different set of flags (default 50) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "QPS to use while talking with kubernetes apiserver. The number must be >= 0. If 0 will use DefaultQPS: 50. Doesn't cover events and node heartbeat apis which rate limiting is controlled by a different set of flags (default 50).";
     };
 
     kube-reserved = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=500Mi,ephemeral-storage=1Gi) pairs that describe resources reserved for kubernetes system components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail. [default=none] (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=500Mi,ephemeral-storage=1Gi) pairs that describe resources reserved for kubernetes system components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail (default none).";
     };
 
     kube-reserved-cgroup = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Absolute name of the top level cgroup that is used to manage kubernetes components for which compute resources were reserved via '--kube-reserved' flag. Ex. '/kube-reserved'. [default=''] (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Absolute name of the top level cgroup that is used to manage kubernetes components for which compute resources were reserved via '--kube-reserved' flag. Ex. '/kube-reserved' (default '').";
     };
 
     kubeconfig = mkOption {
@@ -2067,13 +2110,13 @@ in
     kubelet-cgroups = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Optional absolute name of cgroups to create and run the Kubelet in. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Optional absolute name of cgroups to create and run the Kubelet in.";
     };
 
     local-storage-capacity-isolation = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "If true, local ephemeral storage isolation is enabled. Otherwise, local storage isolation feature will be disabled (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "If true, local ephemeral storage isolation is enabled. Otherwise, local storage isolation feature will be disabled (default true).";
     };
 
     lock-file = mkOption {
@@ -2085,7 +2128,7 @@ in
     log-cadvisor-usage = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Whether to log the usage of the cAdvisor container (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Whether to log the usage of the cAdvisor container.";
     };
 
     log-flush-frequency = mkOption {
@@ -2097,85 +2140,85 @@ in
     log-json-info-buffer-size = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "[Alpha] In JSON format with split output streams, the info messages can be buffered for a while to increase performance. The default value of zero bytes disables buffering. The size can be specified as number of bytes (512), multiples of 1000 (1K), multiples of 1024 (2Ki), or powers of those (3M, 4G, 5Mi, 6Gi). Enable the LoggingAlphaOptions feature gate to use this. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "[Alpha] In JSON format with split output streams, the info messages can be buffered for a while to increase performance. The default value of zero bytes disables buffering. The size can be specified as number of bytes (512), multiples of 1000 (1K), multiples of 1024 (2Ki), or powers of those (3M, 4G, 5Mi, 6Gi). Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
     log-json-split-stream = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
     logging-format = mkOption {
       type = types.nullOr (types.enum [ "json" "text" ]);
       default = null;
-      description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text'. (default 'text') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text' (default 'text').";
     };
 
     machine-id-file = mkOption {
       type = types.nullOr (types.listOf types.path);
       default = null;
-      description = "List of files to check for machine-id. Use the first one that exists. (default '/etc/machine-id,/var/lib/dbus/machine-id') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "List of files to check for machine-id. Use the first one that exists. (default '/etc/machine-id,/var/lib/dbus/machine-id').";
     };
 
     make-iptables-util-chains = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "If true, kubelet will ensure iptables utility rules are present on host. (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "If true, kubelet will ensure iptables utility rules are present on host (default true).";
     };
 
     manifest-url = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "URL for accessing additional Pod specifications to run (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "URL for accessing additional Pod specifications to run.";
     };
 
     manifest-url-header = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "List of HTTP headers to use when accessing the url provided to --manifest-url. Multiple headers with the same name will be added in the same order provided. This flag can be repeatedly invoked. For example: --manifest-url-header 'a:hello,b:again,c:world' --manifest-url-header 'b:beautiful' (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "List of HTTP headers to use when accessing the url provided to --manifest-url. Multiple headers with the same name will be added in the same order provided. This flag can be repeatedly invoked. For example: --manifest-url-header 'a:hello,b:again,c:world' --manifest-url-header 'b:beautiful'.";
     };
 
     max-open-files = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Number of files that can be opened by Kubelet process. (default 1000000) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Number of files that can be opened by Kubelet process (default 1000000).";
     };
 
     max-pods = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Number of Pods that can run on this Kubelet. (default 110) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Number of Pods that can run on this Kubelet (default 110).";
     };
 
     maximum-dead-containers = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Maximum number of old instances of containers to retain globally.  Each container takes up some disk space. To disable, set to a negative number. (default -1) (DEPRECATED: Use --eviction-hard or --eviction-soft instead. Will be removed in a future version.)";
+      description = "Maximum number of old instances of containers to retain globally.  Each container takes up some disk space. To disable, set to a negative number (default -1).";
     };
 
     maximum-dead-containers-per-container = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Maximum number of old instances to retain per container.  Each container takes up some disk space. (default 1) (DEPRECATED: Use --eviction-hard or --eviction-soft instead. Will be removed in a future version.)";
+      description = "Maximum number of old instances to retain per container.  Each container takes up some disk space (default 1).";
     };
 
     memory-manager-policy = mkOption {
       type = types.nullOr (types.enum [ "None" "Static" ]);
       default = null;
-      description = "Memory Manager policy to use. Possible values: 'None', 'Static'. (default 'None') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Memory Manager policy to use. Possible values: 'None', 'Static' (default 'None').";
     };
 
     minimum-container-ttl-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Minimum age for a finished container before it is garbage collected.  Examples: '300ms', '10s' or '2h45m' (DEPRECATED: Use --eviction-hard or --eviction-soft instead. Will be removed in a future version.)";
+      description = "Minimum age for a finished container before it is garbage collected.  Examples: '300ms', '10s' or '2h45m'.";
     };
 
     minimum-image-ttl-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Minimum age for an unused image before it is garbage collected.  Examples: '300ms', '10s' or '2h45m'. (default 2m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Minimum age for an unused image before it is garbage collected.  Examples: '300ms', '10s' or '2h45m' (default 2m0s).";
     };
 
     node-ip = mkOption {
@@ -2193,61 +2236,61 @@ in
     node-status-max-images = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The maximum number of images to report in Node.Status.Images. If -1 is specified, no cap will be applied. (default 50) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The maximum number of images to report in Node.Status.Images. If -1 is specified, no cap will be applied (default 50).";
     };
 
     node-status-update-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Specifies how often kubelet posts node status to master. Note: be cautious when changing the constant, it must work with nodeMonitorGracePeriod in nodecontroller. (default 10s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Specifies how often kubelet posts node status to master. Note: be cautious when changing the constant, it must work with nodeMonitorGracePeriod in nodecontroller (default 10s).";
     };
 
     oom-score-adj = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The oom-score-adj value for kubelet process. Values must be within the range [-1000, 1000] (default -999) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The oom-score-adj value for kubelet process. Values must be within the range [-1000, 1000] (default -999).";
     };
 
     pod-cidr = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "The CIDR to use for pod IP addresses, only used in standalone mode.  In cluster mode, this is obtained from the master. For IPv6, the maximum number of IP's allocated is 65536 (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The CIDR to use for pod IP addresses, only used in standalone mode.  In cluster mode, this is obtained from the master. For IPv6, the maximum number of IP's allocated is 65536.";
     };
 
     #pod-infra-container-image = mkOption {
     #  type = types.nullOr types.str;
     #  default = null;
-    #  description = "Specified image will not be pruned by the image garbage collector. CRI implementations have their own configuration to set this image. (default 'registry.k8s.io/pause:3.9') (DEPRECATED: will be removed in a future release. Image garbage collector will get sandbox image information from CRI.)";
+    #  description = "Specified image will not be pruned by the image garbage collector. CRI implementations have their own configuration to set this image. (default 'registry.k8s.io/pause:3.9').";
     #};
 
     pod-manifest-path = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Path to the directory containing static pod files to run, or the path to a single static pod file. Files starting with dots will be ignored. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Path to the directory containing static pod files to run, or the path to a single static pod file. Files starting with dots will be ignored.";
     };
 
     pod-max-pids = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Set the maximum number of processes per pod.  If -1, the kubelet defaults to the node allocatable pid capacity. (default -1) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Set the maximum number of processes per pod.  If -1, the kubelet defaults to the node allocatable pid capacity (default -1)";
     };
 
     pods-per-core = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Number of Pods per core that can run on this Kubelet. The total number of Pods on this Kubelet cannot exceed max-pods, so max-pods will be used if this calculation results in a larger number of Pods allowed on the Kubelet. A value of 0 disables this limit. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Number of Pods per core that can run on this Kubelet. The total number of Pods on this Kubelet cannot exceed max-pods, so max-pods will be used if this calculation results in a larger number of Pods allowed on the Kubelet. A value of 0 disables this limit.";
     };
 
     port = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The port for the Kubelet to serve on. (default 10250) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The port for the Kubelet to serve on (default 10250)";
     };
 
     protect-kernel-defaults = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Default kubelet behaviour for kernel tuning. If set, kubelet errors if any of kernel tunables is different than kubelet defaults. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Default kubelet behaviour for kernel tuning. If set, kubelet errors if any of kernel tunables is different than kubelet defaults.";
     };
 
     provider-id = mkOption {
@@ -2259,61 +2302,61 @@ in
     qos-reserved = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "<Warning: Alpha feature> A set of ResourceName=Percentage (e.g. memory=50%) pairs that describe how pod resource requests are reserved at the QoS level. Currently only memory is supported. Requires the QOSReserved feature gate to be enabled. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "<Warning: Alpha feature> A set of ResourceName=Percentage (e.g. memory=50%) pairs that describe how pod resource requests are reserved at the QoS level. Currently only memory is supported. Requires the QOSReserved feature gate to be enabled.";
     };
 
     read-only-port = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The read-only port for the Kubelet to serve on with no authentication/authorization (set to 0 to disable) (default 10255) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The read-only port for the Kubelet to serve on with no authentication/authorization (set to 0 to disable) (default 10255).";
     };
 
     register-node = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Register the node with the apiserver. If --kubeconfig is not provided, this flag is irrelevant, as the Kubelet won't have an apiserver to register with. (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Register the node with the apiserver. If --kubeconfig is not provided, this flag is irrelevant, as the Kubelet won't have an apiserver to register with (default true).";
     };
 
     register-schedulable = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Register the node as schedulable. Won't have any effect if register-node is false. (default true) (DEPRECATED: will be removed in a future version)";
+      description = "Register the node as schedulable. Won't have any effect if register-node is false (default true).";
     };
 
     register-with-taints = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "Register the node with the given list of taints (comma separated '<key>=<value>:<effect>'). No-op if register-node is false. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Register the node with the given list of taints (comma separated '<key>=<value>:<effect>'). No-op if register-node is false.";
     };
 
     registry-burst = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Maximum size of a bursty pulls, temporarily allows pulls to burst to this number, while still not exceeding registry-qps. Only used if --registry-qps > 0 (default 10) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Maximum size of a bursty pulls, temporarily allows pulls to burst to this number, while still not exceeding registry-qps. Only used if --registry-qps > 0 (default 10).";
     };
 
     registry-qps = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "If > 0, limit registry pull QPS to this value.  If 0, unlimited. (default 5) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "If > 0, limit registry pull QPS to this value.  If 0, unlimited (default 5).";
     };
 
     reserved-cpus = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "List of CPUs or CPU ranges that are reserved for system and kubernetes usage. This specific list will supersede cpu counts in --system-reserved and --kube-reserved. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "List of CPUs or CPU ranges that are reserved for system and kubernetes usage. This specific list will supersede cpu counts in --system-reserved and --kube-reserved.";
     };
 
     reserved-memory = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "List of memory reservations for NUMA nodes. (e.g. --reserved-memory 0:memory=1Gi,hugepages-1M=2Gi --reserved-memory 1:memory=2Gi). The total sum for each memory type should be equal to the sum of kube-reserved, system-reserved and eviction-threshold. See https://kubernetes.io/docs/tasks/administer-cluster/memory-manager/#reserved-memory-flag for more details. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "List of memory reservations for NUMA nodes. (e.g. --reserved-memory 0:memory=1Gi,hugepages-1M=2Gi --reserved-memory 1:memory=2Gi). The total sum for each memory type should be equal to the sum of kube-reserved, system-reserved and eviction-threshold. See https://kubernetes.io/docs/tasks/administer-cluster/memory-manager/#reserved-memory-flag for more details.";
     };
 
     resolv-conf = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "Resolver configuration file used as the basis for the container DNS resolution configuration. (default "/etc/resolv.conf") (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Resolver configuration file used as the basis for the container DNS resolution configuration (default '/etc/resolv.conf').";
     };
 
     root-dir = mkOption {
@@ -2325,19 +2368,19 @@ in
     rotate-certificates = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Auto rotate the kubelet client certificates by requesting new certificates from the kube-apiserver when the certificate expiration approaches. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Auto rotate the kubelet client certificates by requesting new certificates from the kube-apiserver when the certificate expiration approaches.";
     };
 
     rotate-server-certificates = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Auto-request and rotate the kubelet serving certificates by requesting new certificates from the kube-apiserver when the certificate expiration approaches. Requires the RotateKubeletServerCertificate feature gate to be enabled, and approval of the submitted CertificateSigningRequest objects. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Auto-request and rotate the kubelet serving certificates by requesting new certificates from the kube-apiserver when the certificate expiration approaches. Requires the RotateKubeletServerCertificate feature gate to be enabled, and approval of the submitted CertificateSigningRequest objects.";
     };
 
     runonce = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "If true, exit after spawning pods from static pod files or remote urls. Exclusive with --enable-server (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "If true, exit after spawning pods from static pod files or remote urls. Exclusive with --enable-server";
     };
 
     runtime-cgroups = mkOption {
@@ -2349,7 +2392,7 @@ in
     runtime-request-timeout = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Timeout of all runtime requests except long running request - pull, logs, exec and attach. When timeout exceeded, kubelet will cancel the request, throw out an error and retry later. (default 2m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Timeout of all runtime requests except long running request - pull, logs, exec and attach. When timeout exceeded, kubelet will cancel the request, throw out an error and retry later (default 2m0s).";
     };
 
     seccomp-default = mkOption {
@@ -2361,85 +2404,85 @@ in
     serialize-image-pulls = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Pull images one at a time. We recommend *not* changing the default value on nodes that run docker daemon with version < 1.9 or an Aufs storage backend. Issue #10959 has more details. (default true) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Pull images one at a time. We recommend *not* changing the default value on nodes that run docker daemon with version < 1.9 or an Aufs storage backend. Issue #10959 has more details (default true).";
     };
 
     storage-driver-buffer-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Writes in the storage driver will be buffered for this duration, and committed to the non memory backends as a single transaction (default 1m0s) (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Writes in the storage driver will be buffered for this duration, and committed to the non memory backends as a single transaction (default 1m0s).";
     };
 
     storage-driver-db = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Database name (default 'cadvisor') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Database name (default 'cadvisor').";
     };
 
     storage-driver-host = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Database host:port (default 'localhost:8086') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Database host:port (default 'localhost:8086').";
     };
 
     storage-driver-password = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Database password (default 'root') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Database password (default 'root').";
     };
 
     storage-driver-secure = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Use secure connection with database (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Use secure connection with database.";
     };
 
     storage-driver-table = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Table name (default 'stats') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Table name (default 'stats').";
     };
 
     storage-driver-user = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Database username (default 'root') (DEPRECATED: This is a cadvisor flag that was mistakenly registered with the Kubelet. Due to legacy concerns, it will follow the standard CLI deprecation timeline before being removed.)";
+      description = "Database username (default 'root').";
     };
 
     streaming-connection-idle-timeout = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Maximum time a streaming connection can be idle before the connection is automatically closed. 0 indicates no timeout. Example: '5m'. Note: All connections to the kubelet server have a maximum duration of 4 hours. (default 4h0m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Maximum time a streaming connection can be idle before the connection is automatically closed. 0 indicates no timeout. Example: '5m'. Note: All connections to the kubelet server have a maximum duration of 4 hours (default 4h0m0s).";
     };
 
     sync-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Max period between synchronizing running containers and config (default 1m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Max period between synchronizing running containers and config (default 1m0s).";
     };
 
     system-cgroups = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Optional absolute name of cgroups in which to place all non-kernel processes that are not already inside a cgroup under '/'. Empty for no container. Rolling back the flag requires a reboot. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Optional absolute name of cgroups in which to place all non-kernel processes that are not already inside a cgroup under '/'. Empty for no container. Rolling back the flag requires a reboot.";
     };
 
     system-reserved = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=500Mi,ephemeral-storage=1Gi) pairs that describe resources reserved for non-kubernetes components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail. [default=none] (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=500Mi,ephemeral-storage=1Gi) pairs that describe resources reserved for non-kubernetes components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail (default none).";
     };
 
     system-reserved-cgroup = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Absolute name of the top level cgroup that is used to manage non-kubernetes components for which compute resources were reserved via '--system-reserved' flag. Ex. '/system-reserved'. [default=''] (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Absolute name of the top level cgroup that is used to manage non-kubernetes components for which compute resources were reserved via '--system-reserved' flag. Ex. '/system-reserved' (default '').";
     };
 
     tls-cert-file = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "File containing x509 Certificate used for serving HTTPS (with intermediate certs, if any, concatenated after server cert). If --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory passed to --cert-dir. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "File containing x509 Certificate used for serving HTTPS (with intermediate certs, if any, concatenated after server cert). If --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory passed to --cert-dir.";
     };
 
     tls-cipher-suites = mkOption {
@@ -2451,31 +2494,31 @@ in
     tls-min-version = mkOption {
       type = types.nullOr (types.enum [ "VersionTLS10" "VersionTLS11" "VersionTLS12" "VersionsTLS13" ]);
       default = null;
-      description = "Minimum TLS version supported. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13 (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Minimum TLS version supported. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13.";
     };
 
     tls-private-key-file = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "File containing x509 private key matching --tls-cert-file. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "File containing x509 private key matching --tls-cert-file.";
     };
 
     topology-manager-policy = mkOption {
       type = types.nullOr (types.enum [ "none" "best-effort" "restricted" "single-numa-mode" ]);
       default = null;
-      description = "Topology Manager policy to use. Possible values: 'none', 'best-effort', 'restricted', 'single-numa-node'. (default 'none') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Topology Manager policy to use. Possible values: 'none', 'best-effort', 'restricted', 'single-numa-node' (default 'none')";
     };
 
     topology-manager-policy-options = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "A set of key=value Topology Manager policy options to use, to fine tune their behaviour. If not supplied, keep the default behaviour. (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "A set of key=value Topology Manager policy options to use, to fine tune their behaviour. If not supplied, keep the default behaviour.";
     };
 
     topology-manager-scope = mkOption {
       type = types.nullOr (types.enum [ "container" "pod" ]);
       default = null;
-      description = "Scope to which topology hints applied. Topology Manager collects hints from Hint Providers and applies them to defined scope to ensure the pod admission. Possible values: 'container', 'pod'. (default 'container') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Scope to which topology hints applied. Topology Manager collects hints from Hint Providers and applies them to defined scope to ensure the pod admission. Possible values: 'container', 'pod' (default 'container').";
     };
 
     v = mkOption {
@@ -2493,13 +2536,13 @@ in
     volume-plugin-dir = mkOption {
       type = types.nullOr types.path;
       default = null;
-      description = "The full path of the directory in which to search for additional third party volume plugins (default '/usr/libexec/kubernetes/kubelet-plugins/volume/exec/') (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "The full path of the directory in which to search for additional third party volume plugins (default '/usr/libexec/kubernetes/kubelet-plugins/volume/exec/').";
     };
 
     volume-stats-agg-period = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Specifies interval for kubelet to calculate and cache the volume disk usage for all pods and volumes.  To disable volume calculations, set to a negative number. (default 1m0s) (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's --config flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)";
+      description = "Specifies interval for kubelet to calculate and cache the volume disk usage for all pods and volumes.  To disable volume calculations, set to a negative number (default 1m0s).";
     };
   };
 #+end_src
@@ -2544,7 +2587,7 @@ in
             ${optionalString (cfg.cgroups-per-qos != null) "--cgroups-per-qos ${boolToString cfg.cgroups-per-qos}"} \
             ${optionalString (cfg.cloud-config != null) "--cloud-config ${toString cfg.cloud-config}"} \
             ${optionalString (cfg.cloud-provider != null) "--cloud-provider ${toString cfg.cloud-provider}"} \
-            ${optionalString (cfg.configFile != null) "--config ${toString cfg.configFile}"} \
+            --config "${toString actualConfigFile}" \
             ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
             ${optionalString (cfg.container-hints != null) "--container-hints ${toString cfg.container-hints}"} \
             ${optionalString (cfg.container-log-max-files != null) "--container-log-max-files ${toString cfg.container-log-max-files}"} \
