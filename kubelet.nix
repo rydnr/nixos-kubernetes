@@ -1118,6 +1118,12 @@ in
       description = "Specifies the total duration that the node should delay the shutdown and total grace period for pod termination during a node shutdown (default '0s').";
     };
 
+    shutdown-grace-period-critical-pods = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Specifies the duration used to terminate critical pods during a node shutdown. This should be less than shutdownGracePeriod. For example, if shutdownGracePeriod=30s, and shutdownGracePeriodCriticalPods=10s, during a node shutdown the first 20 seconds would be reserved for gracefully terminating normal pods, and the last 10 seconds would be reserved for terminating critical pods (default '0s').";
+    };
+
     storage-driver-buffer-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
