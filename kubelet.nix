@@ -921,7 +921,7 @@ in
     };
 
     memory-throttling-factor = mkOption {
-      type = types.nullOr types.float64;
+      type = types.nullOr types.float;
       default = null;
       description = "Specifies the factor multiplied by the memory limit or node allocatable memory when setting the cgroupv2 memory.high value to enforce MemoryQoS. Decreasing this factor will set lower high limit for container cgroups and put heavier reclaim pressure while increasing will put less reclaim pressure. See https://kep.k8s.io/2570 for more details (default 0.9).";
     };
