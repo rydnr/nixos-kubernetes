@@ -2249,6 +2249,12 @@ in
       description = "Swap memory available to container workloads. May be one of ''; 'NoSwap': workloads can not use swap (default option); 'LimitedSwap': workload swap usage is limited. The swap limit is proportionate to the container's memory request.";
     };
 
+    memory-throttling-factor = mkOption {
+      type = types.nullOr types.float64;
+      default = null;
+      description = "Specifies the factor multiplied by the memory limit or node allocatable memory when setting the cgroupv2 memory.high value to enforce MemoryQoS. Decreasing this factor will set lower high limit for container cgroups and put heavier reclaim pressure while increasing will put less reclaim pressure. See https://kep.k8s.io/2570 for more details (default 0.9).";
+    };
+
     minimum-container-ttl-duration = mkOption {
       type = types.nullOr types.str;
       default = null;
