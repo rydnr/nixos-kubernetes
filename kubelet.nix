@@ -558,6 +558,12 @@ in
       description = "Enables profiling via web interface host:port/debug/pprof/ (efault true).";
     };
 
+    enable-debug-flags-handler = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Enables flags endpoint via web interface host:port/debug/flags/v (default true).";
+    };
+
     enable-server = mkOption {
       type = types.nullOr types.str;
       default = null;
