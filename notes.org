@@ -2401,6 +2401,12 @@ in
       description = "Enable the use of RuntimeDefault as the default seccomp profile for all workloads.";
     };
 
+    static-pod-pad = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "The path to the directory containing local (static) pods to run, or the path to a single static pod file (default '').";
+    };
+
     serialize-image-pulls = mkOption {
       type = types.nullOr types.bool;
       default = null;
