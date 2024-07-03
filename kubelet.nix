@@ -564,6 +564,12 @@ in
       description = "Enables system logs via web interface host:port/logs/ (default true).";
     };
 
+    enable-system-log-query = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Enables the node log query feature on the /logs endpoint. enable-system-log-handler has to be enabled in addition for this feature to work (default false).";
+    };
+
     enforce-node-allocatable = mkOption {
       type = types.nullOr (types.listOf (types.enum [ "none" "pods" "system-reserved" "kube-reserved" ]));
       default = null;
