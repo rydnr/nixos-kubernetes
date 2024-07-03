@@ -20,7 +20,7 @@ let
   colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
     parts = builtins.split ":" item;
     in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 2; }) attrs);
-
+  listToFeatureGates = attrs: map (item: let parts = builtins.split "=" item; key = builtins.elemAt parts 0; in { "${key}" = builtins.elemAt parts 2; }) attrs;
   configSet = {
     apiVersion = "kubelet.config.k8s.io/v1";
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
