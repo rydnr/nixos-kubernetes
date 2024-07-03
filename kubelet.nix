@@ -824,6 +824,12 @@ in
       description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
+    logging-flush-frequency = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Maximum time between log flushes. If a string, parsed as a duration (i.e. '1s') If an int, the maximum number of nanoseconds (i.e. 1s = 1000000000). Ignored if the selected logging backend writes log messages without buffering.";
+    };
+
     logging-format = mkOption {
       type = types.nullOr (types.enum [ "json" "text" ]);
       default = null;
