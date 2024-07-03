@@ -1160,6 +1160,12 @@ in
       description = "Optional absolute name of cgroups in which to place all non-kernel processes that are not already inside a cgroup under '/'. Empty for no container. Rolling back the flag requires a reboot.";
     };
 
+    system-log-handler = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Enables system logs via web interface host:port/logs/ (default true).";
+    };
+
     system-reserved = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
