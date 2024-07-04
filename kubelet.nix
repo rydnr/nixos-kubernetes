@@ -1240,7 +1240,8 @@ in
             ${optionalString (cfg.cgroups-per-qos != null) "--cgroups-per-qos ${boolToString cfg.cgroups-per-qos}"} \
             ${optionalString (cfg.cloud-config != null) "--cloud-config ${toString cfg.cloud-config}"} \
             ${optionalString (cfg.cloud-provider != null) "--cloud-provider ${toString cfg.cloud-provider}"} \
-             ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
+            --config "${toString actualConfigFile}" \
+            ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
             ${optionalString (cfg.container-hints != null) "--container-hints ${toString cfg.container-hints}"} \
             ${optionalString (cfg.container-log-max-files != null) "--container-log-max-files ${toString cfg.container-log-max-files}"} \
             ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-max-size}"} \
@@ -1287,7 +1288,6 @@ in
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kube-reserved != null) "--kube-reserved \"${concatStringsSep "," cfg.kube-reserved}\""} \
             ${optionalString (cfg.kube-reserved-cgroup != null) "--kube-reserved-cgroup ${toString cfg.kube-reserved-cgroup}"} \
-            --kubeconfig "${toString kubeConfigFile}" \
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.local-storage-capacity-isolation != null) "--local-storage-capacity-isolation ${boolToString cfg.local-storage-capacity-isolation}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \
