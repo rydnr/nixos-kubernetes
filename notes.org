@@ -1623,7 +1623,7 @@ let
 
   <<mkKubeConfig>>
   <<mkKubeConfigOptions>>
-  generatedKubeConfig = mkKubeConfig "kubelet" (cfg // (if cfg.client-ca-file != null then { caCrtFile = cfg.client-ca-file; } else {}));
+  generatedKubeConfig = mkKubeConfig "kubelet" (cfg // { server = cfg.kubeConfigOpts.server; caCrtFile = cfg.kubeConfigOpts.caCrtFile; });
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   <<boolToString>>
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
