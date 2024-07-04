@@ -26,7 +26,84 @@ let
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     kind = "KubeletConfiguration";
     serializeImagePulls = cfg.serialize-image-pulls;
-  }
+  } // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
+    // (if cfg.static-pod-path != null then { staticPodPath = cfg.static-pod-path; } else {})
+    // (if cfg.sync-frequency != null then { syncFrequency = cfg.sync-frequency; } else {})
+    // (if cfg.file-check-frequency != null then { fileCheckFrequency = cfg.file-check-frequency; } else {})
+    // (if cfg.http-check-frequency != null then { httpCheckFrequency = cfg.http-check-frequency; } else {})
+    // (if cfg.address != null then { address = cfg.address; } else {})
+    // (if cfg.anonymous-auth != null then { authorization = { anonymous = { enabled = cfg.anonymous-auth; }; }; } else {})
+    // (if cfg.authentication-token-webhook != null then { authentication = { webhook = { enabled = true; }; }; } else {})
+    // (if cfg.authentication-token-webhook-cache-ttl != null then { authentication = { webhook = { cacheTTL = cfg.authentication-token-webhook-cache-ttl; }; }; } else {})
+    // (if cfg.authorization-mode != null then { authorization = { mode = cfg.authorization-mode; }; } else {})
+    // (if cfg.authorization-webhook-cache-authorized-ttl != null then { authorization = { webhook = { cacheAuthorizedTTL = cfg.authorization-webhook-cache-authorized-ttl; }; }; } else {})
+    // (if cfg.authorization-webhook-cache-unauthorized-ttl != null then { authorization = { webhook = { cacheUnauthorizedTTL = cfg.authorization-webhook-cache-unauthorized-ttl; }; }; } else {})
+    // (if cfg.cgroup-driver != null then { cgroupDriver = cfg.cgroup-driver; } else {})
+    // (if cfg.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.client-ca-file; }; }; } else {})
+    // (if cfg.cluster-dns != null then { clusterDNS = cfg.cluster-dns; } else {})
+    // (if cfg.cluster-domain != null then { clusterDomain = cfg.cluster-domain; } else {})
+    // (if cfg.eviction-hard != null then { evictionHard = colonListToAttributeSet cfg.eviction-hard; } else {})
+    // (if cfg.hairpin-mode != null then { hairpinMode = cfg.hairpin-mode; } else {})
+    // (if cfg.healthz-bind-address != null then { healthzBindAddress = cfg.healthz-bind-address; } else {})
+    // (if cfg.healthz-port != null then { healthzPort = cfg.healthz-port; } else {})
+    // (if cfg.port != null then { port = toString cfg.port; } else {})
+    // (if cfg.register-node != null then { registerNode = cfg.register-node; } else {})
+    // (if cfg.register-with-taints != null then { registerWithTaints = taintToAttributeSet cfg.register-with-taints; } else {})
+    // (if cfg.tls-cert-file != null then { tlsCertFile = cfg.tls-cert-file; } else {})
+    // (if cfg.tls-private-key-file != null then { tlsPrivateKeyFile = cfg.tls-private-key-file; } else {})
+    // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
+    // (if cfg.registry-burst != null then { registryPullQPS = cfg.registry-burst; } else {})
+    // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
+    // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
+    // (if cfg.enable-debugging-handlers != null then { enableDebuggingHandlers = cfg.enableDebuggingHandlers; } else {})
+    // (if cfg.oom-score-adj != null then { oomScoreAdj = cfg.oom-score-adj; } else {})
+    // (if cfg.streaming-connection-idle-timeout != null then { streamingConnectionIdleTimeout = cfg.streaming-connection-idle-timeout; } else {})
+    // (if cfg.node-status-update-frequency != null then { nodeStatusUpdateFrequency = cfg.node-status-update-frequency; } else {})
+    // (if cfg.image-gc-high-threshold != null then { imageGCHighThresholdPercent = cfg.image-gc-high-threshold; } else {})
+    // (if cfg.image-gc-low-threshold != null then { imageGCLowThresholdPercent = cfg.image-gc-low-threshold; } else {})
+    // (if cfg.volume-stats-agg-period != null then { volumeStatsAggPeriod = cfg.volume-stats-agg-period; } else {})
+    // (if cfg.cgroups-per-qos != null then { cgroupsPerQOS = cfg.cgroups-per-qos; } else {})
+    // (if cfg.cpu-manager-policy != null then { cpuManagerPolicy = cfg.cpu-manager-policy; } else {})
+    // (if cfg.cpu-manager-reconcile-period != null then { cpuManagerReconcilePeriod = cfg.cpu-manager-reconcile-period; } else {})
+    // (if cfg.memory-manager-policy != null then { memoryManagerPolicy = cfg.memory-manager-policy; } else {})
+    // (if cfg.topology-manager-policy != null then { topologyManagerPolicy = cfg.topology-manager-policy; } else {})
+    // (if cfg.topology-manager-scope != null then { topologyManagerScope = cfg.topology-manager-scope; } else {})
+    // (if cfg.runtime-request-timeout != null then { runtimeRequestTimeout = cfg.runtime-request-timeout; } else {})
+    // (if cfg.max-pods != null then { maxPods = cfg.max-pods; } else {})
+    // (if cfg.resolv-conf != null then { resolvConf = cfg.resolv-conf; } else {})
+    // (if cfg.cpu-cfs-quota != null then { cpuCfsQuota = cfg.cpu-cfs-quota; } else {})
+    // (if cfg.cpu-cfs-quota-period != null then { cpuCfsQuotaPeriod = cfg.cpu-cfs-quota-period; } else {})
+    // (if cfg.node-status-max-images != null then { nodeStatusMaxImages = cfg.node-status-max-images; } else {})
+    // (if cfg.max-open-files != null then { maxOpenFiles = cfg.max-open-files; } else {})
+    // (if cfg.kube-api-content-type != null then { contentType = cfg.kube-api-content-type; } else {})
+    // (if cfg.kube-api-qps != null then { kubeAPIQPS = cfg.kube-api-qps; } else {})
+    // (if cfg.kube-api-burst != null then { kubeAPIBurst = cfg.kube-api-burst; } else {})
+    // (if cfg.eviction-pressure-transition-period != null then { evictionPressureTransitionPeriod = cfg.eviction-pressure-transition-period; } else {})
+    // (if cfg.enable-controller-attach-detach != null then { enableControllerAttachDetach = cfg.enable-controller-attach-detach; } else {})
+    // (if cfg.make-iptables-util-chains != null then { makeIPTablesUtilChains = cfg.make-iptables-util-chains; } else {})
+    // (if cfg.feature-gates != null then { featureGate = listToFeatureGate cfg.feature-gates; } else {})
+    // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } else {})
+    // (if cfg.memory-swap != null then { memorySwap = { swapBehavior = cfg.memory-swap; }; } else {})
+    // (if cfg.container-log-max-size != null then { containerLogMaxSize = cfg.container-log-max-size; } else {})
+    // (if cfg.container-log-max-files != null then { containerLogMaxFiles = cfg.container-log-max-files; } else {})
+    // (if cfg.config-map-and-secret-change-detection-strategy != null then { configMapAndSecretChangeDetectionStrategy = cfg.config-map-and-secret-change-detection-strategy; } else {})
+    // (if cfg.enforce-node-allocatable != null then { enforceNodeAllocatable = cfg.enforce-node-allocatable; } else {})
+    // (if cfg.volume-plugin-dir != null then { volumePluginDir = cfg.volume-plugin-dir; } else {})
+    // (if cfg.logging-format != null then { logging = { format = cfg.logging-format; }; } else {})
+    // (if cfg.logging-flush-frequency != null then { logging = { flushFrequency = cfg.logging-flush-frequency; }; } else {})
+    // (if cfg.v != null then { logging = { verbosity = cfg.v; }; } else {})
+    // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; } else {})
+    // (if cfg.enable-system-log-handler != null then { enableSystemLogHandler = cfg.enable-system-log-handler; } else {})
+    // (if cfg.enable-system-log-query != null then { enableSystemLogQuery = cfg.enable-system-log-query; } else {})
+    // (if cfg.shutdown-grace-period != null then { shutdownGracePeriod = cfg.shutdown-grace-period; } else {})
+    // (if cfg.shutdown-grace-period-critical-pods != null then { shutdownGracePeriodCriticalPods = cfg.shutdown-grace-period-critical-pods; } else {})
+    // (if cfg.enable-profiling-handler != null then { enableProfilingHandler = cfg.enable-profiling-handler; } else {})
+    // (if cfg.enable-debug-flags-handler != null then { enableDebugFlagsHandler = cfg.enable-debug-flags-handler; } else {})
+    // (if cfg.seccomp-default != null then { seccompDefault = cfg.seccomp-default; } else {})
+    // (if cfg.memory-throttling-factor != null then { memoryThrottlingFactor = cfg.memory-throttling-factor; } else {})
+    // (if cfg.register-node != null then { registerNode = cfg.register-node; } else {})
+    // (if cfg.local-storage-capacity-isolation != null then { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
+    // (if cfg.container-runtime-endpoint != null then { containerRuntimeEnpoint = cfg.container-runtime-endpoint; } else {})
     ;
   generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
@@ -81,7 +158,7 @@ let
       description = "Path to the certificate key file.";
     };
   };
-  generatedKubeConfig = mkKubeConfig "kubelet";
+  generatedKubeConfig = mkKubeConfig "kubelet" cfg;
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   boolToString = b: if b then "true" else "false";
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
@@ -1288,6 +1365,7 @@ in
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kube-reserved != null) "--kube-reserved \"${concatStringsSep "," cfg.kube-reserved}\""} \
             ${optionalString (cfg.kube-reserved-cgroup != null) "--kube-reserved-cgroup ${toString cfg.kube-reserved-cgroup}"} \
+            --kubeconfig "${toString kubeConfigFile}" \
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.local-storage-capacity-isolation != null) "--local-storage-capacity-isolation ${boolToString cfg.local-storage-capacity-isolation}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \
