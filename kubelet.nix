@@ -1287,7 +1287,8 @@ in
             ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
             ${optionalString (cfg.kube-reserved != null) "--kube-reserved \"${concatStringsSep "," cfg.kube-reserved}\""} \
             ${optionalString (cfg.kube-reserved-cgroup != null) "--kube-reserved-cgroup ${toString cfg.kube-reserved-cgroup}"} \
-             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
+            --kubeconfig "${toString kubeConfigFile}" \
+            ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.local-storage-capacity-isolation != null) "--local-storage-capacity-isolation ${boolToString cfg.local-storage-capacity-isolation}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \
             ${optionalString (cfg.log-cadvisor-usage != null) "--log-cadvisor-usage"} \
