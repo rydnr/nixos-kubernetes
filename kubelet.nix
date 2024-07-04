@@ -20,14 +20,14 @@ let
   colonListToAttributeSet = attrs: builtins.listToAttrs (map (item: let
     parts = builtins.split ":" item;
     in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 2; }) attrs);
-  listToFeatureGates = attrs: map (item: let parts = builtins.split "=" item; key = builtins.elemAt parts 0; in { "${key}" = builtins.elemAt parts 2; }) attrs;
+
   configSet = {
     apiVersion = "kubelet.config.k8s.io/v1";
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     kind = "KubeletConfiguration";
     serializeImagePulls = cfg.serialize-image-pulls;
   } // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
-   ;
+    ;
   generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
 
