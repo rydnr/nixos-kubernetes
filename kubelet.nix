@@ -26,7 +26,7 @@ let
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     kind = "KubeletConfiguration";
     serializeImagePulls = cfg.serialize-image-pulls;
-  } // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
+  }
     ;
   generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
