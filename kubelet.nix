@@ -158,7 +158,7 @@ let
       description = "Path to the certificate key file.";
     };
   };
-  generatedKubeConfig = mkKubeConfig "kubelet" (cfg // { server = cfg.kubeConfigOpts.server; caCrtFile = cfg.kubeConfigOpts.caCrtFile; });
+  generatedKubeConfig = mkKubeConfig "kubelet" (cfg // cfg.kubeConfigOpts);
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
   boolToString = b: if b then "true" else "false";
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
