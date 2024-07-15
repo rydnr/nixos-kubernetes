@@ -2546,12 +2546,6 @@ in
       description = "The port for the Kubelet to serve on (default 10250)";
     };
 
-    read-only-port = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      description = "The read-only port for the Kubelet to serve on with no authentication/authorization. The port number must be between 1 and 65535, inclusive. Setting this field to 0 disables the read-only service. Default: 0 (disabled).";
-    };
-
     protect-kernel-defaults = mkOption {
       type = types.nullOr types.bool;
       default = null;
@@ -2942,7 +2936,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
             ${optionalString (cfg.node-labels != null) "--node-labels ${toString cfg.node-labels}"} \
             ${optionalString (cfg.pod-manifest-path != null) "--pod-manifest-path ${toString cfg.pod-manifest-path}"} \
             ${optionalString (cfg.pod-max-pids != null) "--pod-max-pids ${toString cfg.pod-max-pids}"} \
-            ${optionalString (cfg.read-only-port != null) "--read-only-port ${toString cfg.read-only-port}"} \
             ${optionalString (cfg.register-schedulable != null) "--register-schedulable ${boolToString cfg.register-schedulable}"} \
             ${optionalString (cfg.registry-qps != null) "--registry-qps ${toString cfg.registry-qps}"} \
             ${optionalString (cfg.reserved-cpus != null) "--reserved-cpus \"${concatStringsSep "," cfg.reserved-cpus}\""} \
