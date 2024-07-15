@@ -436,13 +436,13 @@ in
 
       webhook = {
         cache-authorized-ttl = mkOption {
-          type = typues.nullOr types.str;
+          type = types.nullOr types.str;
           default = null;
           description = "The duration to cache 'authorized' responses from the webhook authorizer.";
         };
 
         cache-unauthorized-ttl = mkOption {
-          type = typues.nullOr types.str;
+          type = types.nullOr types.str;
           default = null;
           description = "The duration to cache 'unauthorized' responses from the webhook authorizer.";
         };
