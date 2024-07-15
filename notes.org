@@ -1648,7 +1648,7 @@ let
     // (if cfg.local-storage-capacity-isolation != null then { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
     // (if cfg.image-service-endpoint != null then { imageServiceEndpoint = cfg.image-service-endpoint; } else {})
 
-    // (if cfg.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.client-ca-file; }; }; } else {})
+    // (if cfg.authentication.x509.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.authentication.x509.client-ca-file; }; }; } else {})
     // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
     // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
     // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
