@@ -1580,6 +1580,7 @@ let
     // (if cfg.volume-stats-agg-period != null then { volumeStatsAggPeriod = cfg.volume-stats-agg-period; } else {})
     // (if cfg.kubelet-cgroups != null then { kubeletCgroups = cfg.kubelet-cgroups; } else {})
     // (if cfg.cgroup-root != null then { cgroupRoot = cfg.cgroup-root; } else {})
+    // (if cfg.cgroup-driver != null then { cgroupDriver = cfg.cgroup-driver; } else {})
     // (if cfg.cpu-manager-policy != null then { cpuManagerPolicy = cfg.cpu-manager-policy; } else {})
     // (if cfg.cpu-manager-policy-options != null then { cpuManagerPolicyOptions = cfg.cpu-manager-options; } else {})
     // (if cfg.cpu-manager-reconcile-period != null then { cpuManagerReconcilePeriod = cfg.cpu-manager-reconcile-period; } else {})
@@ -1853,9 +1854,14 @@ in
       description = "The directory where the TLS certs are located. If --tls-cert-file and --tls-private-key-file are provided, this flag will be ignored. (default '/var/lib/kubelet/pki')";
     };
 
-
     cgroup-root = mkOption {
       type = types.nullOr types.str;
+      default = null;
+      description = "Optional root cgroup to use for pods. This is handled by the container runtime on a best effort basis. Default: '', which means use the container runtime default.";
+    };
+
+    cgroup-driver = mkOption {
+      type = types.nullOr (types.enumOf [ "cgroupfs" "systemd" ]);
       default = null;
       description = "Optional root cgroup to use for pods. This is handled by the container runtime on a best effort basis. Default: '', which means use the container runtime default.";
     };
