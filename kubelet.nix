@@ -1041,7 +1041,11 @@ in
       description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
-    logging = logging-option-type;
+    logging = mkOption {
+      type = types.nullOr logging-option-type;
+      default = null;
+      description = "Specifies the options of logging.";
+    };
 
     machine-id-file = mkOption {
       type = types.nullOr (types.listOf types.path);
