@@ -883,7 +883,6 @@ let
     // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
     // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
     // (if cfg.cgroups-per-qos != null then { cgroupsPerQOS = cfg.cgroups-per-qos; } else {})
-    // (if cfg.logging-flush-frequency != null then { logging = { flushFrequency = cfg.logging-flush-frequency; }; } else {})
     // (if cfg.v != null then { logging = { verbosity = cfg.v; }; } else {})
     // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; } else {})
     ;
