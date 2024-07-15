@@ -436,26 +436,20 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
         description = "Set of { pattern = N; } settings for file-filtered logging (only works for text log format)";
       };
 
-      text = types.nullOr text-logging-option-type;
-      json = types.nullOr json-logging-option-type;
-    };
-  };
-
-  authorization-webhook-option-type = types.submodule {
-    options = {
-      cache-authorized-ttl = mkOption {
-        type = types.nullOr types.str;
+      text = mkOption {
+        type = types.nullOr text-logging-option-type;
         default = null;
-        description = "The duration to cache 'authorized' responses from the webhook authorizer.";
+        description = "Options for logging format 'text'. Only available when the LoggingAlphaOptions feature gate is enabled.";
       };
 
-      cache-unauthorized-ttl = mkOption {
-        type = types.nullOr types.str;
+      json = mkOption {
+        type = types.nullOr json-logging-option-type;
         default = null;
-        description = "The duration to cache 'unauthorized' responses from the webhook authorizer.";
+        description = "Options for logging format 'json'. Only available when the LoggingAlphaOptions feature gate is enabled.";
       };
     };
   };
+
 
   authentication-x509-option-type = types.submodule {
     options = {
@@ -495,9 +489,37 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
 
   authentication-option-type = types.submodule {
     options = {
-      x509 = types.nullOr authentication-x509-option-type;
-      webhook = types.nullOr authentication-webhook-option-type;
-      anonymous = types.nullOr authentication-anonymous-option-type;
+      x509 = mkOption {
+        type = types.nullOr authentication-x509-option-type;
+        default = null;
+        description = "Settings related to x509 client certificate authentication.";
+      };
+      webhook = mkOption {
+        type = types.nullOr authentication-webhook-option-type;
+        default = null;
+        description = "Settings related to webhook bearer token authentication.";
+      };
+      anonymous = mkOption {
+        type = types.nullOr authentication-anonymous-option-type;
+        default = null;
+        description = "Settings related to anonymous authentication.";
+      };
+    };
+  };
+
+  authorization-webhook-option-type = types.submodule {
+    options = {
+      cache-authorized-ttl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "The duration to cache 'authorized' responses from the webhook authorizer.";
+      };
+
+      cache-unauthorized-ttl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "The duration to cache 'unauthorized' responses from the webhook authorizer.";
+      };
     };
   };
 
@@ -509,7 +531,11 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
         description = "Authorization mode to apply to requests to the kubelet server. Valid values are AlwaysAllow and Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization.";
       };
 
-      webhook = types.nullOr authorization-webhook-option-type;
+      webhook = mkOption {
+        type = types.nullOr authorization-webhook-option-type;
+        default = null;
+        description = "Settings related to Webhook authorization.";
+      };
     };
   };
 
