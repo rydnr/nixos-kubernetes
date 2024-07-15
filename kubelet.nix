@@ -22,88 +22,126 @@ let
     in { name = builtins.elemAt parts 0; value = builtins.elemAt parts 2; }) attrs);
 
   configSet = {
-    apiVersion = "kubelet.config.k8s.io/v1";
+    apiVersion = "kubelet.config.k8s.io/${cfg.api-version}";
+    authentication = cfg.authentication;
+    authorization = cfg.authorization;
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     kind = "KubeletConfiguration";
+    logging = cfg.logging;
+    reservedSystemCPUs = cfg.reserved-system-cpus;
     serializeImagePulls = cfg.serialize-image-pulls;
   } // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
     // (if cfg.static-pod-path != null then { staticPodPath = cfg.static-pod-path; } else {})
+    // (if cfg.pod-logs-dir != null then { podLogsDir = cfg.pod-logs-dir; } else {})
     // (if cfg.sync-frequency != null then { syncFrequency = cfg.sync-frequency; } else {})
     // (if cfg.file-check-frequency != null then { fileCheckFrequency = cfg.file-check-frequency; } else {})
     // (if cfg.http-check-frequency != null then { httpCheckFrequency = cfg.http-check-frequency; } else {})
+    // (if cfg.static-pod-url != null then { staticPodUrl = cfg.static-pod-url; } else {})
+    // (if cfg.static-pod-url-header != null then { staticPodUrlHeader = cfg.static-pod-url-header; } else {})
     // (if cfg.address != null then { address = cfg.address; } else {})
-    // (if cfg.anonymous-auth != null then { authorization = { anonymous = { enabled = cfg.anonymous-auth; }; }; } else {})
-    // (if cfg.authentication-token-webhook != null then { authentication = { webhook = { enabled = true; }; }; } else {})
-    // (if cfg.authentication-token-webhook-cache-ttl != null then { authentication = { webhook = { cacheTTL = cfg.authentication-token-webhook-cache-ttl; }; }; } else {})
-    // (if cfg.authorization-mode != null then { authorization = { mode = cfg.authorization-mode; }; } else {})
-    // (if cfg.authorization-webhook-cache-authorized-ttl != null then { authorization = { webhook = { cacheAuthorizedTTL = cfg.authorization-webhook-cache-authorized-ttl; }; }; } else {})
-    // (if cfg.authorization-webhook-cache-unauthorized-ttl != null then { authorization = { webhook = { cacheUnauthorizedTTL = cfg.authorization-webhook-cache-unauthorized-ttl; }; }; } else {})
-    // (if cfg.cgroup-driver != null then { cgroupDriver = cfg.cgroup-driver; } else {})
-    // (if cfg.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.client-ca-file; }; }; } else {})
-    // (if cfg.cluster-dns != null then { clusterDNS = cfg.cluster-dns; } else {})
-    // (if cfg.cluster-domain != null then { clusterDomain = cfg.cluster-domain; } else {})
-    // (if cfg.eviction-hard != null then { evictionHard = colonListToAttributeSet cfg.eviction-hard; } else {})
-    // (if cfg.hairpin-mode != null then { hairpinMode = cfg.hairpin-mode; } else {})
-    // (if cfg.healthz-bind-address != null then { healthzBindAddress = cfg.healthz-bind-address; } else {})
-    // (if cfg.healthz-port != null then { healthzPort = cfg.healthz-port; } else {})
     // (if cfg.port != null then { port = toString cfg.port; } else {})
-    // (if cfg.register-node != null then { registerNode = cfg.register-node; } else {})
-    // (if cfg.register-with-taints != null then { registerWithTaints = taintToAttributeSet cfg.register-with-taints; } else {})
+    // (if cfg.read-only-port != null then { readOnlyPort = toString cfg.read-only-port; } else {})
     // (if cfg.tls-cert-file != null then { tlsCertFile = cfg.tls-cert-file; } else {})
     // (if cfg.tls-private-key-file != null then { tlsPrivateKeyFile = cfg.tls-private-key-file; } else {})
-    // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
+    // (if cfg.tls-cipher-suites != null then { tlsCipherSuites = cfg.tls-cipher-suites; } else {})
+    // (if cfg.tls-min-version != null then { tlsMinVersion = cfg.tls-min-version; } else {})
+    // (if cfg.rotate-certificates != null then { rotateCertificates = cfg.rotate-certificates; } else {})
+    // (if cfg.server-tls-bootstrap != null then { serverTLSBootstrap = cfg.server-tls-bootstrap; } else {})
+    // (if cfg.registry-pull-qps != null then { registryPullQPS = cfg.registry-pull-qps; } else {})
     // (if cfg.registry-burst != null then { registryPullQPS = cfg.registry-burst; } else {})
-    // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
-    // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
     // (if cfg.enable-debugging-handlers != null then { enableDebuggingHandlers = cfg.enableDebuggingHandlers; } else {})
+    // (if cfg.enable-contention-profiling != null then { enableContentionProfiling = cfg.enableContentionProfiling; } else {})
+    // (if cfg.healthz-port != null then { healthzPort = cfg.healthz-port; } else {})
+    // (if cfg.healthz-bind-address != null then { healthzBindAddress = cfg.healthz-bind-address; } else {})
     // (if cfg.oom-score-adj != null then { oomScoreAdj = cfg.oom-score-adj; } else {})
+    // (if cfg.cluster-domain != null then { clusterDomain = cfg.cluster-domain; } else {})
+    // (if cfg.cluster-dns != null then { clusterDNS = cfg.cluster-dns; } else {})
     // (if cfg.streaming-connection-idle-timeout != null then { streamingConnectionIdleTimeout = cfg.streaming-connection-idle-timeout; } else {})
     // (if cfg.node-status-update-frequency != null then { nodeStatusUpdateFrequency = cfg.node-status-update-frequency; } else {})
+    // (if cfg.node-status-report-frequency != null then { nodeStatusReportFrequency = cfg.node-status-report-frequency; } else {})
+    // (if cfg.node-lease-duration-seconds != null then { nodeLeaseDurationSeconds = cfg.node-lease-duration-seconds; } else {})
+    // (if cfg.image-minimum-gc-age != null then { imageMinimumGCAge = cfg.image-minimum-gc-age; } else {})
+    // (if cfg.image-maximum-gc-age != null then { imageMaximumGCAge = cfg.image-maximum-gc-age; } else {})
     // (if cfg.image-gc-high-threshold != null then { imageGCHighThresholdPercent = cfg.image-gc-high-threshold; } else {})
     // (if cfg.image-gc-low-threshold != null then { imageGCLowThresholdPercent = cfg.image-gc-low-threshold; } else {})
     // (if cfg.volume-stats-agg-period != null then { volumeStatsAggPeriod = cfg.volume-stats-agg-period; } else {})
-    // (if cfg.cgroups-per-qos != null then { cgroupsPerQOS = cfg.cgroups-per-qos; } else {})
+    // (if cfg.kubelet-cgroups != null then { kubeletCgroups = cfg.kubelet-cgroups; } else {})
+    // (if cfg.cgroup-root != null then { cgroupRoot = cfg.cgroup-root; } else {})
     // (if cfg.cpu-manager-policy != null then { cpuManagerPolicy = cfg.cpu-manager-policy; } else {})
+    // (if cfg.cpu-manager-policy-options != null then { cpuManagerPolicyOptions = cfg.cpu-manager-options; } else {})
     // (if cfg.cpu-manager-reconcile-period != null then { cpuManagerReconcilePeriod = cfg.cpu-manager-reconcile-period; } else {})
     // (if cfg.memory-manager-policy != null then { memoryManagerPolicy = cfg.memory-manager-policy; } else {})
     // (if cfg.topology-manager-policy != null then { topologyManagerPolicy = cfg.topology-manager-policy; } else {})
     // (if cfg.topology-manager-scope != null then { topologyManagerScope = cfg.topology-manager-scope; } else {})
+    // (if cfg.topology-manager-policy-options != null then { topologyManagerPolicyOptions = cfg.topology-manager-policy-options; } else {})
+    // (if cfg.qos-reserved != null then { qosReserved = cfg.qos-reserved; } else {})
     // (if cfg.runtime-request-timeout != null then { runtimeRequestTimeout = cfg.runtime-request-timeout; } else {})
+    // (if cfg.hairpin-mode != null then { hairpinMode = cfg.hairpin-mode; } else {})
     // (if cfg.max-pods != null then { maxPods = cfg.max-pods; } else {})
+    // (if cfg.pod-cidr != null then { podCIDR = cfg.pod-cidr; } else {})
+    // (if cfg.pods-pid-limit != null then { podsPidsLimit = cfg.pods-pids-limit; } else {})
     // (if cfg.resolv-conf != null then { resolvConf = cfg.resolv-conf; } else {})
-    // (if cfg.cpu-cfs-quota != null then { cpuCfsQuota = cfg.cpu-cfs-quota; } else {})
+    // (if cfg.run-once != null then { runOnce = cfg.run-once; } else {})
+    // (if cfg.cpu-cfs-quota != null then { cpuCFSQuota = cfg.cpu-cfs-quota; } else {})
     // (if cfg.cpu-cfs-quota-period != null then { cpuCfsQuotaPeriod = cfg.cpu-cfs-quota-period; } else {})
     // (if cfg.node-status-max-images != null then { nodeStatusMaxImages = cfg.node-status-max-images; } else {})
     // (if cfg.max-open-files != null then { maxOpenFiles = cfg.max-open-files; } else {})
-    // (if cfg.kube-api-content-type != null then { contentType = cfg.kube-api-content-type; } else {})
+    // (if cfg.content-type != null then { contentType = cfg.content-type; } else {})
     // (if cfg.kube-api-qps != null then { kubeAPIQPS = cfg.kube-api-qps; } else {})
     // (if cfg.kube-api-burst != null then { kubeAPIBurst = cfg.kube-api-burst; } else {})
+    // (if cfg.max-parallel-image-pulls != null then { maxParallelImagePulls = cfg.max-parallel-image-pulls; } else {})
+    // (if cfg.eviction-hard != null then { evictionHard = cfg.eviction-hard; } else {})
+    // (if cfg.eviction-soft != null then { evictionSoft = cfg.eviction-soft; } else {})
+    // (if cfg.eviction-soft-grace-period != null then { evictionSoftGracePeriod = cfg.eviction-soft-grace-period; } else {})
     // (if cfg.eviction-pressure-transition-period != null then { evictionPressureTransitionPeriod = cfg.eviction-pressure-transition-period; } else {})
+    // (if cfg.eviction-max-pod-grace-period != null then { evictionMaxPodGracePeriod = cfg.eviction-max-pod-grace-period; } else {})
+    // (if cfg.eviction-minimum-reclaim != null then { evictionMinimumReclain = cfg.eviction-minimum-reclaim; } else {})
+    // (if cfg.pods-per-core != null then { podsPerCore = cfg.pods-per-core; } else {})
     // (if cfg.enable-controller-attach-detach != null then { enableControllerAttachDetach = cfg.enable-controller-attach-detach; } else {})
+    // (if cfg.protect-kernel-defaults != null then { protectKernelDefaults = cfg.protect-kernel-defaults; } else {})
     // (if cfg.make-iptables-util-chains != null then { makeIPTablesUtilChains = cfg.make-iptables-util-chains; } else {})
     // (if cfg.feature-gates != null then { featureGate = listToFeatureGate cfg.feature-gates; } else {})
     // (if cfg.fail-swap-on != null then { failSwapOn = cfg.fail-swap-on; } else {})
     // (if cfg.memory-swap != null then { memorySwap = { swapBehavior = cfg.memory-swap; }; } else {})
     // (if cfg.container-log-max-size != null then { containerLogMaxSize = cfg.container-log-max-size; } else {})
     // (if cfg.container-log-max-files != null then { containerLogMaxFiles = cfg.container-log-max-files; } else {})
+    // (if cfg.container-log-max-workers != null then { containerLogMaxWorkers = cfg.container-log-max-workers; } else {})
+    // (if cfg.container-log-monitor-interval != null then { containerLogMonitorInterval = cfg.container-log-monitor-interval; } else {})
     // (if cfg.config-map-and-secret-change-detection-strategy != null then { configMapAndSecretChangeDetectionStrategy = cfg.config-map-and-secret-change-detection-strategy; } else {})
+    // (if cfg.system-reserved != null then { systemReserved = cfg.system-reserved; } else {})
+    // (if cfg.kube-reserved != null then { kubeReserved = cfg.kube-reserved; } else {})
+    // (if cfg.show-hidden-metrics-for-version != null then { showHiddenMetricsForVersion = cfg.show-hidden-metrics-for-version; } else {})
+    // (if cfg.system-reserved-cgroup != null then { systemReservedCgroup = cfg.system-reserved-cgroup; } else {})
+    // (if cfg.kube-reserved-cgroup != null then { kubeReservedCgroup = cfg.kube-reserved -cgroup; } else {})
     // (if cfg.enforce-node-allocatable != null then { enforceNodeAllocatable = cfg.enforce-node-allocatable; } else {})
+    // (if cfg.allowed-unsafe-sysctls != null then { allowedUnsafeSysctls = cfg.allowed-unsafe-sysctls; } else {})
     // (if cfg.volume-plugin-dir != null then { volumePluginDir = cfg.volume-plugin-dir; } else {})
-    // (if cfg.logging-format != null then { logging = { format = cfg.logging-format; }; } else {})
-    // (if cfg.logging-flush-frequency != null then { logging = { flushFrequency = cfg.logging-flush-frequency; }; } else {})
-    // (if cfg.v != null then { logging = { verbosity = cfg.v; }; } else {})
-    // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; } else {})
+    // (if cfg.provider-id != null then { providerID = cfg.provider-id; } else {})
+    // (if cfg.kernel-memcg-notification != null then { kernelMemcgNotification = cfg.kernel-memcg-notification; } else {})
     // (if cfg.enable-system-log-handler != null then { enableSystemLogHandler = cfg.enable-system-log-handler; } else {})
     // (if cfg.enable-system-log-query != null then { enableSystemLogQuery = cfg.enable-system-log-query; } else {})
     // (if cfg.shutdown-grace-period != null then { shutdownGracePeriod = cfg.shutdown-grace-period; } else {})
     // (if cfg.shutdown-grace-period-critical-pods != null then { shutdownGracePeriodCriticalPods = cfg.shutdown-grace-period-critical-pods; } else {})
+    // (if cfg.shutdown-grace-period-by-pod-priority != null then { shutdownGracePeriodByPodPriority = cfg.shutdown-grace-period-by-pod-priority; } else {})
+    // (if cfg.reserved-memory != null then { reservedMemory = cfg.reservedMemory; } else {})
     // (if cfg.enable-profiling-handler != null then { enableProfilingHandler = cfg.enable-profiling-handler; } else {})
     // (if cfg.enable-debug-flags-handler != null then { enableDebugFlagsHandler = cfg.enable-debug-flags-handler; } else {})
     // (if cfg.seccomp-default != null then { seccompDefault = cfg.seccomp-default; } else {})
     // (if cfg.memory-throttling-factor != null then { memoryThrottlingFactor = cfg.memory-throttling-factor; } else {})
+    // (if cfg.register-with-taints != null then { registerWithTaints = taintToAttributeSet cfg.register-with-taints; } else {})
     // (if cfg.register-node != null then { registerNode = cfg.register-node; } else {})
+    // (if cfg.tracing != null then { tracing = { endpoint = cfg.tracing.endpoint; samplingRatePerMillion = cfg.tracing.sampling-rate-per-million; }; } else {})
     // (if cfg.local-storage-capacity-isolation != null then { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
-    // (if cfg.container-runtime-endpoint != null then { containerRuntimeEnpoint = cfg.container-runtime-endpoint; } else {})
+    // (if cfg.image-service-endpoint != null then { imageServiceEndpoint = cfg.image-service-endpoint; } else {})
+
+    // (if cfg.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.client-ca-file; }; }; } else {})
+    // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
+    // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
+    // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
+    // (if cfg.cgroups-per-qos != null then { cgroupsPerQOS = cfg.cgroups-per-qos; } else {})
+    // (if cfg.logging-flush-frequency != null then { logging = { flushFrequency = cfg.logging-flush-frequency; }; } else {})
+    // (if cfg.v != null then { logging = { verbosity = cfg.v; }; } else {})
+    // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; } else {})
     ;
   generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
@@ -315,6 +353,33 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
 
+  shutdown-grace-period-by-pod-priority-option-type = types.listOf (types.attrs {
+    priority = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The priority value associated with the shutdown grace period.";
+    };
+    shutdown-grace-period-seconds = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The shutdown grace period in seconds.";
+    };
+  });
+
+  tracing-option-type = types.attrs {
+    endpoint = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Endpoint of the collector this component will report traces to. The connection is insecure, and does not currently support TLS. Recommended is unset, and endpoint is the otlp grpc (default localhost:4317).";
+    };
+
+    sampling-rate-per-million = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The number of samples to collect per million spans. Recommended is unset. If unset, sampler respects its parent span's sampling rate, but otherwise never samples.";
+    };
+  };
+
 in
 {
   options.services.raw-kubelet = {
@@ -322,6 +387,66 @@ in
       type = types.bool;
       default = false;
       inherit description;
+    };
+
+    api-version = mkOption {
+      type = types.nullOr types.str;
+      default = "v1beta1";
+      description = "The version of the kubelet API";
+    };
+
+    authentication = {
+      x509 = {
+        client-ca-file = mkOption {
+          type = types.nullOr types.path;
+          default = null;
+          description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.";
+        };
+      };
+
+      webhook = {
+        enabled = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Allows bearer token authentication backed by the tokenreviews.authentication.k8s.io API.";
+        };
+
+        cache-ttl = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = "The duration to cache responses from the webhook token authenticator (default 2m0s).";
+        };
+      };
+
+      anonymous = {
+        enabled = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Allows anonymous requests to the kubelet server. Requests that are not rejected by another authentication method are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated.";
+        };
+      };
+    };
+
+    authorization = {
+      mode = mkOption {
+        type = types.nullOr (types.enum [ "AlwaysAllow" "Webhook" ]);
+        default = null;
+        description = "Authorization mode to apply to requests to the kubelet server. Valid values are AlwaysAllow and Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization.";
+      };
+
+      webhook = {
+        cache-authorized-ttl = mkOption {
+          type = typues.nullOr types.str;
+          default = null;
+          description = "The duration to cache 'authorized' responses from the webhook authorizer.";
+        };
+
+        cache-unauthorized-ttl = mkOption {
+          type = typues.nullOr types.str;
+          default = null;
+          description = "The duration to cache 'unauthorized' responses from the webhook authorizer.";
+        };
+      };
     };
 
     address = mkOption {
@@ -354,11 +479,6 @@ in
       description = "Use the TokenReview API to determine authentication for bearer tokens.";
     };
 
-    authentication-token-webhook-cache-ttl = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "The duration to cache responses from the webhook token authenticator (default 2m0s).";
-    };
 
     authorization-mode = mkOption {
       type = types.nullOr types.str;
@@ -396,11 +516,6 @@ in
       description = "The directory where the TLS certs are located. If --tls-cert-file and --tls-private-key-file are provided, this flag will be ignored. (default '/var/lib/kubelet/pki')";
     };
 
-    cgroup-driver = mkOption {
-      type = types.nullOr (types.enum [ "cgroupfs" "systemd" ]);
-      default = null;
-      description = "Driver that the kubelet uses to manipulate cgroups on the host.  Possible values: 'cgroupfs', 'systemd' (default 'cgroupfs').";
-    };
 
     cgroup-root = mkOption {
       type = types.nullOr types.str;
@@ -412,12 +527,6 @@ in
       type = types.nullOr types.bool;
       default = null;
       description = "Enable creation of QoS cgroup hierarchy, if true top level QoS and pod cgroups are created (default true).";
-    };
-
-    client-ca-file = mkOption {
-      type = types.nullOr types.path;
-      default = null;
-      description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.";
     };
 
     cloud-config = mkOption {
@@ -471,13 +580,25 @@ in
     container-log-max-files = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "<Warning: Beta feature> Set the maximum number of container log files that can be present for a container. The number must be >= 2 (default 5).";
+      description = "Specifies the maximum number of container log files that can be present for a container (default 5).";
     };
 
     container-log-max-size = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "<Warning: Beta feature> Set the maximum size (e.g. 10Mi) of container log file before it is rotated (default '10Mi').";
+      description = "A quantity defining the maximum size of the container log file before it is rotated. For example: '5Mi' or '256Ki' (default '10Mi').";
+    };
+
+    container-log-max-workers = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "Specifies the maximum number of concurrent workers to spawn for performing the log rotate operations. Set this count to 1 for disabling the concurrent log rotation workflows (default 1).";
+    };
+
+    container-log-monitor-interval = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "Specifies the duration at which the container logs are monitored for performing the log rotate operation. This defaults to 10 * time.Seconds. But can be customized to a smaller value based on the log generation rate and the size required to be rotated against (default '10s').";
     };
 
     container-runtime-endpoint = mkOption {
@@ -498,22 +619,22 @@ in
       description = "containerd namespace (default 'k8s.io').";
     };
 
-    contention-profiling = mkOption {
+    enable-contention-profiling = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enable block profiling, if profiling is enabled.";
+      description = "Enables block profiling, if enableDebuggingHandlers is true.";
     };
 
     cpu-cfs-quota = mkOption {
       type = types.nullOr types.bool;
       default = null;
-      description = "Enable CPU CFS quota enforcement for containers that specify CPU limits (default true).";
+      description = "Enables CPU CFS quota enforcement for containers that specify CPU limits (default true).";
     };
 
     cpu-cfs-quota-period = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Sets CPU CFS quota period value, cpu.cfs_period_us, defaults to Linux Kernel default (default 100ms).";
+      description = "The CPU CFS quota period value, cpu.cfs_period_us. The value must be between 1 ms and 1 second, inclusive. Requires the CustomCPUCFSQuotaPeriod feature gate to be enabled (default '100ms').";
     };
 
     cpu-manager-policy = mkOption {
@@ -523,9 +644,9 @@ in
     };
 
     cpu-manager-policy-options = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
-      description = "A set of key=value CPU Manager policy options to use, to fine tune their behaviour. If not supplied, keep the default behaviour.";
+      description = "A set of key=value which allows to set extra options to fine tune the behaviour of the cpu manager policies. Requires both the 'CPUManager' and 'CPUManagerPolicyOptions' feature gates to be enabled.";
     };
 
     cpu-manager-reconcile-period = mkOption {
@@ -613,7 +734,7 @@ in
     };
 
     eviction-hard = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
       description = "A set of eviction thresholds (e.g. memory.available<1Gi) that if met would trigger a pod eviction.";
     };
@@ -625,9 +746,9 @@ in
     };
 
     eviction-minimum-reclaim = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
-      description = "A set of minimum reclaims (e.g. imagefs.available=2Gi) that describes the minimum amount of resource the kubelet will reclaim when performing a pod eviction if that resource is under pressure.";
+      description = "A set of minimum reclaims (e.g. { 'imagefs.available' = '2Gi'; }) that describes the minimum amount of resource the kubelet will reclaim when performing a pod eviction if that resource is under pressure.";
     };
 
     eviction-pressure-transition-period = mkOption {
@@ -637,15 +758,15 @@ in
     };
 
     eviction-soft = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
       description = "A set of eviction thresholds (e.g. memory.available<1.5Gi) that if met over a corresponding grace period would trigger a pod eviction.";
     };
 
     eviction-soft-grace-period = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
-      description = "A set of eviction grace periods (e.g. memory.available=1m30s) that correspond to how long a soft eviction threshold must hold before triggering a pod eviction.";
+      description = "A map of signal names to quantities that defines grace periods for each soft eviction signal. For example: { 'memory.available': '30s'}";
     };
 
     exit-on-lock-contention = mkOption {
@@ -750,6 +871,18 @@ in
       description = "The percent of disk usage before which image garbage collection is never run. Lowest disk usage to garbage collect to. Values must be within the range [0, 100] and must be less than that of --image-gc-high-threshold (default 80).";
     };
 
+    image-maximum-gc-age = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The maximum age an image can be unused before it is garbage collected. The default of this field is '0s', which disables this field--meaning images won't be garbage collected based on being unused for too long (default '0s' / disabled).";
+    };
+
+    image-minimum-gc-age = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The minimum age for an unused image before it is garbage collected (default '2m').";
+    };
+
     image-service-endpoint = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -763,7 +896,7 @@ in
     };
 
     kernel-memcg-notification = mkOption {
-      type = types.nullOr types.str;
+      type = types.nullOr types.bool;
       default = null;
       description = "If enabled, the kubelet will integrate with the kernel memcg notification to determine if memory eviction thresholds are crossed rather than polling.";
     };
@@ -774,7 +907,7 @@ in
       description = "Burst to use while talking with kubernetes apiserver. The number must be >= 0. If 0 will use DefaultBurst: 100. Doesn't cover events and node heartbeat apis which rate limiting is controlled by a different set of flags (default 100).";
     };
 
-    kube-api-content-type = mkOption {
+    content-type = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "Content type of requests sent to apiserver (default 'application/vnd.kubernetes.protobuf').";
@@ -787,15 +920,15 @@ in
     };
 
     kube-reserved = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
-      description = "A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=500Mi,ephemeral-storage=1Gi) pairs that describe resources reserved for kubernetes system components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail (default none).";
+      description = "A set of ResourceName=ResourceQuantity (e.g. { 'cpu' = '200m'; 'memory' = '500Mi'; 'ephemeral-storage' = '1Gi'; }) pairs that describe resources reserved for kubernetes system components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail (default none).";
     };
 
     kube-reserved-cgroup = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Absolute name of the top level cgroup that is used to manage kubernetes components for which compute resources were reserved via '--kube-reserved' flag. Ex. '/kube-reserved' (default '').";
+      description = "Helps the kubelet identify absolute name of top level CGroup used to enforce KubeReserved compute resource reservation for Kubernetes node system daemons. Refer to Node Allocatable doc for more information (default '').";
     };
 
     kubeconfig = mkOption {
@@ -809,7 +942,7 @@ in
     kubelet-cgroups = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Optional absolute name of cgroups to create and run the Kubelet in.";
+      description = "The absolute name of cgroups in which to place all non-kernel processes that are not already in a container. Empty for no container. Rolling back the flag requires a reboot. The cgroupRoot must be specified if this field is not empty (default '').";
     };
 
     local-storage-capacity-isolation = mkOption {
@@ -848,16 +981,58 @@ in
       description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
-    logging-flush-frequency = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "Maximum time between log flushes. If a string, parsed as a duration (i.e. '1s') If an int, the maximum number of nanoseconds (i.e. 1s = 1000000000). Ignored if the selected logging backend writes log messages without buffering.";
-    };
+    logging = {
+      format = mkOption {
+        type = types.enum [ "json" "text" ];
+        default = "text";
+        description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text' (default 'text').";
+      };
 
-    logging-format = mkOption {
-      type = types.nullOr (types.enum [ "json" "text" ]);
-      default = null;
-      description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text' (default 'text').";
+      flush-frequency = mkOption {
+        type = types.types.str;
+        description = "Maximum time between log flushes. If a string, parsed as a duration (i.e. '1s') If an int, the maximum number of nanoseconds (i.e. 1s = 1000000000). Ignored if the selected logging backend writes log messages without buffering.";
+      };
+
+      verbosity = mkOption {
+        type = types.int;
+        description = "Number for the log level verbosity";
+      };
+
+      vmodule = mkOption {
+        type = (types.attrsOf types.int);
+        default = {};
+        description = "Set of { pattern = N; } settings for file-filtered logging (only works for text log format)";
+      };
+
+      options = {
+        # Holds additional parameters that are specific to the different logging formats. Only the options for the selected format get used, but all of them get validated. Only available when the LoggingAlphaOptions feature gate is enabled.
+        text = {
+          splitStream = mkOption {
+            type = types.nullOr types.bool;
+            default = null;
+            description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+          };
+
+          infoBufferSize = mkOption {
+            type = types.nullOr types.int;
+            default = null;
+            description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+          };
+        };
+        json = {
+          splitStream = mkOption {
+            type = types.nullOr types.bool;
+            default = null;
+            description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+          };
+
+          infoBufferSize = mkOption {
+            type = types.nullOr types.int;
+            default = null;
+            description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+          };
+        };
+      };
     };
 
     machine-id-file = mkOption {
@@ -887,7 +1062,13 @@ in
     max-open-files = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "Number of files that can be opened by Kubelet process (default 1000000).";
+      description = "The number of files that can be opened by Kubelet process. The value must be a non-negative number (default 1000000).";
+    };
+
+    max-parallel-image-pulls = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "Sets the maximum number of image pulls in parallel. This field cannot be set if SerializeImagePulls is true. Setting it to nil means no limit.";
     };
 
     max-pods = mkOption {
@@ -953,13 +1134,25 @@ in
     node-status-max-images = mkOption {
       type = types.nullOr types.int;
       default = null;
-      description = "The maximum number of images to report in Node.Status.Images. If -1 is specified, no cap will be applied (default 50).";
+      description = "Caps the number of images reported in Node.status.images. The value must be greater than -2. Note: If -1 is specified, no cap will be applied. If 0 is specified, no image is returned (default 50).";
     };
 
     node-status-update-frequency = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "Specifies how often kubelet posts node status to master. Note: be cautious when changing the constant, it must work with nodeMonitorGracePeriod in nodecontroller (default 10s).";
+    };
+
+    node-status-report-frequency = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The frequency that kubelet posts node status to master if node status does not change. Kubelet will ignore this frequency and post node status immediately if any change is detected. It is only used when node lease feature is enabled. nodeStatusReportFrequency's default value is 5m. But if nodeStatusUpdateFrequency is set explicitly, nodeStatusReportFrequency's default value will be set to nodeStatusUpdateFrequency for backward compatibility (default '5m').";
+    };
+
+    node-lease-duration-seconds = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The duration the Kubelet will set on its corresponding Lease. NodeLease provides an indicator of node health by having the Kubelet create and periodically renew a lease, named after the node, in the kube-node-lease namespace. If the lease expires, the node can be considered unhealthy. The lease is currently renewed every 10s, per KEP-0009. In the future, the lease renewal interval may be set based on the lease duration. The field value must be greater than 0 (default 40).";
     };
 
     oom-score-adj = mkOption {
@@ -972,6 +1165,18 @@ in
       type = types.nullOr types.str;
       default = null;
       description = "The CIDR to use for pod IP addresses, only used in standalone mode.  In cluster mode, this is obtained from the master. For IPv6, the maximum number of IP's allocated is 65536.";
+    };
+
+    pod-pids-limit = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The maximum number of PIDs in any pod (default -1).";
+    };
+
+    pods-logs-dir = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = "Custom root directory path kubelet will use to place pod's log files. Note: it is not recommended to use the temp folder as a log directory as it may cause unexpected behavior in many places. Default: '/var/log/pods/'";
     };
 
     #pod-infra-container-image = mkOption {
@@ -1002,6 +1207,12 @@ in
       type = types.nullOr types.int;
       default = null;
       description = "The port for the Kubelet to serve on (default 10250)";
+    };
+
+    read-only-port = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The read-only port for the Kubelet to serve on with no authentication/authorization. The port number must be between 1 and 65535, inclusive. Setting this field to 0 disables the read-only service. Default: 0 (disabled).";
     };
 
     protect-kernel-defaults = mkOption {
@@ -1052,16 +1263,22 @@ in
       description = "Maximum size of a bursty pulls, temporarily allows pulls to burst to this number, while still not exceeding registry-qps. Only used if --registry-qps > 0 (default 10).";
     };
 
+    registry-pull-qps = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      description = "The limit of registry pulls per second. The value must not be a negative number. Setting it to 0 means no limit (default 5).";
+    };
+
     registry-qps = mkOption {
       type = types.nullOr types.int;
       default = null;
       description = "If > 0, limit registry pull QPS to this value.  If 0, unlimited (default 5).";
     };
 
-    reserved-cpus = mkOption {
+    reserved-system-cpus = mkOption {
       type = types.nullOr (types.listOf types.str);
       default = null;
-      description = "List of CPUs or CPU ranges that are reserved for system and kubernetes usage. This specific list will supersede cpu counts in --system-reserved and --kube-reserved.";
+      description = "Specifies the CPU list reserved for the host level system threads and kubernetes related threads. This provide a 'static' CPU list rather than the 'dynamic' list by systemReserved and kubeReserved. This option does not support systemReservedCgroup or kubeReservedCgroup.";
     };
 
     reserved-memory = mkOption {
@@ -1118,16 +1335,40 @@ in
       description = "Enable the use of RuntimeDefault as the default seccomp profile for all workloads.";
     };
 
+    server-tls-bootstrap = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Enables server certificate bootstrap. Instead of self signing a serving certificate, the Kubelet will request a certificate from the 'certificates.k8s.io' API. This requires an approver to approve the certificate signing requests (CSR). The RotateKubeletServerCertificate feature must be enabled when setting this field (default false).";
+    };
+
     static-pod-path = mkOption {
       type = types.nullOr types.path;
       default = null;
       description = "The path to the directory containing local (static) pods to run, or the path to a single static pod file (default '').";
     };
 
+    static-pod-url = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The URL for accessing static pods to run (default '').";
+    };
+
+    static-pod-url-header = mkOption {
+      type = types.nullOr (types.attrsOf (types.listOf types.str));
+      default = null;
+      description = "Map of slices with HTTP headers to use when accessing the pod's URL).";
+    };
+
     serialize-image-pulls = mkOption {
       type = types.nullOr types.bool;
-      default = null;
+      default = true;
       description = "Pull images one at a time. We recommend *not* changing the default value on nodes that run docker daemon with version < 1.9 or an Aufs storage backend. Issue #10959 has more details (default true).";
+    };
+
+    show-hidden-metrics-for-version = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The previous version for which you want to show hidden metrics. Only the previous minor version is meaningful, other values will not be allowed. The format is <major>.<minor>, e.g.: 1.16. The purpose of this format is make sure you have the opportunity to notice if the next release hides additional metrics, rather than being surprised when they are permanently removed in the release after that (default: '').";
     };
 
     shutdown-grace-period = mkOption {
@@ -1140,6 +1381,20 @@ in
       type = types.nullOr types.str;
       default = null;
       description = "Specifies the duration used to terminate critical pods during a node shutdown. This should be less than shutdownGracePeriod. For example, if shutdownGracePeriod=30s, and shutdownGracePeriodCriticalPods=10s, during a node shutdown the first 20 seconds would be reserved for gracefully terminating normal pods, and the last 10 seconds would be reserved for terminating critical pods (default '0s').";
+    };
+
+    shutdown-grace-period-by-pod-priority = mkOption {
+      type = types.nullOr shutdown-grace-period-by-pod-priority-option-type;
+      default = null;
+      description = "Specifies the shutdown grace period for Pods based on their associated priority class value. When a shutdown request is received, the Kubelet will initiate shutdown on all pods running on the node with a grace period that depends on the priority of the pod, and then wait for all pods to exit. Each entry in the array represents the graceful shutdown time a pod with a priority class value that lies in the range of that value and the next higher entry in the list when the node is shutting down. For example, to allow critical pods 10s to shutdown, priority>=10000 pods 20s to shutdown, and all remaining pods 30s to shutdown.
+
+shutdownGracePeriodByPodPriority:
+
+    priority: 2000000000 shutdownGracePeriodSeconds: 10
+    priority: 10000 shutdownGracePeriodSeconds: 20
+    priority: 0 shutdownGracePeriodSeconds: 30
+
+The time the Kubelet will wait before exiting will at most be the maximum of all shutdownGracePeriodSeconds for each priority class range represented on the node. When all pods have exited or reached their grace periods, the Kubelet will release the shutdown inhibit lock. Requires the GracefulNodeShutdown feature gate to be enabled. This configuration must be empty if either ShutdownGracePeriod or ShutdownGracePeriodCriticalPods is set.";
     };
 
     storage-driver-buffer-duration = mkOption {
@@ -1203,9 +1458,9 @@ in
     };
 
     system-reserved = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
-      description = "A set of ResourceName=ResourceQuantity (e.g. cpu=200m,memory=500Mi,ephemeral-storage=1Gi) pairs that describe resources reserved for non-kubernetes components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail (default none).";
+      description = "A set of ResourceName=ResourceQuantity (e.g. { 'cpu' = '200m'; 'memory' = '500Mi'; 'ephemeral-storage' = '1Gi'; }) pairs that describe resources reserved for non-kubernetes components. Currently only cpu, memory and local ephemeral storage for root file system are supported. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ for more detail (default none).";
     };
 
     system-reserved-cgroup = mkOption {
@@ -1245,7 +1500,7 @@ in
     };
 
     topology-manager-policy-options = mkOption {
-      type = types.nullOr (types.listOf types.str);
+      type = types.nullOr (types.attrsOf types.str);
       default = null;
       description = "A set of key=value Topology Manager policy options to use, to fine tune their behaviour. If not supplied, keep the default behaviour.";
     };
@@ -1256,16 +1511,10 @@ in
       description = "Scope to which topology hints applied. Topology Manager collects hints from Hint Providers and applies them to defined scope to ensure the pod admission. Possible values: 'container', 'pod' (default 'container').";
     };
 
-    v = mkOption {
-      type = types.nullOr types.int;
+    tracing = mkOption {
+      type = types.nullOr tracing-option-type;
       default = null;
-      description = "Number for the log level verbosity";
-    };
-
-    vmodule = mkOption {
-      type = types.nullOr (types.listOf types.str);
-      default = null;
-      description = "List of pattern=N settings for file-filtered logging (only works for text log format)";
+      description = "Specifies the versioned configuration for OpenTelemetry tracing clients. See https://kep.k8s.io/2832 for more details (default nil).";
     };
 
     volume-plugin-dir = mkOption {
@@ -1282,7 +1531,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.services.raw-kubelet = lib.mkForce {
+    systemd.services.raw-kubelet = {
       inherit description;
       # wantedBy = [ "kubernetes.target" ];
       # after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
@@ -1305,113 +1554,60 @@ in
         RestartSec = "1000ms";
         ExecStart = ''
           ${pkgs.kubernetes}/bin/kubelet \
-            ${optionalString (cfg.allowed-unsafe-sysctls != null) "--allowed-unsafe-sysctls \"${concatStringsSep "," cfg.allowed-unsafe-sysctls}\""} \
-            ${optionalString (cfg.anonymous-auth != null) "--anonymous-auth"} \
             ${optionalString (cfg.application-metrics-count-limit != null) "--application-metrics-count-limit ${toString cfg.application-metrics-count-limit}"} \
-            ${optionalString (cfg.authorization-webhook-cache-authorized-ttl != null) "--authorization-webhook-cache-authorized-ttl ${toString cfg.authorization-webhook-cache-authorized-ttl}"} \
-            ${optionalString (cfg.authorization-webhook-cache-unauthorized-ttl != null) "--authorization-webhook-cache-unauthorized-ttl ${toString cfg.authorization-webhook-cache-unauthorized-ttl}"} \
             ${optionalString (cfg.boot-id-file != null) "--boot-id-file \"${concatStringsSep "," cfg.boot-id-file}\""} \
             ${optionalString (cfg.bootstrap-kubeconfig != null) "--bootstrap-kubeconfig ${toString cfg.bootstrap-kubeconfig}"} \
             ${optionalString (cfg.cert-dir != null) "--cert-dir ${toString cfg.cert-dir}"} \
-            ${optionalString (cfg.cgroup-root != null) "--cgroup-root ${toString cfg.cgroup-root}"} \
             ${optionalString (cfg.cgroups-per-qos != null) "--cgroups-per-qos ${boolToString cfg.cgroups-per-qos}"} \
             ${optionalString (cfg.cloud-config != null) "--cloud-config ${toString cfg.cloud-config}"} \
             ${optionalString (cfg.cloud-provider != null) "--cloud-provider ${toString cfg.cloud-provider}"} \
             --config "${toString actualConfigFile}" \
             ${optionalString (cfg.config-dir != null) "--config-dir ${toString cfg.config-dir}"} \
             ${optionalString (cfg.container-hints != null) "--container-hints ${toString cfg.container-hints}"} \
-            ${optionalString (cfg.container-log-max-files != null) "--container-log-max-files ${toString cfg.container-log-max-files}"} \
-            ${optionalString (cfg.container-log-max-size != null) "--container-log-max-size ${toString cfg.container-log-max-size}"} \
             ${optionalString (cfg.containerd != null) "--containerd ${toString cfg.containerd}"} \
             ${optionalString (cfg.containerd-namespace != null) "--containerd-namespace ${toString cfg.containerd-namespace}"} \
-            ${optionalString (cfg.contention-profiling != null) "--contention-profiling"} \
-            ${optionalString (cfg.cpu-cfs-quota != null) "--cpu-cfs-quota ${toString cfg.cpu-cfs-quota}"} \
-            ${optionalString (cfg.cpu-cfs-quota-period != null) "--cpu-cfs-quota-period ${toString cfg.cpu-cfs-quota-period}"} \
-            ${optionalString (cfg.cpu-manager-policy-options != null) "--cpu-manager-policy-options \"${concatStringsSep "," cfg.cpu-manager-policy-options}\""} \
-            ${optionalString (cfg.cpu-manager-reconcile-period != null) "--cpu-manager-reconcile-period ${toString cfg.cpu-manager-reconcile-period}"} \
-            ${optionalString (cfg.enable-controller-attach-detach != null) "--enable-controller-attach-detach ${boolToString cfg.enable-controller-attach-detach}"} \
-            ${optionalString (cfg.enable-debugging-handlers != null) "--enable-debugging-handlers ${boolToString cfg.enable-debugging-handlers}"} \
             ${optionalString (cfg.enable-load-reader != null) "--enable-load-reader"} \
-              ${optionalString (cfg.enable-server != null) "--enable-server ${toString cfg.enable-server}"} \
-            ${optionalString (cfg.enforce-node-allocatable != null) "--enforce-node-allocatable ${concatStringsSep "," cfg.enforce-node-allocatable}\""} \
             ${optionalString (cfg.event-burst != null) "--event-burst ${toString cfg.event-burst}"} \
             ${optionalString (cfg.event-qps != null) "--event-qps ${toString cfg.event-qps}"} \
             ${optionalString (cfg.event-storage-age-limit != null) "--event-storage-age-limit ${toString cfg.event-storage-age-limit}"} \
             ${optionalString (cfg.event-storage-event-limit != null) "--event-storage-event-limit ${toString cfg.event-storage-event-limit}"} \
-            ${optionalString (cfg.eviction-hard != null) "--eviction-hard \"${concatStringsSep "," cfg.eviction-hard}\""} \
-            ${optionalString (cfg.eviction-max-pod-grace-period != null) "--eviction-max-pod-grace-period ${toString cfg.eviction-max-pod-grace-period}"} \
-            ${optionalString (cfg.eviction-minimum-reclaim != null) "--eviction-minimum-reclaim \"${concatStringsSep "," cfg.eviction-minimum-reclaim}\""} \
-            ${optionalString (cfg.eviction-pressure-transition-period != null) "--eviction-pressure-transition-period ${toString cfg.eviction-pressure-transition-period}"} \
-            ${optionalString (cfg.eviction-soft != null) "--eviction-soft \"${concatStringsSep "," cfg.eviction-soft}\""} \
-            ${optionalString (cfg.eviction-soft-grace-period != null) "--eviction-soft-grace-period \"${concatStringsSep "," cfg.eviction-soft-grace-period}\""} \
             ${optionalString (cfg.exit-on-lock-contention != null) "--exit-on-lock-contention"} \
             ${optionalString (cfg.experimental-allocatable-ignore-eviction != null) "--experimental-allocatable-ignore-eviction ${boolToString cfg.experimental-allocatable-ignore-eviction}"} \
             ${optionalString (cfg.experimental-mounter-path != null) "--experimental-mounter-path ${toString cfg.experimental-mounter-path}"} \
-            ${optionalString (cfg.feature-gates != null) "--feature-gates \"${concatStringsSep "," cfg.feature-gates}\""} \
-            ${optionalString (cfg.file-check-frequency != null) "--file-check-frequency ${toString cfg.file-check-frequency}"} \
             ${optionalString (cfg.global-housekeeping-interval != null) "--global-housekeeping-interval ${toString cfg.global-housekeeping-interval}"} \
             ${optionalString (cfg.hostname-override != null) "--hostname-override ${toString cfg.hostname-override}"} \
             ${optionalString (cfg.housekeeping-interval != null) "--housekeeping-interval ${toString cfg.housekeeping-interval}"} \
-            ${optionalString (cfg.http-check-frequency != null) "--http-check-frequency ${toString cfg.http-check-frequency}"} \
             ${optionalString (cfg.image-credential-provider-bin-dir != null) "--image-credential-provider-bin-dir ${toString cfg.image-credential-provider-bin-dir}"} \
             ${optionalString (cfg.image-credential-provider-config != null) "--image-credential-provider-config ${toString cfg.image-credential-provider-config}"} \
             ${optionalString (cfg.image-gc-high-threshold != null) "--image-gc-high-threshold ${toString cfg.image-gc-high-threshold}"} \
             ${optionalString (cfg.image-gc-low-threshold != null) "--image-gc-low-threshold ${toString cfg.image-gc-low-threshold}"} \
-            ${optionalString (cfg.image-service-endpoint != null) "--image-service-endpoint ${toString cfg.image-service-endpoint}"} \
             ${optionalString (cfg.keep-terminated-pod-volumes != null) "--keep-terminated-pod-volumes"} \
-            ${optionalString (cfg.kernel-memcg-notification != null) "--kernel-memcg-notification ${toString cfg.kernel-memcg-notification}"} \
-            ${optionalString (cfg.kube-api-burst != null) "--kube-api-burst ${toString cfg.kube-api-burst}"} \
-            ${optionalString (cfg.kube-api-content-type != null) "--kube-api-content-type ${toString cfg.kube-api-content-type}"} \
-            ${optionalString (cfg.kube-api-qps != null) "--kube-api-qps ${toString cfg.kube-api-qps}"} \
-            ${optionalString (cfg.kube-reserved != null) "--kube-reserved \"${concatStringsSep "," cfg.kube-reserved}\""} \
-            ${optionalString (cfg.kube-reserved-cgroup != null) "--kube-reserved-cgroup ${toString cfg.kube-reserved-cgroup}"} \
             --kubeconfig "${toString kubeConfigFile}" \
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
-            ${optionalString (cfg.local-storage-capacity-isolation != null) "--local-storage-capacity-isolation ${boolToString cfg.local-storage-capacity-isolation}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \
             ${optionalString (cfg.log-cadvisor-usage != null) "--log-cadvisor-usage"} \
             ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${toString cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
             ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
-            ${optionalString (cfg.logging-format != null) "--logging-format ${toString cfg.logging-format}"} \
             ${optionalString (cfg.machine-id-file != null) "--machine-id-file \"${concatStringsSep "," cfg.machine-id-file}\""} \
-            ${optionalString (cfg.make-iptables-util-chains != null) "--make-iptables-util-chains ${boolToString cfg.make-iptables-util-chains}"} \
             ${optionalString (cfg.manifest-url != null) "--manifest-url ${toString cfg.manifest-url}"} \
             ${optionalString (cfg.manifest-url-header != null) "--manifest-url-header \"${concatStringsSep "," cfg.manifest-url-header}\""} \
-            ${optionalString (cfg.max-open-files != null) "--max-open-files ${toString cfg.max-open-files}"} \
-            ${optionalString (cfg.max-pods != null) "--max-pods ${toString cfg.max-pods}"} \
             ${optionalString (cfg.maximum-dead-containers != null) "--maximum-dead-containers ${toString cfg.maximum-dead-containers}"} \
             ${optionalString (cfg.maximum-dead-containers-per-container != null) "--maximum-dead-containers-per-container ${toString cfg.maximum-dead-containers-per-container}"} \
-            ${optionalString (cfg.memory-manager-policy != null) "--memory-manager-policy ${toString cfg.memory-manager-policy}"} \
             ${optionalString (cfg.minimum-container-ttl-duration != null) "--minimum-container-ttl-duration ${toString cfg.minimum-container-ttl-duration}"} \
             ${optionalString (cfg.minimum-image-ttl-duration != null) "--minimum-image-ttl-duration ${toString cfg.minimum-image-ttl-duration}"} \
             ${optionalString (cfg.node-ip != null) "--node-ip ${toString cfg.node-ip}"} \
             ${optionalString (cfg.node-labels != null) "--node-labels ${toString cfg.node-labels}"} \
-            ${optionalString (cfg.node-status-max-images != null) "--node-status-max-images ${toString cfg.node-status-max-images}"} \
-            ${optionalString (cfg.node-status-update-frequency != null) "--node-status-update-frequency ${toString cfg.node-status-update-frequency}"} \
-            ${optionalString (cfg.oom-score-adj != null) "--oom-score-adj ${toString cfg.oom-score-adj}"} \
-            ${optionalString (cfg.pod-cidr != null) "--pod-cidr ${toString cfg.pod-cidr}"} \
             ${optionalString (cfg.pod-manifest-path != null) "--pod-manifest-path ${toString cfg.pod-manifest-path}"} \
             ${optionalString (cfg.pod-max-pids != null) "--pod-max-pids ${toString cfg.pod-max-pids}"} \
-            ${optionalString (cfg.pods-per-core != null) "--pods-per-core ${toString cfg.pods-per-core}"} \
-            ${optionalString (cfg.protect-kernel-defaults != null) "--protect-kernel-defaults"} \
-            ${optionalString (cfg.provider-id != null) "--provider-id ${toString cfg.provider-id}"} \
-            ${optionalString (cfg.qos-reserved != null) "--qos-reserved \"${concatStringsSep "," cfg.qos-reserved}\""} \
             ${optionalString (cfg.read-only-port != null) "--read-only-port ${toString cfg.read-only-port}"} \
             ${optionalString (cfg.register-schedulable != null) "--register-schedulable ${boolToString cfg.register-schedulable}"} \
-            ${optionalString (cfg.registry-burst != null) "--registry-burst ${toString cfg.registry-burst}"} \
             ${optionalString (cfg.registry-qps != null) "--registry-qps ${toString cfg.registry-qps}"} \
             ${optionalString (cfg.reserved-cpus != null) "--reserved-cpus \"${concatStringsSep "," cfg.reserved-cpus}\""} \
-            ${optionalString (cfg.reserved-memory != null) "--reserved-memory \"${concatStringsSep "," cfg.reserved-memory}\""} \
-            ${optionalString (cfg.resolv-conf != null) "--resolv-conf ${toString cfg.resolv-conf}"} \
             ${optionalString (cfg.root-dir != null) "--root-dir ${toString cfg.root-dir}"} \
-            ${optionalString (cfg.rotate-certificates != null) "--rotate-certificates"} \
             ${optionalString (cfg.rotate-server-certificates != null) "--rotate-server-certificates"} \
             ${optionalString (cfg.runonce != null) "--runonce ${boolToString cfg.runonce}"} \
             ${optionalString (cfg.runtime-cgroups != null) "--runtime-cgroups ${toString cfg.runtime-cgroups}"} \
-            ${optionalString (cfg.runtime-request-timeout != null) "--runtime-request-timeout ${toString cfg.runtime-request-timeout}"} \
-            ${optionalString (cfg.seccomp-default != null) "--seccomp-default"} \
-            ${optionalString (cfg.serialize-image-pulls != null) "--serialize-image-pulls"} \
             ${optionalString (cfg.storage-driver-buffer-duration != null) "--storage-driver-buffer-duration ${toString cfg.storage-driver-buffer-duration}"} \
             ${optionalString (cfg.storage-driver-db != null) "--storage-driver-db ${toString cfg.storage-driver-db}"} \
             ${optionalString (cfg.storage-driver-host != null) "--storage-driver-host ${toString cfg.storage-driver-host}"} \
@@ -1419,19 +1615,9 @@ in
             ${optionalString (cfg.storage-driver-secure != null) "--storage-driver-secure"} \
             ${optionalString (cfg.storage-driver-table != null) "--storage-driver-table ${toString cfg.storage-driver-table}"} \
             ${optionalString (cfg.storage-driver-user != null) "--storage-driver-user ${toString cfg.storage-driver-user}"} \
-            ${optionalString (cfg.streaming-connection-idle-timeout != null) "--streaming-connection-idle-timeout ${toString cfg.streaming-connection-idle-timeout}"} \
-            ${optionalString (cfg.sync-frequency != null) "--sync-frequency ${toString cfg.sync-frequency}"} \
             ${optionalString (cfg.system-cgroups != null) "--system-cgroups ${toString cfg.system-cgroups}"} \
-            ${optionalString (cfg.system-reserved != null) "--system-reserved \"${concatStringsSep "," cfg.system-reserved}\""} \
-            ${optionalString (cfg.system-reserved-cgroup != null) "--system-reserved-cgroup ${toString cfg.system-reserved-cgroup}"} \
-            ${optionalString (cfg.tls-cipher-suites != null) "---tls-cipher-suites \"${concatStringsSep "," cfg.tls-cipher-suites}\""} \
-            ${optionalString (cfg.tls-min-version != null) "--tls-min-version ${toString cfg.tls-min-version}"} \
-            ${optionalString (cfg.topology-manager-policy != null) "--topology-manager-policy ${toString cfg.topology-manager-policy}"} \
-            ${optionalString (cfg.topology-manager-policy-options != null) "--topology-manager-policy-options \"${concatStringsSep "," cfg.topology-manager-policy-options}\""} \
-            ${optionalString (cfg.topology-manager-scope != null) "--topology-manager-scope ${toString cfg.topology-manager-scope}"} \
             ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
             ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
-            ${optionalString (cfg.volume-plugin-dir != null) "--volume-plugin-dir ${toString cfg.volume-plugin-dir}"} \
             ${optionalString (cfg.volume-stats-agg-period != null) "--volume-stats-agg-period ${toString cfg.volume-stats-agg-period}"}
         '';
       };
