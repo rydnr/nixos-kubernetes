@@ -1201,6 +1201,12 @@ in
       description = "Enables block profiling, if enableDebuggingHandlers is true.";
     };
 
+    run-once = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+      description = "Causes the Kubelet to check the API server once for pods, run those in addition to the pods specified by static pod files, and exit (default false).";
+    };
+
     cpu-cfs-quota = mkOption {
       type = types.nullOr types.bool;
       default = null;
