@@ -135,7 +135,6 @@ let
     // (if cfg.local-storage-capacity-isolation != null then { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
     // (if cfg.image-service-endpoint != null then { imageServiceEndpoint = cfg.image-service-endpoint; } else {})
 
-    // (if cfg.authentication.x509.client-ca-file != null then { authentication = { x509 = { clientCAFile = cfg.authentication.x509.client-ca-file; }; }; } else {})
     // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
     // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
     // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
@@ -354,17 +353,9 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
 
-  shutdown-grace-period-by-pod-priority-option-type = types.listOf (types.attrs {
-    priority = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      description = "The priority value associated with the shutdown grace period.";
-    };
-    shutdown-grace-period-seconds = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      description = "The shutdown grace period in seconds.";
-    };
+  shutdown-grace-period-by-pod-priority-option-type = types.listOf (types.shape {
+    priority = types.nullOr types.int;
+    shutdown-grace-period-seconds = types.nullOr types.int;
   });
 
   tracing-option-type = types.attrs {
