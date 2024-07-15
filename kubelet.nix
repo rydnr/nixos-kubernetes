@@ -24,7 +24,7 @@ let
   containerdSettings = {
     version = 2;
     root = /var/lib/containerd/daemon;
-    state = /var/lib/containerd/daemon;
+    state = /var/run/containerd/daemon;
     oom_score = 0;
     grpc = {
       address = "/var/run/containerd/containerd.sock";
