@@ -917,10 +917,20 @@ HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This end
 is checked every 20 seconds (also configurable with a flag).";
 <<featureGatesDescription>>
 
-  shutdown-grace-period-by-pod-priority-option-type = types.attrs {
-    priority = types.nullOr types.int;
-    shutdown-grace-period-seconds = types.nullOr types.int;
-  };
+  shutdown-grace-period-by-pod-priority-option-type = types.listOf (types.submodule {
+    options = {
+      priority = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "The priority value associated with the shutdown grace period.";
+      };
+      shutdown-grace-period-seconds = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "The shutdown grace period in seconds.";
+      };
+    };
+  });
 
   tracing-option-type = types.attrs {
     endpoint = mkOption {
@@ -1950,7 +1960,7 @@ in
     };
 
     shutdown-grace-period-by-pod-priority = mkOption {
-      type = types.nullOr types.listOf (shutdown-grace-period-by-pod-priority-option-type);
+      type = types.nullOr shutdown-grace-period-by-pod-priority-option-type;
       default = null;
       description = "Specifies the shutdown grace period for Pods based on their associated priority class value. When a shutdown request is received, the Kubelet will initiate shutdown on all pods running on the node with a grace period that depends on the priority of the pod, and then wait for all pods to exit. Each entry in the array represents the graceful shutdown time a pod with a priority class value that lies in the range of that value and the next higher entry in the list when the node is shutting down. For example, to allow critical pods 10s to shutdown, priority>=10000 pods 20s to shutdown, and all remaining pods 30s to shutdown.
 
