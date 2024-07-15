@@ -1,3 +1,748 @@
+* Common declarations
+
+** boolToString
+
+#+NAME: boolToString
+#+BEGIN_SRC nix
+boolToString = b: if b then "true" else "false";
+#+END_SRC
+
+** featureGates
+
+*** description
+
+#+NAME: featureGatesDescription
+#+BEGIN_SRC nix
+  featureGatesDescription = ''
+A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
+  APIResponseCompression=true|false (BETA - default=true)
+  APIServerIdentity=true|false (BETA - default=true)
+  APIServerTracing=true|false (BETA - default=true)
+  APIServingWithRoutine=true|false (BETA - default=true)
+  AllAlpha=true|false (ALPHA - default=false)
+  AllBeta=true|false (BETA - default=false)
+  AnyVolumeDataSource=true|false (BETA - default=true)
+  AppArmor=true|false (BETA - default=true)
+  AppArmorFields=true|false (BETA - default=true)
+  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
+  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
+  CPUManagerPolicyOptions=true|false (BETA - default=true)
+  CRDValidationRatcheting=true|false (BETA - default=true)
+  CSIMigrationPortworx=true|false (BETA - default=false)
+  CSIVolumeHealth=true|false (ALPHA - default=false)
+  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
+  ClusterTrustBundle=true|false (ALPHA - default=false)
+  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
+  ComponentSLIs=true|false (BETA - default=true)
+  ConsistentListFromCache=true|false (ALPHA - default=false)
+  ContainerCheckpoint=true|false (BETA - default=true)
+  ContextualLogging=true|false (BETA - default=true)
+  CronJobsScheduledAnnotation=true|false (BETA - default=true)
+  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
+  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
+  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
+  DevicePluginCDIDevices=true|false (BETA - default=true)
+  DisableCloudProviders=true|false (BETA - default=true)
+  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
+  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
+  DynamicResourceAllocation=true|false (ALPHA - default=false)
+  ElasticIndexedJob=true|false (BETA - default=true)
+  EventedPLEG=true|false (ALPHA - default=false)
+  GracefulNodeShutdown=true|false (BETA - default=true)
+  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
+  HPAScaleToZero=true|false (ALPHA - default=false)
+  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
+  ImageMaximumGCAge=true|false (BETA - default=true)
+  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
+  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
+  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
+  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
+  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
+  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
+  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
+  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
+  InformerResourceVersion=true|false (ALPHA - default=false)
+  JobBackoffLimitPerIndex=true|false (BETA - default=true)
+  JobManagedBy=true|false (ALPHA - default=false)
+  JobPodFailurePolicy=true|false (BETA - default=true)
+  JobPodReplacementPolicy=true|false (BETA - default=true)
+  JobSuccessPolicy=true|false (ALPHA - default=false)
+  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
+  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
+  KubeletInUserNamespace=true|false (ALPHA - default=false)
+  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
+  KubeletPodResourcesGet=true|false (ALPHA - default=false)
+  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
+  KubeletTracing=true|false (BETA - default=true)
+  LoadBalancerIPMode=true|false (BETA - default=true)
+  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
+  LogarithmicScaleDown=true|false (BETA - default=true)
+  LoggingAlphaOptions=true|false (ALPHA - default=false)
+  LoggingBetaOptions=true|false (BETA - default=true)
+  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
+  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
+  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
+  MemoryManager=true|false (BETA - default=true)
+  MemoryQoS=true|false (ALPHA - default=false)
+  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
+  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
+  NFTablesProxyMode=true|false (ALPHA - default=false)
+  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
+  NodeLogQuery=true|false (BETA - default=false)
+  NodeSwap=true|false (BETA - default=true)
+  OpenAPIEnums=true|false (BETA - default=true)
+  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
+  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
+  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
+  PodDeletionCost=true|false (BETA - default=true)
+  PodDisruptionConditions=true|false (BETA - default=true)
+  PodIndexLabel=true|false (BETA - default=true)
+  PodLifecycleSleepAction=true|false (BETA - default=true)
+  PodReadyToStartContainersCondition=true|false (BETA - default=true)
+  PortForwardWebsockets=true|false (ALPHA - default=false)
+  ProcMountType=true|false (ALPHA - default=false)
+  QOSReserved=true|false (ALPHA - default=false)
+  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
+  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
+  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
+  RetryGenerateName=true|false (ALPHA - default=false)
+  RotateKubeletServerCertificate=true|false (BETA - default=true)
+  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
+  SELinuxMount=true|false (ALPHA - default=false)
+  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
+  SchedulerQueueingHints=true|false (BETA - default=false)
+  SeparateCacheWatchRPC=true|false (BETA - default=true)
+  SeparateTaintEvictionController=true|false (BETA - default=true)
+  ServiceAccountTokenJTI=true|false (BETA - default=true)
+  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
+  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
+  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
+  ServiceTrafficDistribution=true|false (ALPHA - default=false)
+  SidecarContainers=true|false (BETA - default=true)
+  SizeMemoryBackedVolumes=true|false (BETA - default=true)
+  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
+  StatefulSetStartOrdinal=true|false (BETA - default=true)
+  StorageNamespaceIndex=true|false (BETA - default=true)
+  StorageVersionAPI=true|false (ALPHA - default=false)
+  StorageVersionHash=true|false (BETA - default=true)
+  StorageVersionMigrator=true|false (ALPHA - default=false)
+  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
+  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
+  TopologyAwareHints=true|false (BETA - default=true)
+  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
+  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
+  TopologyManagerPolicyOptions=true|false (BETA - default=true)
+  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
+  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
+  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
+  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
+  UserNamespacesSupport=true|false (BETA - default=false)
+  VolumeAttributesClass=true|false (ALPHA - default=false)
+  VolumeCapacityPriority=true|false (ALPHA - default=false)
+  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
+  WatchList=true|false (ALPHA - default=false)
+  WatchListClient=true|false (BETA - default=false)
+  WinDSR=true|false (ALPHA - default=false)
+  WinOverlay=true|false (BETA - default=true)
+  WindowsHostNetwork=true|false (ALPHA - default=true)
+'';
+#+END_SRC
+
+*** listToFeatureGates
+
+#+NAME: listToFeatureGates
+#+begin_src nix
+listToFeatureGates = attrs: map (item: let parts = builtins.split "=" item; key = builtins.elemAt parts 0; in { "${key}" = builtins.elemAt parts 2; }) attrs
+#+end_src
+** admission type
+
+#+NAME: admissionType
+#+BEGIN_SRC nix
+type = types.nullOr (types.listOf (types.enum [
+  "AlwaysAdmit"
+  "AlwaysDeny"
+  "AlwaysPullImages"
+  "CertificateApproval"
+  "CertificateSigning"
+  "CertificateSubjectRestriction"
+  "ClusterTrustBundleAttest"
+  "DefaultIngressClass"
+  "DefaultStorageClass"
+  "DefaultTolerationSeconds"
+  "DenyServiceExternalIPs"
+  "EventRateLimit"
+  "ExtendedResourceToleration"
+  "ImagePolicyWebhook"
+  "LimitPodHardAntiAffinityTopology"
+  "LimitRanger"
+  "MutatingAdmissionWebhook"
+  "NamespaceAutoProvision"
+  "NamespaceExists"
+  "NamespaceLifecycle"
+  "NodeRestriction"
+  "OwnerReferencesPermissionEnforcement"
+  "PersistentVolumeClaimResize"
+  "PersistentVolumeLabel"
+  "PodNodeSelector"
+  "PodSecurity"
+  "PodTolerationRestriction"
+  "Priority"
+  "ResourceQuota"
+  "RuntimeClass"
+  "ServiceAccount"
+  "StorageObjectInUseProtection"
+  "TaintNodesByCondition"
+  "ValidatingAdmissionPolicy"
+  "ValidatingAdmissionWebhook"
+]));
+#+END_SRC
+
+
+*** description
+
+#+NAME: admissionTypeDescription
+#+BEGIN_SRC nix
+Comma-delimited list of admission plugins: AlwaysAdmit, AlwaysDeny, AlwaysPullImages, CertificateApproval, CertificateSigning, CertificateSubjectRestriction, ClusterTrustBundleAttest, DefaultIngressClass, DefaultStorageClass, DefaultTolerationSeconds, DenyServiceExternalIPs, EventRateLimit, ExtendedResourceToleration, ImagePolicyWebhook, LimitPodHardAntiAffinityTopology, LimitRanger, MutatingAdmissionWebhook, NamespaceAutoProvision, NamespaceExists, NamespaceLifecycle, NodeRestriction, OwnerReferencesPermissionEnforcement, PersistentVolumeClaimResize, PersistentVolumeLabel, PodNodeSelector, PodSecurity, PodTolerationRestriction, Priority, ResourceQuota, RuntimeClass, ServiceAccount, StorageObjectInUseProtection, TaintNodesByCondition, ValidatingAdmissionPolicy, ValidatingAdmissionWebhook.
+#+END_SRC
+
+
+** generateCert
+
+#+NAME: generateCert
+#+begin_src nix :noweb yes
+generateCert = pkgs.writeScriptBin "generate-cert" ''
+  #!/usr/bin/env ${pkgs.bash}/bin/bash
+  set -e
+  CERT_NAME="$1";
+  # CERT_PASSWORD="$2"; not supported by kubernetes
+  DAYS="$2";
+  CERT_DIRECTORY="$3";
+  CA_CRT="$4";
+  CA_KEY="$5";
+  CA_PASSWORD="$6";
+  C="$7";
+  ST="$8";
+  L="$9";
+  O="$10";
+  OU="$11";
+  CN="$12";
+
+  KEY="$CERT_DIRECTORY/private/$CERT_NAME.key"
+  CSR="$CERT_DIRECTORY/csr/$CERT_NAME.csr"
+  CRT="$CERT_DIRECTORY/certs/$CERT_NAME.crt"
+
+  # Generate the private key
+  # password-protected private keys are not supported by kubernetes [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -aes256 -out "$KEY" -pass pass:"$CERT_PASSWORD" -pkeyopt rsa_keygen_bits:4096
+  [[ -f "$KEY" ]] || ${pkgs.openssl}/bin/openssl genpkey -algorithm RSA -out "$KEY" -pkeyopt rsa_keygen_bits:4096
+
+  # Use the private key to create a certificate request for the certificate authority.
+  # password-protected private keys are not supported by kubernetes [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -passin pass:"$CERT_PASSWORD" -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+  [[ -f "$CSR" ]] || ${pkgs.openssl}/bin/openssl req -new -key "$KEY" -sha256 -out "$CSR" -days "$DAYS" -subj "/C=$C/ST=$ST/L=$L/O=$O/OU=$OU/CN=$CN"
+
+  # Sign the request with the certificate authority
+  [[ -f "$CRT" ]] || ${pkgs.openssl}/bin/openssl x509 -req -in "$CSR" -CA "$CA_CRT" -CAkey "$CA_KEY" -out "$CRT" -days "$DAYS" -sha256 -passin pass:"$CA_PASSWORD"
+'';
+#+end_src
+
+
+** caCrtFile option
+
+#+NAME: caCrtFile
+#+BEGIN_SRC nix
+caCrtFile = lib.mkOption {
+  type = lib.types.nullOr lib.types.path;
+  default = null;
+  description = "Path to the CA file.";
+};
+#+END_SRC
+
+** caKeyFile option
+
+#+NAME: caKeyFile
+#+BEGIN_SRC nix
+caKeyFile = lib.mkOption {
+  type = lib.types.nullOr lib.types.path;
+  default = null;
+  description = "Path to the CA key file.";
+};
+#+END_SRC
+
+
+** certCrtFile option
+
+#+NAME: certCrtFile
+#+BEGIN_SRC nix
+certCrtFile = lib.mkOption {
+  type = lib.types.nullOr lib.types.path;
+  default = null;
+  description = "Path to the certificate.";
+};
+#+END_SRC
+
+** certKeyFile option
+
+#+NAME: certKeyFile
+#+BEGIN_SRC nix
+certKeyFile = lib.mkOption {
+  type = lib.types.nullOr lib.types.path;
+  default = null;
+  description = "Path to the certificate key file.";
+};
+#+END_SRC
+
+
+** certificate options
+
+#+NAME: certificateOptions
+#+begin_src nix :noweb yes :exports none
+enable = lib.mkOption {
+  type = lib.types.bool;
+  default = false;
+  inherit description;
+};
+certName = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = "raw-kubelet";
+  description = "The name of the certificate.";
+};
+<<certCrtFile>>
+<<caCrtFile>>
+<<caKeyFile>>
+caPassword = lib.mkOption {
+  type = lib.types.str;
+  default = null;
+  description = "Password for the certificate authority.";
+};
+certDirectory = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = "/etc/ssl";
+  description = "The root directory tree where certificate should be stored.";
+};
+certExpirationDays = lib.mkOption {
+  type = lib.types.nullOr lib.types.int;
+  default = 365;
+  description = "The number of days until the certificate expires.";
+};
+certCountry = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = null;
+  description = "The two-letter ISO code for the country where the organization of the certificate is located.";
+};
+certState = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = null;
+  description = "The full name of the state or province where the organization of the certificate is located.";
+};
+certLocality = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = null;
+  description = "The city or locality where the organization of the certificate is located.";
+};
+certOrganization = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = null;
+  description = "The legal name of the organization of the certificate.";
+};
+certOrganizationalUnit = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = null;
+  description = "The organizational unit (division of the organization in charge) of the certificate.";
+};
+certCommonName = lib.mkOption {
+  type = lib.types.nullOr lib.types.str;
+  default = null;
+  description = "The name of the individual or organization of the certificate.";
+};
+#+end_src
+
+** certificate module
+
+*** Test
+#+NAME: foobar
+#+BEGIN_SRC sh :var foo="default" :var bar="default"
+#foo=${foo}
+#baz=${bar}
+echo "This is a test with ${foo} and ${bar}"
+#+END_SRC
+
+*** Outputs
+#+BEGIN_SRC sh :tangle output1.txt :noweb yes
+<<foobar(foo="bar",bar="qux")>>
+#+END_SRC
+
+#+BEGIN_SRC sh :tangle output2.txt :noweb yes
+<<foobar(foo="bar2", bar="qux2")>>
+#+END_SRC
+
+
+#+NAME: certificateModule
+#+begin_src nix :var serviceName="replaceme" :noweb yes
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
+
+let
+  cfg = config.services.${serviceName}
+  description = "an utility to manage the ${serviceName} certificate";
+  <<generateCert>>
+in
+{
+  options.services.${serviceName}-certificate = {
+    <<certificateOptions>>
+  };
+
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ bash coreutils openssl ];
+
+    systemd.services.${serviceName} = {
+      inherit description;
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          else
+            "echo 'Using ${cfg.certFile} as certificate for ${serviceName}"
+          }
+        '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/certs''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/csr''
+          ''${pkgs.coreutils}/bin/install -d -m 0700 -o root -g root ${cfg.certDirectory}/private''
+        ];
+      };
+    };
+  };
+}
+#+end_src
+
+*** certificateModule1
+
+#+NAME: certificateModule1
+#+begin_src nix :noweb yes
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
+
+let
+#+end_src
+
+*** certificateModule2
+#+NAME: certificateModule2
+#+begin_src nix :noweb yes
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ bash coreutils openssl ];
+
+    systemd.services.${serviceName} = {
+      inherit description;
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          else
+            "echo 'Using ${cfg.certFile} as certificate for ${serviceName}"
+          }
+        '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/certs''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/csr''
+          ''${pkgs.coreutils}/bin/install -d -m 0700 -o root -g root ${cfg.certDirectory}/private''
+        ];
+      };
+    };
+  };
+}
+#+end_src
+
+*** certificateModule3
+
+#+NAME: certificateModule
+#+begin_src nix :var serviceName="replaceme" :noweb yes :exports none
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
+
+let
+  cfg = config.services.${serviceName}
+  description = "an utility to manage the ${serviceName} certificate";
+  <<generateCert>>
+in
+{
+  options.services.${serviceName}-certificate = {
+    <<certificateOptions>>
+  };
+
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ bash coreutils openssl ];
+
+    systemd.services.${serviceName} = {
+      inherit description;
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          else
+            "echo 'Using ${cfg.certFile} as certificate for ${serviceName}"
+          }
+        '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/certs''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/csr''
+          ''${pkgs.coreutils}/bin/install -d -m 0700 -o root -g root ${cfg.certDirectory}/private''
+        ];
+      };
+    };
+  };
+}
+#+end_src
+
+
+** mkKubeConfig
+
+#+NAME: mkKubeConfig
+#+BEGIN_SRC nix
+mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
+  apiVersion = "v1";
+  clusters = [{
+    name = "local";
+    cluster.certificate-authority = attrs.caCrtFile;
+    cluster.server = attrs.server;
+  }];
+  contexts = [{
+    context = {
+      cluster = "local";
+      user = name;
+    };
+    name = "local";
+  }];
+  current-context = "local";
+  kind = "Config";
+  users = [{
+    inherit name;
+    user = {
+      client-certificate = attrs.certCrtFile;
+      client-key = attrs.certKeyFile;
+    };
+  }];
+});
+#+END_SRC
+
+
+** mkKubeConfigOptions
+
+This function creates the common options a module needs to request to be able to call `mkKubeConfig`.
+
+#+NAME: mkKubeConfigOptions
+#+BEGIN_SRC nix :noweb yes
+mkKubeConfigOptions = prefix: {
+  server = mkOption {
+    description = "${prefix} kube-apiserver server address.";
+    type = types.str;
+  };
+  <<caCrtFile>>
+  <<caKeyFile>>
+  <<certCrtFile>>
+  <<certKeyFile>>
+};
+#+END_SRC
+
+
+** mkCert
+
+#+NAME: mkCert
+#+BEGIN_SRC nix
+mkCert = { name, CN, hosts ? [], fields ? {}, action ? "",
+           privateKeyOwner ? "kubernetes" }: rec {
+  inherit name caCert CN hosts fields action;
+  cert = secret name;
+  key = secret "${name}-key";
+  privateKeyOptions = {
+    owner = privateKeyOwner;
+    group = "nogroup";
+    mode = "0600";
+    path = key;
+  };
+};
+#+END_SRC
+
+** secret
+
+#+NAME: secret
+#+BEGIN_SRC nix
+secret = name: path: "${path}/${name}.pem";
+#+END_SRC
+
+** defaultContainerdConfigFile
+
+#+NAME: defaultContainerdConfigFile
+#+BEGIN_SRC nix
+defaultContainerdConfigFile = pkgs.writeText "containerd.toml" ''
+version = 2
+root = "/var/lib/containerd/daemon"
+state = "/var/run/containerd/daemon"
+oom_score = 0
+
+[grpc]
+  address = "/var/run/containerd/containerd.sock"
+
+[plugins."io.containerd.grpc.v1.cri"]
+  sandbox_image = "pause:latest"
+
+[plugins."io.containerd.grpc.v1.cri".cni]
+  bin_dir = "/opt/cni/bin"
+  max_conf_num = 0
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+  runtime_type = "io.containerd.runc.v2"
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes."io.containerd.runc.v2".options]
+  SystemdCgroup = true
+'';
+#+END_SRC
+
+
+
+* kubelet
+
+** Certificate
+
+As with ~kube-proxy~, we'll create a service that creates a certificate for ~kubelet~ if it doesn't exist. I tried to abstract this into a parameterized template, parameter substitution seem to work only when evaluating code blocks, and that's not suitable for our scenario.
+
+#+begin_src nix :noweb yes :tangle kubelet-certificate.nix
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+with lib;
+
+let
+  cfg = config.services.raw-kubelet-certificate;
+  description = "an utility to manage the kubelet";
+  <<generateCert>>
+in
+{
+  options.services.raw-kubelet-certificate = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      inherit description;
+    };
+    certName = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "raw-kubelet";
+      description = "The name of the certificate.";
+    };
+    <<certCrtFile>>
+    <<caCrtFile>>
+    <<caKeyFile>>
+    caPassword = lib.mkOption {
+      type = lib.types.str;
+      default = null;
+      description = "Password for the certificate authority.";
+    };
+    certDirectory = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "/etc/ssl";
+      description = "The root directory tree where certificate should be stored.";
+    };
+    certExpirationDays = lib.mkOption {
+      type = lib.types.nullOr lib.types.int;
+      default = 365;
+      description = "The number of days until the certificate expires.";
+    };
+    certCountry = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The two-letter ISO code for the country where the organization of the certificate is located.";
+    };
+    certState = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The full name of the state or province where the organization of the certificate is located.";
+    };
+    certLocality = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The city or locality where the organization of the certificate is located.";
+    };
+    certOrganization = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The legal name of the organization of the certificate.";
+    };
+    certOrganizationalUnit = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The organizational unit (division of the organization in charge) of the certificate.";
+    };
+    certCommonName = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The name of the individual or organization of the certificate.";
+    };
+  };
+
+  config = mkIf cfg.enable {
+    environment.systemPackages = with pkgs; [ bash coreutils openssl ];
+
+    systemd.services.raw-kubelet-certificate = {
+      inherit description;
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${if cfg.certCrtFile == null then "${generateCert}/bin/generate-cert '${cfg.certName}' '${toString cfg.certExpirationDays}' '${cfg.certDirectory}' '${cfg.caCrtFile}' '${cfg.caKeyFile}' '${cfg.caPassword}' '${cfg.certCountry}' '${cfg.certState}' '${cfg.certLocality}' '${cfg.certOrganization}' '${cfg.certOrganizationalUnit}' '${cfg.certCommonName}'"
+          else
+            "echo 'Using ${cfg.certFile} as certificate for kubelet"
+          }
+        '';
+        ExecStartPre = [
+          # Ensure proper permissions
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/certs''
+          ''${pkgs.coreutils}/bin/install -d -m 0755 -o root -g root ${cfg.certDirectory}/csr''
+          ''${pkgs.coreutils}/bin/install -d -m 0700 -o root -g root ${cfg.certDirectory}/private''
+        ];
+      };
+    };
+  };
+}
+#+end_src
+
+
+** let block
+
+#+begin_src nix :noweb yes :tangle kubelet.nix
 {
   config,
   pkgs,
@@ -147,59 +892,11 @@ let
   generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
 
-  mkKubeConfig = name: attrs: pkgs.writeText "${name}-kubeconfig" (builtins.toJSON {
-    apiVersion = "v1";
-    clusters = [{
-      name = "local";
-      cluster.certificate-authority = attrs.caCrtFile;
-      cluster.server = attrs.server;
-    }];
-    contexts = [{
-      context = {
-        cluster = "local";
-        user = name;
-      };
-      name = "local";
-    }];
-    current-context = "local";
-    kind = "Config";
-    users = [{
-      inherit name;
-      user = {
-        client-certificate = attrs.certCrtFile;
-        client-key = attrs.certKeyFile;
-      };
-    }];
-  });
-  mkKubeConfigOptions = prefix: {
-    server = mkOption {
-      description = "${prefix} kube-apiserver server address.";
-      type = types.str;
-    };
-    caCrtFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to the CA file.";
-    };
-    caKeyFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to the CA key file.";
-    };
-    certCrtFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to the certificate.";
-    };
-    certKeyFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default = null;
-      description = "Path to the certificate key file.";
-    };
-  };
+  <<mkKubeConfig>>
+  <<mkKubeConfigOptions>>
   generatedKubeConfig = mkKubeConfig "kubelet" (cfg // cfg.kubeConfigOpts);
   kubeConfigFile = if cfg.kubeconfig != null then cfg.kubeconfig else generatedKubeConfig;
-  boolToString = b: if b then "true" else "false";
+  <<boolToString>>
   description = "The kubelet is the primary 'node agent' that runs on each node. It can register the node with the apiserver using one of: the hostname; a flag to override the hostname; or specific logic for a cloud provider.";
   longDescription = "The kubelet is the primary 'node agent' that runs on each
 node. It can register the node with the apiserver using one of: the hostname; a flag to
@@ -220,139 +917,7 @@ via a flag.
 
 HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint
 is checked every 20 seconds (also configurable with a flag).";
-  featureGatesDescription = ''
-A set of key=value pairs that describe feature gates for alpha/experimental features. Options are:
-  APIResponseCompression=true|false (BETA - default=true)
-  APIServerIdentity=true|false (BETA - default=true)
-  APIServerTracing=true|false (BETA - default=true)
-  APIServingWithRoutine=true|false (BETA - default=true)
-  AllAlpha=true|false (ALPHA - default=false)
-  AllBeta=true|false (BETA - default=false)
-  AnyVolumeDataSource=true|false (BETA - default=true)
-  AppArmor=true|false (BETA - default=true)
-  AppArmorFields=true|false (BETA - default=true)
-  CPUManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  CPUManagerPolicyBetaOptions=true|false (BETA - default=true)
-  CPUManagerPolicyOptions=true|false (BETA - default=true)
-  CRDValidationRatcheting=true|false (BETA - default=true)
-  CSIMigrationPortworx=true|false (BETA - default=false)
-  CSIVolumeHealth=true|false (ALPHA - default=false)
-  CloudControllerManagerWebhook=true|false (ALPHA - default=false)
-  ClusterTrustBundle=true|false (ALPHA - default=false)
-  ClusterTrustBundleProjection=true|false (ALPHA - default=false)
-  ComponentSLIs=true|false (BETA - default=true)
-  ConsistentListFromCache=true|false (ALPHA - default=false)
-  ContainerCheckpoint=true|false (BETA - default=true)
-  ContextualLogging=true|false (BETA - default=true)
-  CronJobsScheduledAnnotation=true|false (BETA - default=true)
-  CrossNamespaceVolumeDataSource=true|false (ALPHA - default=false)
-  CustomCPUCFSQuotaPeriod=true|false (ALPHA - default=false)
-  CustomResourceFieldSelectors=true|false (ALPHA - default=false)
-  DevicePluginCDIDevices=true|false (BETA - default=true)
-  DisableCloudProviders=true|false (BETA - default=true)
-  DisableKubeletCloudCredentialProviders=true|false (BETA - default=true)
-  DisableNodeKubeProxyVersion=true|false (ALPHA - default=false)
-  DynamicResourceAllocation=true|false (ALPHA - default=false)
-  ElasticIndexedJob=true|false (BETA - default=true)
-  EventedPLEG=true|false (ALPHA - default=false)
-  GracefulNodeShutdown=true|false (BETA - default=true)
-  GracefulNodeShutdownBasedOnPodPriority=true|false (BETA - default=true)
-  HPAScaleToZero=true|false (ALPHA - default=false)
-  HonorPVReclaimPolicy=true|false (ALPHA - default=false)
-  ImageMaximumGCAge=true|false (BETA - default=true)
-  InPlacePodVerticalScaling=true|false (ALPHA - default=false)
-  InTreePluginAWSUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureDiskUnregister=true|false (ALPHA - default=false)
-  InTreePluginAzureFileUnregister=true|false (ALPHA - default=false)
-  InTreePluginGCEUnregister=true|false (ALPHA - default=false)
-  InTreePluginOpenStackUnregister=true|false (ALPHA - default=false)
-  InTreePluginPortworxUnregister=true|false (ALPHA - default=false)
-  InTreePluginvSphereUnregister=true|false (ALPHA - default=false)
-  InformerResourceVersion=true|false (ALPHA - default=false)
-  JobBackoffLimitPerIndex=true|false (BETA - default=true)
-  JobManagedBy=true|false (ALPHA - default=false)
-  JobPodFailurePolicy=true|false (BETA - default=true)
-  JobPodReplacementPolicy=true|false (BETA - default=true)
-  JobSuccessPolicy=true|false (ALPHA - default=false)
-  KubeProxyDrainingTerminatingNodes=true|false (BETA - default=true)
-  KubeletCgroupDriverFromCRI=true|false (ALPHA - default=false)
-  KubeletInUserNamespace=true|false (ALPHA - default=false)
-  KubeletPodResourcesDynamicResources=true|false (ALPHA - default=false)
-  KubeletPodResourcesGet=true|false (ALPHA - default=false)
-  KubeletSeparateDiskGC=true|false (ALPHA - default=false)
-  KubeletTracing=true|false (BETA - default=true)
-  LoadBalancerIPMode=true|false (BETA - default=true)
-  LocalStorageCapacityIsolationFSQuotaMonitoring=true|false (ALPHA - default=false)
-  LogarithmicScaleDown=true|false (BETA - default=true)
-  LoggingAlphaOptions=true|false (ALPHA - default=false)
-  LoggingBetaOptions=true|false (BETA - default=true)
-  MatchLabelKeysInPodAffinity=true|false (ALPHA - default=false)
-  MatchLabelKeysInPodTopologySpread=true|false (BETA - default=true)
-  MaxUnavailableStatefulSet=true|false (ALPHA - default=false)
-  MemoryManager=true|false (BETA - default=true)
-  MemoryQoS=true|false (ALPHA - default=false)
-  MultiCIDRServiceAllocator=true|false (ALPHA - default=false)
-  MutatingAdmissionPolicy=true|false (ALPHA - default=false)
-  NFTablesProxyMode=true|false (ALPHA - default=false)
-  NodeInclusionPolicyInPodTopologySpread=true|false (BETA - default=true)
-  NodeLogQuery=true|false (BETA - default=false)
-  NodeSwap=true|false (BETA - default=true)
-  OpenAPIEnums=true|false (BETA - default=true)
-  PDBUnhealthyPodEvictionPolicy=true|false (BETA - default=true)
-  PersistentVolumeLastPhaseTransitionTime=true|false (BETA - default=true)
-  PodAndContainerStatsFromCRI=true|false (ALPHA - default=false)
-  PodDeletionCost=true|false (BETA - default=true)
-  PodDisruptionConditions=true|false (BETA - default=true)
-  PodIndexLabel=true|false (BETA - default=true)
-  PodLifecycleSleepAction=true|false (BETA - default=true)
-  PodReadyToStartContainersCondition=true|false (BETA - default=true)
-  PortForwardWebsockets=true|false (ALPHA - default=false)
-  ProcMountType=true|false (ALPHA - default=false)
-  QOSReserved=true|false (ALPHA - default=false)
-  RecoverVolumeExpansionFailure=true|false (ALPHA - default=false)
-  RecursiveReadOnlyMounts=true|false (ALPHA - default=false)
-  RelaxedEnvironmentVariableValidation=true|false (ALPHA - default=false)
-  RetryGenerateName=true|false (ALPHA - default=false)
-  RotateKubeletServerCertificate=true|false (BETA - default=true)
-  RuntimeClassInImageCriApi=true|false (ALPHA - default=false)
-  SELinuxMount=true|false (ALPHA - default=false)
-  SELinuxMountReadWriteOncePod=true|false (BETA - default=true)
-  SchedulerQueueingHints=true|false (BETA - default=false)
-  SeparateCacheWatchRPC=true|false (BETA - default=true)
-  SeparateTaintEvictionController=true|false (BETA - default=true)
-  ServiceAccountTokenJTI=true|false (BETA - default=true)
-  ServiceAccountTokenNodeBinding=true|false (ALPHA - default=false)
-  ServiceAccountTokenNodeBindingValidation=true|false (BETA - default=true)
-  ServiceAccountTokenPodNodeInfo=true|false (BETA - default=true)
-  ServiceTrafficDistribution=true|false (ALPHA - default=false)
-  SidecarContainers=true|false (BETA - default=true)
-  SizeMemoryBackedVolumes=true|false (BETA - default=true)
-  StatefulSetAutoDeletePVC=true|false (BETA - default=true)
-  StatefulSetStartOrdinal=true|false (BETA - default=true)
-  StorageNamespaceIndex=true|false (BETA - default=true)
-  StorageVersionAPI=true|false (ALPHA - default=false)
-  StorageVersionHash=true|false (BETA - default=true)
-  StorageVersionMigrator=true|false (ALPHA - default=false)
-  StructuredAuthenticationConfiguration=true|false (BETA - default=true)
-  StructuredAuthorizationConfiguration=true|false (BETA - default=true)
-  TopologyAwareHints=true|false (BETA - default=true)
-  TopologyManagerPolicyAlphaOptions=true|false (ALPHA - default=false)
-  TopologyManagerPolicyBetaOptions=true|false (BETA - default=true)
-  TopologyManagerPolicyOptions=true|false (BETA - default=true)
-  TranslateStreamCloseWebsocketRequests=true|false (BETA - default=true)
-  UnauthenticatedHTTP2DOSMitigation=true|false (BETA - default=true)
-  UnknownVersionInteroperabilityProxy=true|false (ALPHA - default=false)
-  UserNamespacesPodSecurityStandards=true|false (ALPHA - default=false)
-  UserNamespacesSupport=true|false (BETA - default=false)
-  VolumeAttributesClass=true|false (ALPHA - default=false)
-  VolumeCapacityPriority=true|false (ALPHA - default=false)
-  WatchFromStorageWithoutResourceVersion=true|false (BETA - default=false)
-  WatchList=true|false (ALPHA - default=false)
-  WatchListClient=true|false (BETA - default=false)
-  WinDSR=true|false (ALPHA - default=false)
-  WinOverlay=true|false (BETA - default=true)
-  WindowsHostNetwork=true|false (ALPHA - default=true)
-'';
+<<featureGatesDescription>>
 
   shutdown-grace-period-by-pod-priority-option-type = types.listOf (types.attrs {
     priority = mkOption {
@@ -380,7 +945,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
       description = "The number of samples to collect per million spans. Recommended is unset. If unset, sampler respects its parent span's sampling rate, but otherwise never samples.";
     };
   };
+#+end_src
 
+
+** options block
+
+#+begin_src nix :noweb yes :tangle kubelet.nix
 in
 {
   options.services.raw-kubelet = {
@@ -1529,7 +2099,12 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
       description = "Specifies interval for kubelet to calculate and cache the volume disk usage for all pods and volumes.  To disable volume calculations, set to a negative number (default 1m0s).";
     };
   };
+#+end_src
 
+
+** config block
+
+#+begin_src nix :noweb yes :tangle kubelet.nix
   config = mkIf cfg.enable {
     systemd.services.raw-kubelet = {
       inherit description;
@@ -1626,3 +2201,5 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
     };
   };
 }
+#+end_src
+
