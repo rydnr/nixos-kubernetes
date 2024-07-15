@@ -441,6 +441,78 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
   };
 
+  authorization-webhook-option-type = types.submodule {
+    options = {
+      cache-authorized-ttl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "The duration to cache 'authorized' responses from the webhook authorizer.";
+      };
+
+      cache-unauthorized-ttl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "The duration to cache 'unauthorized' responses from the webhook authorizer.";
+      };
+    };
+  };
+
+  authentication-x509-option-type = types.submodule {
+    options = {
+      client-ca-file = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.";
+      };
+    };
+  };
+
+  authentication-webhook-option-type = types.submodule {
+    options = {
+      enabled = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Allows bearer token authentication backed by the tokenreviews.authentication.k8s.io API.";
+      };
+
+      cache-ttl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "The duration to cache responses from the webhook token authenticator (default 2m0s).";
+      };
+    };
+  };
+
+  authentication-anonymous-option-type = types.submodule {
+    options = {
+      enabled = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Allows anonymous requests to the kubelet server. Requests that are not rejected by another authentication method are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated.";
+      };
+    };
+  };
+
+  authentication-option-type = types.submodule {
+    options = {
+      x509 = types.nullOr authentication-x509-option-type;
+      webhook = types.nullOr authentication-webhook-option-type;
+      anonymous = types.nullOr authentication-anonymous-option-type;
+    };
+  };
+
+  authorization-option-type = types.submodule {
+    options = {
+      mode = mkOption {
+        type = types.nullOr (types.enum [ "AlwaysAllow" "Webhook" ]);
+        default = null;
+        description = "Authorization mode to apply to requests to the kubelet server. Valid values are AlwaysAllow and Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization.";
+      };
+
+      webhook = types.nullOr authorization-webhook-option-type;
+    };
+  };
+
 in
 {
   options.services.raw-kubelet = {
@@ -456,58 +528,16 @@ in
       description = "The version of the kubelet API";
     };
 
-    authentication = {
-      x509 = {
-        client-ca-file = mkOption {
-          type = types.nullOr types.path;
-          default = null;
-          description = "If set, any request presenting a client certificate signed by one of the authorities in the client-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.";
-        };
-      };
-
-      webhook = {
-        enabled = mkOption {
-          type = types.bool;
-          default = false;
-          description = "Allows bearer token authentication backed by the tokenreviews.authentication.k8s.io API.";
-        };
-
-        cache-ttl = mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = "The duration to cache responses from the webhook token authenticator (default 2m0s).";
-        };
-      };
-
-      anonymous = {
-        enabled = mkOption {
-          type = types.bool;
-          default = false;
-          description = "Allows anonymous requests to the kubelet server. Requests that are not rejected by another authentication method are treated as anonymous requests. Anonymous requests have a username of system:anonymous, and a group name of system:unauthenticated.";
-        };
-      };
+    authentication = mkOption {
+      type = types.nullOr authentication-option-type;
+      default = null;
+      description = "Specifies how requests to the Kubelet's server are authenticated.";
     };
 
-    authorization = {
-      mode = mkOption {
-        type = types.nullOr (types.enum [ "AlwaysAllow" "Webhook" ]);
-        default = null;
-        description = "Authorization mode to apply to requests to the kubelet server. Valid values are AlwaysAllow and Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization.";
-      };
-
-      webhook = {
-        cache-authorized-ttl = mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = "The duration to cache 'authorized' responses from the webhook authorizer.";
-        };
-
-        cache-unauthorized-ttl = mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = "The duration to cache 'unauthorized' responses from the webhook authorizer.";
-        };
-      };
+    authorization = mkOption {
+      type = types.nullOr authorization-option-type;
+      default = null;
+      description = "Specifies how requests to the Kubelet's server are authorized.";
     };
 
     address = mkOption {
@@ -545,18 +575,6 @@ in
       type = types.nullOr types.str;
       default = null;
       description = "Authorization mode for Kubelet server. Valid options are AlwaysAllow or Webhook. Webhook mode uses the SubjectAccessReview API to determine authorization (default 'AlwaysAllow').";
-    };
-
-    authorization-webhook-cache-authorized-ttl = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "The duration to cache 'authorized' responses from the webhook authorizer (default 5m0s).";
-    };
-
-    authorization-webhook-cache-unauthorized-ttl = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "The duration to cache 'unauthorized' responses from the webhook authorizer (default 30s).";
     };
 
     boot-id-file = mkOption {
