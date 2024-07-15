@@ -138,8 +138,6 @@ let
     // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
     // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
     // (if cfg.cgroups-per-qos != null then { cgroupsPerQOS = cfg.cgroups-per-qos; } else {})
-    // (if cfg.v != null then { logging = { verbosity = cfg.v; }; } else {})
-    // (if cfg.log-json-info-buffer-size != null then { logging = { options = { json = { infoBufferSize = cfg.log-json-info-buffer-size; }; }; }; } else {})
     ;
   generatedConfig = pkgs.writeText "kubelet-config" (builtins.toJSON configSet);
   actualConfigFile = if cfg.configFile != null then cfg.configFile else generatedConfig;
@@ -1612,7 +1610,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
             ${optionalString (cfg.reserved-cpus != null) "--reserved-cpus \"${concatStringsSep "," cfg.reserved-cpus}\""} \
             ${optionalString (cfg.root-dir != null) "--root-dir ${toString cfg.root-dir}"} \
             ${optionalString (cfg.rotate-server-certificates != null) "--rotate-server-certificates"} \
-            ${optionalString (cfg.runonce != null) "--runonce ${boolToString cfg.runonce}"} \
             ${optionalString (cfg.runtime-cgroups != null) "--runtime-cgroups ${toString cfg.runtime-cgroups}"} \
             ${optionalString (cfg.storage-driver-buffer-duration != null) "--storage-driver-buffer-duration ${toString cfg.storage-driver-buffer-duration}"} \
             ${optionalString (cfg.storage-driver-db != null) "--storage-driver-db ${toString cfg.storage-driver-db}"} \
@@ -1622,8 +1619,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
             ${optionalString (cfg.storage-driver-table != null) "--storage-driver-table ${toString cfg.storage-driver-table}"} \
             ${optionalString (cfg.storage-driver-user != null) "--storage-driver-user ${toString cfg.storage-driver-user}"} \
             ${optionalString (cfg.system-cgroups != null) "--system-cgroups ${toString cfg.system-cgroups}"} \
-            ${optionalString (cfg.v != null) "--v ${toString cfg.v}"} \
-            ${optionalString (cfg.vmodule != null) "--vmodule \"${concatStringsSep "," cfg.vmodule}\""} \
             ${optionalString (cfg.volume-stats-agg-period != null) "--volume-stats-agg-period ${toString cfg.volume-stats-agg-period}"}
         '';
       };
