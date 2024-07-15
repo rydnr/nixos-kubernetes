@@ -932,17 +932,19 @@ is checked every 20 seconds (also configurable with a flag).";
     };
   });
 
-  tracing-option-type = types.attrs {
-    endpoint = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "Endpoint of the collector this component will report traces to. The connection is insecure, and does not currently support TLS. Recommended is unset, and endpoint is the otlp grpc (default localhost:4317).";
-    };
+  tracing-option-type = types.submodule {
+    options = {
+      endpoint = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Endpoint of the collector this component will report traces to. The connection is insecure, and does not currently support TLS. Recommended is unset, and endpoint is the otlp grpc (default localhost:4317).";
+      };
 
-    sampling-rate-per-million = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      description = "The number of samples to collect per million spans. Recommended is unset. If unset, sampler respects its parent span's sampling rate, but otherwise never samples.";
+      sampling-rate-per-million = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "The number of samples to collect per million spans. Recommended is unset. If unset, sampler respects its parent span's sampling rate, but otherwise never samples.";
+      };
     };
   };
 #+end_src
