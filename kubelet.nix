@@ -380,6 +380,68 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
     };
   };
 
+  text-logging-option-type = types.submodule {
+    options = {
+      splitStream = mkOption {
+        type = types.nullOr types.bool;
+        default = null;
+          description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+        };
+
+        infoBufferSize = mkOption {
+          type = types.nullOr types.int;
+          default = null;
+          description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+        };
+      };
+    };
+  };
+
+  json-logging-option-type = types.submodule {
+    options = {
+      splitStream = mkOption {
+        type = types.nullOr types.bool;
+        default = null;
+        description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+      };
+
+      infoBufferSize = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
+      };
+    };
+  };
+
+  logging-option-type = types.submodule {
+    options = {
+      format = mkOption {
+        type = types.enum [ "json" "text" ];
+        default = "text";
+        description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text' (default 'text').";
+      };
+
+      flush-frequency = mkOption {
+        type = types.str;
+        description = "Maximum time between log flushes. If a string, parsed as a duration (i.e. '1s') If an int, the maximum number of nanoseconds (i.e. 1s = 1000000000). Ignored if the selected logging backend writes log messages without buffering.";
+      };
+
+      verbosity = mkOption {
+        type = types.int;
+        description = "Number for the log level verbosity";
+      };
+
+      vmodule = mkOption {
+        type = (types.attrsOf types.int);
+        default = {};
+        description = "Set of { pattern = N; } settings for file-filtered logging (only works for text log format)";
+      };
+
+      text = types.nullOr text-logging-option-type;
+      json = types.nullOr json-logging-option-type;
+    };
+  };
+
 in
 {
   options.services.raw-kubelet = {
@@ -974,77 +1036,13 @@ in
       description = "Whether to log the usage of the cAdvisor container.";
     };
 
-    log-flush-frequency = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "Maximum number of seconds between log flushes (default 5s)";
-    };
-
-    log-json-info-buffer-size = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "[Alpha] In JSON format with split output streams, the info messages can be buffered for a while to increase performance. The default value of zero bytes disables buffering. The size can be specified as number of bytes (512), multiples of 1000 (1K), multiples of 1024 (2Ki), or powers of those (3M, 4G, 5Mi, 6Gi). Enable the LoggingAlphaOptions feature gate to use this.";
-    };
-
     log-json-split-stream = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "[Alpha] In JSON format, write error messages to stderr and info messages to stdout. The default is to write a single stream to stdout. Enable the LoggingAlphaOptions feature gate to use this.";
     };
 
-    logging = {
-      format = mkOption {
-        type = types.enum [ "json" "text" ];
-        default = "text";
-        description = "Sets the log format. Permitted formats: 'json' (gated by LoggingBetaOptions), 'text' (default 'text').";
-      };
-
-      flush-frequency = mkOption {
-        type = types.types.str;
-        description = "Maximum time between log flushes. If a string, parsed as a duration (i.e. '1s') If an int, the maximum number of nanoseconds (i.e. 1s = 1000000000). Ignored if the selected logging backend writes log messages without buffering.";
-      };
-
-      verbosity = mkOption {
-        type = types.int;
-        description = "Number for the log level verbosity";
-      };
-
-      vmodule = mkOption {
-        type = (types.attrsOf types.int);
-        default = {};
-        description = "Set of { pattern = N; } settings for file-filtered logging (only works for text log format)";
-      };
-
-      options = {
-        # Holds additional parameters that are specific to the different logging formats. Only the options for the selected format get used, but all of them get validated. Only available when the LoggingAlphaOptions feature gate is enabled.
-        text = {
-          splitStream = mkOption {
-            type = types.nullOr types.bool;
-            default = null;
-            description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
-          };
-
-          infoBufferSize = mkOption {
-            type = types.nullOr types.int;
-            default = null;
-            description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
-          };
-        };
-        json = {
-          splitStream = mkOption {
-            type = types.nullOr types.bool;
-            default = null;
-            description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
-          };
-
-          infoBufferSize = mkOption {
-            type = types.nullOr types.int;
-            default = null;
-            description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
-          };
-        };
-      };
-    };
+    logging = logging-option-type;
 
     machine-id-file = mkOption {
       type = types.nullOr (types.listOf types.path);
@@ -1591,7 +1589,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \
             ${optionalString (cfg.log-cadvisor-usage != null) "--log-cadvisor-usage"} \
-            ${optionalString (cfg.log-flush-frequency != null) "--log-flush-frequency ${toString cfg.log-flush-frequency}"} \
             ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
             ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
             ${optionalString (cfg.machine-id-file != null) "--machine-id-file \"${concatStringsSep "," cfg.machine-id-file}\""} \
