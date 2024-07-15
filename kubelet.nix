@@ -27,7 +27,6 @@ let
     authorization = cfg.authorization;
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     kind = "KubeletConfiguration";
-    logging = cfg.logging;
     serializeImagePulls = cfg.serialize-image-pulls;
   } // (if cfg.logging != null then { logging = cfg.logging; } else {})
     // (if cfg.reserved-system-cpus != null then { reservedSystemCPUs = cfg.reserved-system-cpus; } else {})
