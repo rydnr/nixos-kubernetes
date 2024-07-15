@@ -1603,15 +1603,15 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
     };
   };
 
-  config = mkMerge [
-    (mkIf cfg.raw-kubelet.enable {
-      virtualisation.containerd = {
-        enable = mkDefault true;
-        configFile = mkDefault defaultContainerdConfigFile;
-      };
-    })
+config = mkMerge [
+  (mkIf cfg.raw-kubelet.enable {
+    virtualisation.containerd = {
+      enable = mkDefault true;
+      configFile = mkDefault defaultContainerdConfigFile;
+    };
+  })
 
-    (mkIf cfg.enable {
+  (mkIf cfg.enable {
     systemd.services.raw-kubelet = {
       inherit description;
       # wantedBy = [ "kubernetes.target" ];
@@ -1697,7 +1697,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
       unitConfig = {
         StartLimitIntervalSec = 0;
       };
-    })
-    ];
-  };
-}
+    };
+  })
+];
