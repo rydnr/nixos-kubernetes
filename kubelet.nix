@@ -355,7 +355,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   shutdown-grace-period-by-pod-priority-option-type = types.attrs {
     priority = types.nullOr types.int;
     shutdown-grace-period-seconds = types.nullOr types.int;
-  });
+  };
 
   tracing-option-type = types.attrs {
     endpoint = mkOption {

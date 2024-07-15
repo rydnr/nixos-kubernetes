@@ -920,7 +920,7 @@ is checked every 20 seconds (also configurable with a flag).";
   shutdown-grace-period-by-pod-priority-option-type = types.attrs {
     priority = types.nullOr types.int;
     shutdown-grace-period-seconds = types.nullOr types.int;
-  });
+  };
 
   tracing-option-type = types.attrs {
     endpoint = mkOption {
