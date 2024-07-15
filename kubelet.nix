@@ -1700,4 +1700,4 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
       };
     })
   ];
-};
+}
