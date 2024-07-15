@@ -27,7 +27,7 @@ let
     state = /var/lib/containerd/daemon;
     oom_score = 0;
     grpc = {
-      address = /var/run/containerd/containerd.sock;
+      address = "/var/run/containerd/containerd.sock";
     };
     plugins = {
       io.containerd.grpc.v1.cri = {
