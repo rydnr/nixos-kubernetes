@@ -773,9 +773,10 @@ let
     containerRuntimeEndpoint = cfg.container-runtime-endpoint;
     kind = "KubeletConfiguration";
     logging = cfg.logging;
-    reservedSystemCPUs = cfg.reserved-system-cpus;
     serializeImagePulls = cfg.serialize-image-pulls;
-  } // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
+  } // (if cfg.logging != null then { logging = cfg.logging; } else {})
+    // (if cfg.reserved-system-cpus != null then { reservedSystemCPUs = cfg.reserved-system-cpus; } else {})
+    // (if cfg.enable-server != null then { enableServer = cfg.enable-server; } else {})
     // (if cfg.static-pod-path != null then { staticPodPath = cfg.static-pod-path; } else {})
     // (if cfg.pod-logs-dir != null then { podLogsDir = cfg.pod-logs-dir; } else {})
     // (if cfg.sync-frequency != null then { syncFrequency = cfg.sync-frequency; } else {})
@@ -784,7 +785,7 @@ let
     // (if cfg.static-pod-url != null then { staticPodUrl = cfg.static-pod-url; } else {})
     // (if cfg.static-pod-url-header != null then { staticPodUrlHeader = cfg.static-pod-url-header; } else {})
     // (if cfg.address != null then { address = cfg.address; } else {})
-    // (if cfg.port != null then { port = toString cfg.port; } else {})
+    // (if cfg.port != null then { port = cfg.port; } else {})
     // (if cfg.read-only-port != null then { readOnlyPort = toString cfg.read-only-port; } else {})
     // (if cfg.tls-cert-file != null then { tlsCertFile = cfg.tls-cert-file; } else {})
     // (if cfg.tls-private-key-file != null then { tlsPrivateKeyFile = cfg.tls-private-key-file; } else {})
