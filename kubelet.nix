@@ -1604,7 +1604,7 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
   };
 
   config = mkMerge [
-    (mkIf cfg.raw-kubelet.enable {
+    (mkIf cfg.enable {
       virtualisation.containerd = {
         enable = mkDefault true;
         configFile = mkDefault defaultContainerdConfigFile;
