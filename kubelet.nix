@@ -386,13 +386,12 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
         type = types.nullOr types.bool;
         default = null;
           description = "Redirects error messages to stderr while info messages go to stdout, with buffering. The default is to write both to stdout, without buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
-        };
+      };
 
-        infoBufferSize = mkOption {
-          type = types.nullOr types.int;
-          default = null;
-          description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
-        };
+      infoBufferSize = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+        description = "Sets the size of the info stream when using split streams. The default is zero, which disables buffering. Only available when the LoggingAlphaOptions feature gate is enabled.";
       };
     };
   };
