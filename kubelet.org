@@ -2167,8 +2167,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
             ${optionalString (cfg.kubelet-cgroups != null) "--kubelet-cgroups ${toString cfg.kubelet-cgroups}"} \
             ${optionalString (cfg.lock-file != null) "--lock-file ${toString cfg.lock-file}"} \
             ${optionalString (cfg.log-cadvisor-usage != null) "--log-cadvisor-usage"} \
-            ${optionalString (cfg.log-json-info-buffer-size != null) "--log-json-info-buffer-size ${toString cfg.log-json-info-buffer-size}"} \
-            ${optionalString (cfg.log-json-split-stream != null) "--log-json-split-stream"} \
             ${optionalString (cfg.machine-id-file != null) "--machine-id-file \"${concatStringsSep "," cfg.machine-id-file}\""} \
             ${optionalString (cfg.manifest-url != null) "--manifest-url ${toString cfg.manifest-url}"} \
             ${optionalString (cfg.manifest-url-header != null) "--manifest-url-header \"${concatStringsSep "," cfg.manifest-url-header}\""} \
