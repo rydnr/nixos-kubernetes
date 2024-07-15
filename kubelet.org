@@ -825,7 +825,7 @@ let
     // (if cfg.hairpin-mode != null then { hairpinMode = cfg.hairpin-mode; } else {})
     // (if cfg.max-pods != null then { maxPods = cfg.max-pods; } else {})
     // (if cfg.pod-cidr != null then { podCIDR = cfg.pod-cidr; } else {})
-    // (if cfg.pods-pid-limit != null then { podsPidsLimit = cfg.pods-pids-limit; } else {})
+    // (if cfg.pod-pids-limit != null then { podPidsLimit = cfg.pod-pids-limit; } else {})
     // (if cfg.resolv-conf != null then { resolvConf = cfg.resolv-conf; } else {})
     // (if cfg.run-once != null then { runOnce = cfg.run-once; } else {})
     // (if cfg.cpu-cfs-quota != null then { cpuCFSQuota = cfg.cpu-cfs-quota; } else {})
