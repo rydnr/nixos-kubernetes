@@ -2178,38 +2178,38 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
 ** config block
 
 #+begin_src nix :noweb yes :tangle kubelet.nix
-config = mkMerge [
-  (mkIf cfg.raw-kubelet.enable {
-    virtualisation.containerd = {
-      enable = mkDefault true;
-      configFile = mkDefault defaultContainerdConfigFile;
-    };
-  })
+  config = mkMerge [
+    (mkIf cfg.raw-kubelet.enable {
+      virtualisation.containerd = {
+        enable = mkDefault true;
+        configFile = mkDefault defaultContainerdConfigFile;
+      };
+    })
 
-  (mkIf cfg.enable {
-    systemd.services.raw-kubelet = {
-      inherit description;
-      # wantedBy = [ "kubernetes.target" ];
-      # after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
-      path = with pkgs; [
-        gitMinimal
-        openssh
-        util-linux
-        iproute
-        ethtool
-        thin-provisioning-tools
-        iptables
-        socat
-      ] ++ lib.optional config.boot.zfs.enabled config.boot.zfs.package;
+    (mkIf cfg.enable {
+      systemd.services.raw-kubelet = {
+        inherit description;
+        # wantedBy = [ "kubernetes.target" ];
+        # after = [ "containerd.service" "network.target" ] ; # "kube-apiserver.service" ];
+        path = with pkgs; [
+          gitMinimal
+          openssh
+          util-linux
+          iproute
+          ethtool
+          thin-provisioning-tools
+          iptables
+          socat
+        ] ++ lib.optional config.boot.zfs.enabled config.boot.zfs.package;
 
-      serviceConfig = {
-        Slice = "raw-kubernetes.slice";
-        CPUAccounting = true;
-        MemoryAccounting = true;
-        Restart = "on-failure";
-        RestartSec = "1000ms";
-        ExecStart = ''
-          ${pkgs.kubernetes}/bin/kubelet \
+        serviceConfig = {
+          Slice = "raw-kubernetes.slice";
+          CPUAccounting = true;
+          MemoryAccounting = true;
+          Restart = "on-failure";
+          RestartSec = "1000ms";
+          ExecStart = ''
+            ${pkgs.kubernetes}/bin/kubelet \
             ${optionalString (cfg.application-metrics-count-limit != null) "--application-metrics-count-limit ${toString cfg.application-metrics-count-limit}"} \
             ${optionalString (cfg.boot-id-file != null) "--boot-id-file \"${concatStringsSep "," cfg.boot-id-file}\""} \
             ${optionalString (cfg.bootstrap-kubeconfig != null) "--bootstrap-kubeconfig ${toString cfg.bootstrap-kubeconfig}"} \
@@ -2267,12 +2267,13 @@ config = mkMerge [
             ${optionalString (cfg.storage-driver-user != null) "--storage-driver-user ${toString cfg.storage-driver-user}"} \
             ${optionalString (cfg.system-cgroups != null) "--system-cgroups ${toString cfg.system-cgroups}"} \
             ${optionalString (cfg.volume-stats-agg-period != null) "--volume-stats-agg-period ${toString cfg.volume-stats-agg-period}"}
-        '';
+          '';
+        };
+        unitConfig = {
+          StartLimitIntervalSec = 0;
+        };
       };
-      unitConfig = {
-        StartLimitIntervalSec = 0;
-      };
-    };
-  })
-];
+    })
+  ];
+};
 #+end_src
