@@ -2180,7 +2180,6 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
             ${optionalString (cfg.pod-max-pids != null) "--pod-max-pids ${toString cfg.pod-max-pids}"} \
             ${optionalString (cfg.register-schedulable != null) "--register-schedulable ${boolToString cfg.register-schedulable}"} \
             ${optionalString (cfg.registry-qps != null) "--registry-qps ${toString cfg.registry-qps}"} \
-            ${optionalString (cfg.reserved-cpus != null) "--reserved-cpus \"${concatStringsSep "," cfg.reserved-cpus}\""} \
             ${optionalString (cfg.root-dir != null) "--root-dir ${toString cfg.root-dir}"} \
             ${optionalString (cfg.rotate-server-certificates != null) "--rotate-server-certificates"} \
             ${optionalString (cfg.runtime-cgroups != null) "--runtime-cgroups ${toString cfg.runtime-cgroups}"} \
