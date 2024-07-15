@@ -134,7 +134,6 @@ let
     // (if cfg.tracing != null then { tracing = { endpoint = cfg.tracing.endpoint; samplingRatePerMillion = cfg.tracing.sampling-rate-per-million; }; } else {})
     // (if cfg.local-storage-capacity-isolation != null then { localStorageCapacityIsolation = cfg.local-storage-capacity-isolation; } else {})
     // (if cfg.image-service-endpoint != null then { imageServiceEndpoint = cfg.image-service-endpoint; } else {})
-
     // (if cfg.registry-qps != null then { registryPullQPS = cfg.registry-qps; } else {})
     // (if cfg.event-qps != null then { eventRecordQPS = cfg.event-qps; } else {})
     // (if cfg.event-burst != null then { eventBurst = cfg.event-burst; } else {})
@@ -353,7 +352,7 @@ A set of key=value pairs that describe feature gates for alpha/experimental feat
   WindowsHostNetwork=true|false (ALPHA - default=true)
 '';
 
-  shutdown-grace-period-by-pod-priority-option-type = types.listOf (types.shape {
+  shutdown-grace-period-by-pod-priority-option-type = types.attrs {
     priority = types.nullOr types.int;
     shutdown-grace-period-seconds = types.nullOr types.int;
   });
@@ -1381,7 +1380,7 @@ in
     };
 
     shutdown-grace-period-by-pod-priority = mkOption {
-      type = types.nullOr shutdown-grace-period-by-pod-priority-option-type;
+      type = types.nullOr types.listOf (shutdown-grace-period-by-pod-priority-option-type);
       default = null;
       description = "Specifies the shutdown grace period for Pods based on their associated priority class value. When a shutdown request is received, the Kubelet will initiate shutdown on all pods running on the node with a grace period that depends on the priority of the pod, and then wait for all pods to exit. Each entry in the array represents the graceful shutdown time a pod with a priority class value that lies in the range of that value and the next higher entry in the list when the node is shutting down. For example, to allow critical pods 10s to shutdown, priority>=10000 pods 20s to shutdown, and all remaining pods 30s to shutdown.
 
