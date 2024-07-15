@@ -1611,7 +1611,7 @@ The time the Kubelet will wait before exiting will at most be the maximum of all
     (mkIf cfg.enable {
       virtualisation.containerd = {
         enable = mkDefault true;
-        settings = cfg.containerdSettings;
+        settings = containerdSettings;
       };
     })
 
